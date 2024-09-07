@@ -27,8 +27,8 @@ fun Mass(modifier: Modifier = Modifier) {
         modifier = modifier
             .background(color = Color.DarkGray)
             .fillMaxWidth()
-            .height(218.dp)
-            .padding(horizontal = 8.dp, vertical = 8.dp),
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .height(218.dp),
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         Column {
