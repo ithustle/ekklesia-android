@@ -2,6 +2,8 @@ package com.toquemedia.ekklesia.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.ui.screens.community.CommunityScreen
 import com.toquemedia.ekklesia.ui.screens.today.TodayScreen
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Home(modifier: Modifier = Modifier) {
 
@@ -28,16 +31,8 @@ fun Home(modifier: Modifier = Modifier) {
     val tabTitles = listOf("Hoje", "Comunidade")
 
     Column {
-        TabRow(
+        PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
-            modifier = modifier.padding(8.dp),
-            indicator = { tabPositions ->
-                SecondaryIndicator(
-                    modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    height = 2.dp,
-                    color = Color(0xFF6B4C75)
-                )
-            }
         ) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
