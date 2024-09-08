@@ -3,6 +3,7 @@ package com.toquemedia.ekklesia.ui.screens.today
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +29,7 @@ fun TodayScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.padding(top = 16.dp))
         Mass(
             modifier = modifier
-
+                .height(210.dp)
         )
         Spacer(modifier = Modifier.padding(top = 32.dp))
         Text(
@@ -37,7 +38,10 @@ fun TodayScreen(modifier: Modifier = Modifier) {
             fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.padding(top = 16.dp))
-        Mass()
+        Mass(
+            modifier = modifier
+                .height(210.dp)
+        )
     }
 }
 
