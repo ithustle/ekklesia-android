@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.ui.screens.today
+package com.toquemedia.ekklesia.ui.screens.home.today
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.toquemedia.ekklesia.ui.screens.home.Mass
+import com.toquemedia.ekklesia.ui.screens.home.composables.Mass
 
 @Composable
 fun TodayScreen(modifier: Modifier = Modifier) {
