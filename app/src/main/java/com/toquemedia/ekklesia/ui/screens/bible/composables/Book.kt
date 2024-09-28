@@ -32,14 +32,14 @@ fun Book(modifier: Modifier = Modifier) {
         Text(
             "Genesis",
             color = Color.White,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Light
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium
         )
         Text(
             "Capítulos 50",
             color = Color.White,
-            fontSize = 8.sp,
-            fontWeight = FontWeight.Light
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Normal
         )
     }
 }
