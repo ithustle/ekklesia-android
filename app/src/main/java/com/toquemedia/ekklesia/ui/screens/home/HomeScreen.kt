@@ -1,13 +1,9 @@
 package com.toquemedia.ekklesia.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,14 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.toquemedia.ekklesia.ui.screens.community.CommunityScreen
-import com.toquemedia.ekklesia.ui.screens.today.TodayScreen
+import com.toquemedia.ekklesia.ui.screens.home.community.CommunityScreen
+import com.toquemedia.ekklesia.ui.screens.home.today.TodayScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier) {
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabTitles = listOf("Hoje", "Comunidade")
@@ -60,5 +55,5 @@ fun Home(modifier: Modifier = Modifier) {
 @Preview(showSystemUi = true)
 @Composable
 private fun HomePrev() {
-    Home()
+    HomeScreen()
 }
