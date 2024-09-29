@@ -16,27 +16,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.toquemedia.ekklesia.model.BookType
+import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @Composable
-fun Book(modifier: Modifier = Modifier) {
+fun Book(
+    modifier: Modifier = Modifier,
+    book: BookType
+) {
     Column(
         modifier = modifier
             .width(103.dp)
             .height(58.dp)
             .clip(shape = RoundedCornerShape(4.dp))
-            .background(color = Color.Red),
+            .background(color = Color(PrincipalColor.value)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 
     ) {
         Text(
-            "Genesis",
+            book.bookName,
             color = Color.White,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )
         Text(
-            "Capítulos 50",
+            "Capítulos ${book.numberOfChapters}",
             color = Color.White,
             fontSize = 10.sp,
             fontWeight = FontWeight.Normal
@@ -47,5 +52,10 @@ fun Book(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun BookPrev() {
-    Book()
+    Book(
+        book = BookType(
+            bookName = "Genesis",
+            numberOfChapters = 50
+        )
+    )
 }

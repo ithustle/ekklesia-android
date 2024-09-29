@@ -9,10 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toquemedia.ekklesia.model.BookType
 import com.toquemedia.ekklesia.ui.screens.bible.composables.Book
 
 @Composable
-fun BookScreen(modifier: Modifier = Modifier) {
+fun BookScreen(
+    modifier: Modifier = Modifier,
+    books: List<BookType> = emptyList()
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -21,8 +25,8 @@ fun BookScreen(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .padding(top = 8.dp)
     ) {
-        items(24) {
-            Book()
+        items(books.size) { index ->
+            Book(book = books[index])
         }
     }
 }
