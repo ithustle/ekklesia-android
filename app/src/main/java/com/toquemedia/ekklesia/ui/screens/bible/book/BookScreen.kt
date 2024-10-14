@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,7 +19,7 @@ fun BookScreen(
     books: List<BookType> = emptyList()
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         modifier = modifier
@@ -31,7 +32,7 @@ fun BookScreen(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun BookScreenPrev() {
     BookScreen()

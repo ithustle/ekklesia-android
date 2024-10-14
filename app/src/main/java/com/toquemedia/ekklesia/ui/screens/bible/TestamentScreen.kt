@@ -65,8 +65,8 @@ fun TestamentScreen(
         }
 
         when(selectedTabIndex) {
-            0 -> BookScreen(books = states.books)
-            1 -> Text("Novo")
+            0 -> BookScreen(books = states.books.slice(0..38))
+            1 -> BookScreen(books = states.books.slice(39..65))
         }
     }
 }

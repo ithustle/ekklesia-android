@@ -3,6 +3,7 @@ package com.toquemedia.ekklesia.ui.screens.bible.composables
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,8 +28,8 @@ fun Book(
 ) {
     Column(
         modifier = modifier
-            .width(103.dp)
-            .height(58.dp)
+            .width(156.dp)
+            .height(96.dp)
             .clip(shape = RoundedCornerShape(4.dp))
             .background(color = Color(PrincipalColor.value)),
         verticalArrangement = Arrangement.Center,
@@ -37,13 +39,15 @@ fun Book(
         Text(
             book.bookName,
             color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium
+            fontSize = 17.sp,
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center
         )
+        Spacer(modifier.height(6.dp))
         Text(
             "Capítulos ${book.numberOfChapters}",
             color = Color.White,
-            fontSize = 10.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.Normal
         )
     }
@@ -54,7 +58,7 @@ fun Book(
 private fun BookPrev() {
     Book(
         book = BookType(
-            bookName = "Genesis",
+            bookName = "Lamentações de Jeremias",
             numberOfChapters = 50
         )
     )
