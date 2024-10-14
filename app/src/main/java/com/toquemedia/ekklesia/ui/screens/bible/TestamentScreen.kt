@@ -17,12 +17,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.toquemedia.ekklesia.ui.screens.bible.book.BookScreen
+import com.toquemedia.ekklesia.ui.screens.bible.book.BookListScreen
+import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
+import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TestamentScreen(modifier: Modifier = Modifier) {
-
+fun TestamentScreen(
+    modifier: Modifier = Modifier,
+    states: TestamentUiState,
+    onNavigateToBook: (bookName: String) -> Unit = {}
+) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabTitles = listOf("Antigo", "Novo")
 
@@ -32,7 +37,9 @@ fun TestamentScreen(modifier: Modifier = Modifier) {
 
         Text(
             "Testamento",
-            fontSize = 24.sp
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(PrincipalColor.value)
         )
 
         PrimaryTabRow(
@@ -47,7 +54,7 @@ fun TestamentScreen(modifier: Modifier = Modifier) {
                     text = {
                         Text(
                             text = title,
-                            color = if (selectedTabIndex == index) Color(0xFF6B4C75) else Color.Black,
+                            color = if (selectedTabIndex == index) Color(PrincipalColor.value) else Color.Black,
                             fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal,
                             fontSize = 16.sp
                         )
@@ -57,8 +64,18 @@ fun TestamentScreen(modifier: Modifier = Modifier) {
         }
 
         when(selectedTabIndex) {
-            0 -> BookScreen()
-            1 -> Text("Novo")
+            0 -> BookListScreen(
+                books = states.books.slice(0..38),
+                onNavigateToBook = {
+                    onNavigateToBook(it.bookName)
+                }
+            )
+            1 -> BookListScreen(
+                books = states.books.slice(39..65),
+                onNavigateToBook = {
+                    onNavigateToBook(it.bookName)
+                }
+            )
         }
     }
 }
@@ -66,5 +83,5 @@ fun TestamentScreen(modifier: Modifier = Modifier) {
 @Preview(showSystemUi = true)
 @Composable
 private fun TestamentScreenPrev() {
-    TestamentScreen()
+    TestamentScreen(states = TestamentUiState())
 }
