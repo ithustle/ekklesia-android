@@ -10,6 +10,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun VersesScreen(
@@ -28,12 +36,14 @@ fun VersesScreen(
 ) {
 
     val book = states.book
+    var chapter by remember { mutableIntStateOf(chapterNumber?.toInt() ?: 0) }
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
         Spacer(modifier = Modifier.padding(vertical = 32.dp))
         Column(
@@ -48,37 +58,59 @@ fun VersesScreen(
                 color = PrincipalColor
             )
             Text(
-                text = chapterNumber.toString(),
+                text = chapter.toString(),
                 fontSize = 40.sp,
                 color = PrincipalColor
             )
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-            states.book?.
-                verses?.get((chapterNumber?.toInt()?.minus(1)) ?: 0)?.forEachIndexed { line, verse ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = (line + 1).toString(),
-                            fontSize = 20.sp,
-                            color = PrincipalColor,
-                            textAlign = TextAlign.Start,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = modifier.padding(horizontal = 4.dp))
-                        Text(
-                            text = verse,
-                            fontSize = 20.sp,
-                            color = PrincipalColor,
-                        )
+            book?.verses?.get((chapter.minus(1)))?.forEachIndexed { line, verse ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = (line + 1).toString(),
+                        fontSize = 20.sp,
+                        color = PrincipalColor,
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = modifier.padding(horizontal = 4.dp))
+                    Text(
+                        text = verse,
+                        fontSize = 20.sp,
+                        color = PrincipalColor,
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(weight = 1f))
+
+        VersesNavigation(
+            modifier = Modifier
+                .padding(top = 20.dp),
+            currentVerse = chapter,
+            bookName = book?.bookName.toString(),
+            onNextVerse = {
+                chapter += 1
+                CoroutineScope(Dispatchers.Main).launch {
+                    scrollState.scrollTo(0)
+                }
+            },
+            onPreviousVerse = {
+                if (chapter > 1) {
+                    chapter -= 1
+                    CoroutineScope(Dispatchers.Main).launch {
+                        scrollState.scrollTo(0)
                     }
                 }
-        }
+            }
+        )
         Spacer(modifier = Modifier.padding(vertical = 16.dp))
     }
 }
