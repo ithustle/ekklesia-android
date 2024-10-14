@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class TestamentViewModel(
     private val repository: BibleRepository = BibleRepository,
-    private val context: Context
+    private val context: Context,
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(TestamentUiState())
@@ -20,6 +20,20 @@ class TestamentViewModel(
     init {
         loadBible()
         getBooks()
+    }
+
+    fun getChaptersOfTheBook(bookName: String) {
+        val numberOfChapters = _uiState.value.books.find { it.bookName == bookName }?.numberOfChapters
+        _uiState.value = _uiState.value.copy(
+            chapters = numberOfChapters ?: 0
+        )
+    }
+
+    fun getVersesOfTheChapter(bookName: String) {
+        val book = _uiState.value.books.find { it.bookName == bookName }
+        _uiState.value = _uiState.value.copy(
+            book = book
+        )
     }
 
     private fun getBooks() {

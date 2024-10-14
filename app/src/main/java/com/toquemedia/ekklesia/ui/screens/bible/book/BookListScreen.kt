@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,9 +13,10 @@ import com.toquemedia.ekklesia.model.BookType
 import com.toquemedia.ekklesia.ui.screens.bible.composables.Book
 
 @Composable
-fun BookScreen(
+fun BookListScreen(
     modifier: Modifier = Modifier,
-    books: List<BookType> = emptyList()
+    books: List<BookType> = emptyList(),
+    onNavigateToBook: (BookType) -> Unit = {}
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -27,13 +27,16 @@ fun BookScreen(
             .padding(top = 8.dp)
     ) {
         items(books.size) { index ->
-            Book(book = books[index])
+            Book(
+                book = books[index],
+                onNavigateToBook = onNavigateToBook
+            )
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun BookScreenPrev() {
-    BookScreen()
+private fun BookListScreenPrev() {
+    BookListScreen()
 }

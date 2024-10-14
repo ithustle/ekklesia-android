@@ -37,12 +37,11 @@ class MainActivity : ComponentActivity() {
                     val currentDestination = navBackStackEntry?.destination
 
                     val currentRoute = currentDestination?.route
-                    val selectedItem by remember(currentDestination) {
-                        val item = when(currentRoute) {
+                    val selectedItem = remember(currentDestination) {
+                        when (currentRoute) {
                             "home" -> BottomBarItem.Home
                             else -> BottomBarItem.Bible
                         }
-                        mutableStateOf(item)
                     }
 
                     EkklesiaApp(

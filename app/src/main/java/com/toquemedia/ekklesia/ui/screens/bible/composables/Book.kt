@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.bible.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,14 +25,18 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 @Composable
 fun Book(
     modifier: Modifier = Modifier,
-    book: BookType
+    book: BookType,
+    onNavigateToBook: (book: BookType) -> Unit = {}
 ) {
     Column(
         modifier = modifier
             .width(156.dp)
             .height(96.dp)
             .clip(shape = RoundedCornerShape(4.dp))
-            .background(color = Color(PrincipalColor.value)),
+            .background(color = Color(PrincipalColor.value))
+            .clickable {
+                onNavigateToBook(book)
+            },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
 

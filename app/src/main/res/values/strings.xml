@@ -3,4 +3,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="bible">Bíblia</string>
     <string name="home">Início</string>
+    <string name="book">book</string>
 </resources>

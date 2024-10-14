@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.bible.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,17 +14,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @Composable
 fun Chapter(
     modifier: Modifier = Modifier,
-    chapterNumber: Int
+    chapterNumber: Int,
+    onNavigateToVerses: (Int) -> Unit = {}
 ) {
     Box(
         modifier = modifier
             .size(48.dp)
             .clip(shape = RoundedCornerShape(2.dp))
-            .background(color = Color.Red),
+            .background(color = PrincipalColor)
+            .clickable {
+                onNavigateToVerses(chapterNumber)
+            },
         contentAlignment = androidx.compose.ui.Alignment.Center
     ) {
         Text(

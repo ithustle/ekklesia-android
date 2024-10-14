@@ -20,17 +20,22 @@ sealed class BottomBarItem(
     val icon: ImageVector,
     val route: String
 ) {
-    object Home : BottomBarItem(
+    data object Home : BottomBarItem(
         label = R.string.home,
         icon = Icons.Rounded.Dashboard,
         route = "home"
     )
 
-    object Bible : BottomBarItem(
+    data object Bible : BottomBarItem(
         label = R.string.bible,
         icon = Icons.Rounded.Book,
         route = "bible"
     )
+}
+
+sealed class Screen(val route: String) {
+    data object Chapters : Screen("chapters")
+    data object Verses : Screen("verses")
 }
 
 val ekklesiaBottomBarItems = listOf(BottomBarItem.Home, BottomBarItem.Bible)

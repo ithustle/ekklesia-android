@@ -14,9 +14,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.ui.screens.bible.composables.Chapter
+import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
 
 @Composable
-fun ChapterScreen(modifier: Modifier = Modifier) {
+fun ChapterScreen(
+    modifier: Modifier = Modifier,
+    states: TestamentUiState,
+    onNavigateToVerses: (Int) -> Unit = {}
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -35,8 +40,11 @@ fun ChapterScreen(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(12) { index ->
-                Chapter(chapterNumber = index + 1)
+            items(states.chapters) { index ->
+                Chapter(
+                    chapterNumber = index + 1,
+                    onNavigateToVerses = onNavigateToVerses
+                )
             }
         }
     }
@@ -45,5 +53,5 @@ fun ChapterScreen(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun ChapterScreenPrev() {
-    ChapterScreen()
+    ChapterScreen(states = TestamentUiState())
 }

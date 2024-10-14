@@ -17,7 +17,8 @@ object BibleRepository {
         for (b in bible) {
             val book = BookType(
                 bookName = b.name,
-                numberOfChapters = b.chapters.size
+                numberOfChapters = b.chapters.size,
+                verses = b.chapters
             )
             books.add(book)
         }
