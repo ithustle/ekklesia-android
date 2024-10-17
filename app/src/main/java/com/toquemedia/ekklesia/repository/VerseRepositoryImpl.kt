@@ -1,22 +1,29 @@
 package com.toquemedia.ekklesia.repository
 
-import android.app.Application
 import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.model.VerseRepository
+import javax.inject.Inject
 
-class VerseRepositoryImpl(context: Application): VerseRepository {
+class VerseRepositoryImpl @Inject constructor (
+    private val verse: VerseDao
+): VerseRepository {
 
-    private val verse = VerseDao(context)
-
-    override suspend fun markVerse(verseId: String, verse: String) {
+    override suspend fun markVerse(bookName: String, chapter: Int, verse: String) {
+        val verseId = "${bookName}_$chapter"
         this.verse.markVerse(verseId, verse)
     }
 
-    override suspend fun unMarkVerse(verseId: String) {
+    override suspend fun unMarkVerse(bookName: String, chapter: Int) {
+        val verseId = "${bookName}_$chapter"
         this.verse.unMarkVerse(verseId)
     }
 
-    override suspend fun getMarkedVerses(verseId: String): String? {
+    override suspend fun getMarkedVerse(bookName: String, chapter: Int): String? {
+        val verseId = "${bookName}_$chapter"
         return this.verse.getVerseMarked(verseId)
+    }
+
+    override suspend fun getMarkedVerse(): MutableList<String> {
+        return this.verse.getVerseMarked()
     }
 }

@@ -29,8 +29,8 @@ fun VersesNavigation(
     modifier: Modifier = Modifier,
     currentVerse: Int = 0,
     bookName: String,
-    onNextVerse: () -> Unit = {},
-    onPreviousVerse: () -> Unit = {},
+    onNextVerse: (Int) -> Unit = {},
+    onPreviousVerse: (Int) -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -45,7 +45,7 @@ fun VersesNavigation(
                 .width(48.dp)
                 .height(48.dp)
                 .clickable {
-                    onPreviousVerse()
+                    onPreviousVerse(currentVerse)
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -69,7 +69,7 @@ fun VersesNavigation(
                 .width(48.dp)
                 .height(48.dp)
                 .clickable {
-                    onNextVerse()
+                    onNextVerse(currentVerse)
                 },
             contentAlignment = Alignment.Center
         ) {

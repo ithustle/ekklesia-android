@@ -2,9 +2,14 @@ package com.toquemedia.ekklesia.ui.screens
 
 import BottomBarItem
 import Screen
+import android.util.Log
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -13,9 +18,12 @@ import androidx.navigation.compose.composable
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentScreen
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.chapter.ChapterScreen
+import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VersesScreen
 import com.toquemedia.ekklesia.ui.screens.home.HomeScreen
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostController) {
     NavHost(
@@ -55,18 +63,70 @@ fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostControl
             )
         }
         composable("${Screen.Verses.route}/{bookName}/{chapterNumber}") { backStackEntry ->
-            val viewModel: TestamentViewModel = hiltViewModel()
-            val states by viewModel.uiState.collectAsState()
+            val vmTestament: TestamentViewModel = hiltViewModel()
+            val vmVerses: VerseViewModel = hiltViewModel()
+
+            val testamentStates by vmTestament.uiState.collectAsState()
+            val versesStates by vmVerses.uiState.collectAsState()
+
             val chapterNumber = backStackEntry.arguments?.getString("chapterNumber")
             val bookName = backStackEntry.arguments?.getString("bookName")
+            val scope = rememberCoroutineScope()
+            val scrollState = rememberScrollState()
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
             bookName?.let {
-                viewModel.getVersesOfTheChapter(it)
+                vmTestament.getVersesOfTheChapter(it)
             }
 
             VersesScreen(
-                states = states,
-                chapterNumber = chapterNumber
+                book = testamentStates.book,
+                chapterNumber = chapterNumber,
+                scrollState = scrollState,
+                sheetState = sheetState,
+                versesStates = versesStates,
+                onSelectedVerse = { verse ->
+                    versesStates.onSelectVerse(verse)
+                },
+                onFavoriteVerse = {
+                    scope.launch {
+                        chapterNumber?.let {
+                            bookName?.let {
+                                vmVerses.markVerse(bookName, chapterNumber, versesStates.selectedVerse)
+                                versesStates.apply {
+                                    onMarkVerse(versesStates.selectedVerse)
+                                    markedVerses.add(versesStates.selectedVerse)
+                                    onSelectVerse("")
+                                    onShowVerseAction(false)
+                                }
+                            }
+                        }
+                    }
+                },
+                onNextVerse = { chapter ->
+                    if (chapter < (chapterNumber?.toInt() ?: 0)) {
+                        //chapter += 1
+                        scope.launch {
+                            scrollState.scrollTo(0)
+                        }
+                    }
+                },
+                onPreviousVerse = { chapter ->
+                    if (chapter > 1) {
+                        //chapter -= 1
+                        scope.launch {
+                            scrollState.scrollTo(0)
+                        }
+                    }
+                },
+                onDismissActionOptionVerse = {
+                    versesStates.onSelectVerse("")
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            versesStates.onShowVerseAction(false)
+                        }
+                    }
+                },
             )
         }
     }

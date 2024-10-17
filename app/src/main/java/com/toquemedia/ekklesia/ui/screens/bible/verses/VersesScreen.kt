@@ -1,5 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.bible.verses
 
+import android.util.Log
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -11,15 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,27 +25,28 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
+import com.toquemedia.ekklesia.model.BookType
+import com.toquemedia.ekklesia.ui.screens.bible.states.VerseUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.BookMock
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VersesScreen(
     modifier: Modifier = Modifier,
-    states: TestamentUiState,
-    chapterNumber: String?
+    book: BookType?,
+    versesStates: VerseUiState,
+    scrollState: ScrollState,
+    sheetState: SheetState,
+    chapterNumber: String?,
+    onFavoriteVerse: () -> Unit = {},
+    onSelectedVerse: (String) -> Unit = {},
+    onNextVerse: (Int) -> Unit = {},
+    onPreviousVerse: (Int) -> Unit = {},
+    onDismissActionOptionVerse: () -> Unit = {},
 ) {
 
-    val book = states.book
-    var chapter by remember { mutableIntStateOf(chapterNumber?.toInt() ?: 0) }
-    var selectedVerse by remember { mutableStateOf("") }
-    var showVerseActionOption by remember { mutableStateOf(false) }
-    var markedVerse by remember { mutableStateOf("") }
-    val scrollState = rememberScrollState()
-    val scope = rememberCoroutineScope()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    Log.d("VerseScreen", versesStates.markedVerses.toString())
 
     Column(
         modifier = modifier
@@ -69,14 +67,14 @@ fun VersesScreen(
                 color = PrincipalColor
             )
             Text(
-                text = chapter.toString(),
+                text = chapterNumber.toString(),
                 fontSize = 40.sp,
                 color = PrincipalColor
             )
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-            book?.verses?.get((chapter.minus(1)))?.forEachIndexed { line, verse ->
+            book?.verses?.get(((chapterNumber?.toInt() ?: 0).minus(1)))?.forEachIndexed { line, verse ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -93,14 +91,14 @@ fun VersesScreen(
                     Spacer(modifier = modifier.padding(horizontal = 4.dp))
                     VerseText(
                         verse = verse,
-                        selectedVerse = selectedVerse,
-                        markedVerse = markedVerse,
+                        selectedVerse = versesStates.selectedVerse,
+                        markedVerse = versesStates.markedVerses,
                         modifier = Modifier
                             .padding(bottom = 1.dp)
-                            .background(color = if (markedVerse == verse) PrincipalColor else Color.Transparent)
+                            .background(color = if (versesStates.markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
                             .clickable {
-                                selectedVerse = verse
-                                showVerseActionOption = true
+                                versesStates.onShowVerseAction(true)
+                                onSelectedVerse(verse)
                             }
                     )
                 }
@@ -112,55 +110,32 @@ fun VersesScreen(
         VersesNavigation(
             modifier = Modifier
                 .padding(top = 20.dp),
-            currentVerse = chapter,
+            currentVerse = chapterNumber?.toInt() ?: 0,
             bookName = book?.bookName.toString(),
-            onNextVerse = {
-                if (chapter < (chapterNumber?.toInt() ?: 0)) {
-                    chapter += 1
-                    scope.launch {
-                        scrollState.scrollTo(0)
-                    }
-                }
-            },
-            onPreviousVerse = {
-                if (chapter > 1) {
-                    chapter -= 1
-                    scope.launch {
-                        scrollState.scrollTo(0)
-                    }
-                }
-            }
+            onNextVerse = onNextVerse,
+            onPreviousVerse = onPreviousVerse
         )
         Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-        if (showVerseActionOption) {
+        if (versesStates.showVerseActionOption) {
             VerseActionOption(
                 sheetState = sheetState,
-                onDismissRequest = {
-                    selectedVerse = ""
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showVerseActionOption = false
-                        }
-                    }
-                },
-                onFavoriteVerse = {
-                    markedVerse = selectedVerse
-                    selectedVerse = ""
-                    showVerseActionOption = false
-                }
+                onDismissRequest = onDismissActionOptionVerse,
+                onFavoriteVerse = onFavoriteVerse
             )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun VersesScreenPrev() {
     VersesScreen(
-        states = TestamentUiState(
-            book = BookMock.get()
-        ),
-        chapterNumber = "1"
+        book = BookMock.get(),
+        chapterNumber = "1",
+        versesStates = VerseUiState(),
+        scrollState = rememberScrollState(),
+        sheetState = rememberModalBottomSheetState()
     )
 }

@@ -17,7 +17,7 @@ fun VerseText(
     modifier: Modifier = Modifier,
     verse: String,
     selectedVerse: String,
-    markedVerse: String
+    markedVerse: List<String>
 ) {
     val paragraphs = verse.splitTextByLineWidth(maxCharsPerLine = 40)
 
@@ -26,7 +26,7 @@ fun VerseText(
             Text(
                 text = it,
                 fontSize = 17.sp,
-                color = if (markedVerse == verse) Color.White else PrincipalColor,
+                color = if (markedVerse.contains(verse)) Color.White else PrincipalColor,
                 textDecoration = if (selectedVerse == verse) TextDecoration.Underline else TextDecoration.None,
                 fontWeight = if (selectedVerse == verse) FontWeight.SemiBold else FontWeight.Normal,
                 modifier = modifier
@@ -41,6 +41,6 @@ private fun VerseTextPrev() {
     VerseText(
         verse = "Observem o mês de abibe e celebrem a Páscoa do Senhor, do seu Deus, pois no mês de abibe, de noite, ele os tirou do Egito.",
         selectedVerse = "",
-        markedVerse = ""
+        markedVerse = listOf("Observem o mês de abibe e celebrem a Páscoa do Senhor, do seu Deus, pois no mês de abibe, de noite, ele os tirou do Egito")
     )
 }
