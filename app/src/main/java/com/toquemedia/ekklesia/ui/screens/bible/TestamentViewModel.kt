@@ -1,17 +1,18 @@
 package com.toquemedia.ekklesia.ui.screens.bible
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.toquemedia.ekklesia.repository.BibleRepository
+import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
 import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TestamentViewModel(
-    private val repository: BibleRepository = BibleRepository,
-    private val context: Context,
+@HiltViewModel
+class TestamentViewModel @Inject constructor(
+    private val repository: BibleRepositoryImpl,
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(TestamentUiState())
@@ -38,7 +39,7 @@ class TestamentViewModel(
 
     private fun getBooks() {
         viewModelScope.launch {
-            val books = repository.getBooks(context)
+            val books = repository.getBooks()
             _uiState.value = _uiState.value.copy(
                 books = books
             )
@@ -47,7 +48,7 @@ class TestamentViewModel(
 
     private fun loadBible() {
         viewModelScope.launch {
-            val bible = repository.loadBible(context)
+            val bible = repository.loadBible()
             _uiState.value = _uiState.value.copy(
                 bible = bible
             )

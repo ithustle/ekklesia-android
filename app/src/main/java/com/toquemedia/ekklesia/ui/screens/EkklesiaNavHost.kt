@@ -1,19 +1,17 @@
 package com.toquemedia.ekklesia.ui.screens
 
+import BottomBarItem
 import Screen
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentScreen
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentViewModel
-import com.toquemedia.ekklesia.ui.screens.bible.TestamentViewModelFactory
 import com.toquemedia.ekklesia.ui.screens.bible.chapter.ChapterScreen
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VersesScreen
 import com.toquemedia.ekklesia.ui.screens.home.HomeScreen
@@ -29,9 +27,7 @@ fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostControl
             HomeScreen()
         }
         composable(BottomBarItem.Bible.route) {
-            val viewModel: TestamentViewModel = viewModel(
-                factory = TestamentViewModelFactory(LocalContext.current)
-            )
+            val viewModel: TestamentViewModel = hiltViewModel()
             val states by viewModel.uiState.collectAsState()
 
             TestamentScreen(
@@ -43,9 +39,7 @@ fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostControl
         }
         composable("${Screen.Chapters.route}/{bookName}") { backStackEntry ->
 
-            val viewModel: TestamentViewModel = viewModel(
-                factory = TestamentViewModelFactory(LocalContext.current)
-            )
+            val viewModel: TestamentViewModel = hiltViewModel()
             val states by viewModel.uiState.collectAsState()
                 val bookName = backStackEntry.arguments?.getString("bookName")
 
@@ -61,9 +55,7 @@ fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostControl
             )
         }
         composable("${Screen.Verses.route}/{bookName}/{chapterNumber}") { backStackEntry ->
-            val viewModel: TestamentViewModel = viewModel(
-                factory = TestamentViewModelFactory(LocalContext.current)
-            )
+            val viewModel: TestamentViewModel = hiltViewModel()
             val states by viewModel.uiState.collectAsState()
             val chapterNumber = backStackEntry.arguments?.getString("chapterNumber")
             val bookName = backStackEntry.arguments?.getString("bookName")

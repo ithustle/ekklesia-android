@@ -1,18 +1,21 @@
 package com.toquemedia.ekklesia.repository
 
-import android.content.Context
 import com.toquemedia.ekklesia.dao.BibleDao
+import com.toquemedia.ekklesia.model.BibleRepository
 import com.toquemedia.ekklesia.model.BibleType
 import com.toquemedia.ekklesia.model.BookType
+import javax.inject.Inject
 
-object BibleRepository {
+class BibleRepositoryImpl @Inject constructor(
+    private val dao: BibleDao,
+) : BibleRepository {
 
-    fun loadBible(context: Context): List<BibleType> {
-        return BibleDao.shared.loadFileBible(context)
+    override fun loadBible(): List<BibleType> {
+        return dao.loadFileBible()
     }
 
-    fun getBooks(context: Context): List<BookType> {
-        val bible = this.loadBible(context)
+    override fun getBooks(): List<BookType> {
+        val bible = this.loadBible()
         val books = mutableListOf<BookType>()
         for (b in bible) {
             val book = BookType(

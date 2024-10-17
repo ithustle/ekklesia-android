@@ -20,7 +20,7 @@ import com.toquemedia.ekklesia.ui.screens.home.today.TodayScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen() {
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabTitles = listOf("Hoje", "Comunidade")
