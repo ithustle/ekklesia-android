@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.ui.screens.bible.verses
 
-import android.util.Log
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,11 +44,11 @@ fun VersesScreen(
     onSelectedVerse: (verse: String, versicle: Int) -> Unit = { _, _ -> },
     onNextVerse: (Int) -> Unit = {},
     onPreviousVerse: (Int) -> Unit = {},
+    onUnMarkVerse: (String, Int) -> Unit = { _, _ -> },
     onDismissActionOptionVerse: () -> Unit = {},
 ) {
 
-    val markedVerses = versesStates.markedVerses.collectAsState()
-    Log.d("VerseScreen", markedVerses.value.toString())
+    val markedVerses by versesStates.markedVerses.collectAsState()
 
     Column(
         modifier = modifier
@@ -94,13 +94,17 @@ fun VersesScreen(
                     VerseText(
                         verse = verse,
                         selectedVerse = versesStates.selectedVerse,
-                        markedVerse = markedVerses.value,
+                        markedVerse = markedVerses,
                         modifier = Modifier
                             .padding(bottom = 4.dp)
-                            .background(color = if (markedVerses.value.contains(verse)) PrincipalColor else Color.Transparent)
+                            .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
                             .clickable {
-                                versesStates.onShowVerseAction(true)
-                                onSelectedVerse(verse, versicle + 1)
+                                if (markedVerses.contains(verse)) {
+                                    onUnMarkVerse(verse, versicle + 1)
+                                } else {
+                                    versesStates.onShowVerseAction(true)
+                                    onSelectedVerse(verse, versicle + 1)
+                                }
                             }
                     )
                 }

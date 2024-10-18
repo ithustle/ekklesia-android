@@ -2,14 +2,14 @@ package com.toquemedia.ekklesia.repository
 
 import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.model.VerseRepository
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 class VerseRepositoryImpl @Inject constructor (
     private val verse: VerseDao
 ): VerseRepository {
 
-    val markedVerses: StateFlow<List<String>> = verse.versesMarked
+    val markedVerses: MutableStateFlow<List<String>> = verse.versesMarked
 
     override suspend fun markVerse(bookName: String, chapter: Int, versicle: Int, verse: String) {
         val verseId = "${bookName}_${chapter}_$versicle"

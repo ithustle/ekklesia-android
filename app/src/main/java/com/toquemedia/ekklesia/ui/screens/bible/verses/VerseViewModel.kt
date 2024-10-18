@@ -34,6 +34,12 @@ class VerseViewModel @Inject constructor(
                         markedVerse = it,
                     )
                 },
+                onUnMarkVerse = { verse ->
+                    val updatedVerses = _uiState.value.markedVerses.value.filter { it != verse }
+                    _uiState.value = _uiState.value.copy(
+                        markedVerses = MutableStateFlow(updatedVerses)
+                    )
+                },
                 onShowVerseAction = {
                     _uiState.value = _uiState.value.copy(showVerseActionOption = it)
                 },
@@ -46,11 +52,13 @@ class VerseViewModel @Inject constructor(
         }
     }
 
-    suspend fun markVerse(bookName: String, chapter: String, versicle: String, verse: String) {
+    suspend fun markVerse(bookName: String?, chapter: String?, versicle: String, verse: String) {
+        if (bookName == null || chapter == null) return
         verseRepository.markVerse(bookName, chapter.toInt(), versicle.toInt(), verse)
     }
 
-    suspend fun unMarkVerse(bookName: String, chapter: String, versicle: String) {
+    suspend fun unMarkVerse(bookName: String?, chapter: String?, versicle: String) {
+        if (bookName == null || chapter == null) return
         verseRepository.unMarkVerse(bookName, chapter.toInt(), versicle.toInt())
     }
 }

@@ -87,22 +87,28 @@ fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostControl
                 onSelectedVerse = { verse, versicle ->
                     versesStates.onSelectVerse(verse, versicle)
                 },
+                onUnMarkVerse = { verse, versicle ->
+                    scope.launch {
+                        versesStates.onUnMarkVerse(verse)
+                        vmVerses.unMarkVerse(
+                            bookName = bookName,
+                            chapter = chapterNumber,
+                            versicle = versicle.toString()
+                        )
+                    }
+                },
                 onFavoriteVerse = {
                     scope.launch {
-                        chapterNumber?.let {
-                            bookName?.let {
-                                versesStates.apply {
-                                    vmVerses.markVerse(
-                                        bookName,
-                                        chapterNumber,
-                                        versicle.toString(),
-                                        selectedVerse
-                                    )
-                                    onMarkVerse(selectedVerse)
-                                    onSelectVerse("", -1)
-                                    onShowVerseAction(false)
-                                }
-                            }
+                        versesStates.apply {
+                            vmVerses.markVerse(
+                                bookName,
+                                chapterNumber,
+                                versicle.toString(),
+                                selectedVerse
+                            )
+                            onMarkVerse(selectedVerse)
+                            onSelectVerse("", -1)
+                            onShowVerseAction(false)
                         }
                     }
                 },
