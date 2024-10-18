@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.ui.screens.bible.verses
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
@@ -24,8 +23,11 @@ class VerseViewModel @Inject constructor(
     init {
         _uiState.update { currentState ->
             currentState.copy(
-                onSelectVerse = {
-                    _uiState.value = _uiState.value.copy(selectedVerse = it)
+                onSelectVerse = { verse, versicle ->
+                    _uiState.value = _uiState.value.copy(
+                        selectedVerse = verse,
+                        versicle = versicle
+                    )
                 },
                 onMarkVerse = {
                     _uiState.value = _uiState.value.copy(
@@ -34,24 +36,21 @@ class VerseViewModel @Inject constructor(
                 },
                 onShowVerseAction = {
                     _uiState.value = _uiState.value.copy(showVerseActionOption = it)
-                }
+                },
+                markedVerses = verseRepository.markedVerses
             )
         }
 
         viewModelScope.launch {
-            val markedVerses = verseRepository.getMarkedVerse()
-            Log.i("markedVerses", markedVerses.toString())
-            _uiState.value = _uiState.value.copy(
-                markedVerses = markedVerses
-            )
+            verseRepository.getMarkedVerse()
         }
     }
 
-    suspend fun markVerse(bookName: String, chapter: String, verse: String) {
-        verseRepository.markVerse(bookName, chapter.toInt(), verse)
+    suspend fun markVerse(bookName: String, chapter: String, versicle: String, verse: String) {
+        verseRepository.markVerse(bookName, chapter.toInt(), versicle.toInt(), verse)
     }
 
-    suspend fun unMarkVerse(bookName: String, chapter: String) {
-        verseRepository.unMarkVerse(bookName, chapter.toInt())
+    suspend fun unMarkVerse(bookName: String, chapter: String, versicle: String) {
+        verseRepository.unMarkVerse(bookName, chapter.toInt(), versicle.toInt())
     }
 }

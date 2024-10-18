@@ -2,7 +2,6 @@ package com.toquemedia.ekklesia.ui.screens
 
 import BottomBarItem
 import Screen
-import android.util.Log
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -85,34 +84,38 @@ fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostControl
                 scrollState = scrollState,
                 sheetState = sheetState,
                 versesStates = versesStates,
-                onSelectedVerse = { verse ->
-                    versesStates.onSelectVerse(verse)
+                onSelectedVerse = { verse, versicle ->
+                    versesStates.onSelectVerse(verse, versicle)
                 },
                 onFavoriteVerse = {
                     scope.launch {
                         chapterNumber?.let {
                             bookName?.let {
-                                vmVerses.markVerse(bookName, chapterNumber, versesStates.selectedVerse)
                                 versesStates.apply {
-                                    onMarkVerse(versesStates.selectedVerse)
-                                    markedVerses.add(versesStates.selectedVerse)
-                                    onSelectVerse("")
+                                    vmVerses.markVerse(
+                                        bookName,
+                                        chapterNumber,
+                                        versicle.toString(),
+                                        selectedVerse
+                                    )
+                                    onMarkVerse(selectedVerse)
+                                    onSelectVerse("", -1)
                                     onShowVerseAction(false)
                                 }
                             }
                         }
                     }
                 },
-                onNextVerse = { chapter ->
-                    if (chapter < (chapterNumber?.toInt() ?: 0)) {
+                onNextVerse = { versicle ->
+                    if (versicle < (chapterNumber?.toInt() ?: 0)) {
                         //chapter += 1
                         scope.launch {
                             scrollState.scrollTo(0)
                         }
                     }
                 },
-                onPreviousVerse = { chapter ->
-                    if (chapter > 1) {
+                onPreviousVerse = { versicle ->
+                    if (versicle > 1) {
                         //chapter -= 1
                         scope.launch {
                             scrollState.scrollTo(0)
@@ -120,7 +123,7 @@ fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostControl
                     }
                 },
                 onDismissActionOptionVerse = {
-                    versesStates.onSelectVerse("")
+                    versesStates.onSelectVerse("", -1)
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
                             versesStates.onShowVerseAction(false)

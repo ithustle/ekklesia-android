@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.extension.splitTextByLineWidth
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun VerseText(
@@ -19,7 +20,7 @@ fun VerseText(
     selectedVerse: String,
     markedVerse: List<String>
 ) {
-    val paragraphs = verse.splitTextByLineWidth(maxCharsPerLine = 40)
+    val paragraphs = verse.splitTextByLineWidth(maxCharsPerLine = 39)
 
     Column {
         paragraphs.forEach {

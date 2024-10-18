@@ -17,6 +17,7 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,13 +41,14 @@ fun VersesScreen(
     sheetState: SheetState,
     chapterNumber: String?,
     onFavoriteVerse: () -> Unit = {},
-    onSelectedVerse: (String) -> Unit = {},
+    onSelectedVerse: (verse: String, versicle: Int) -> Unit = { _, _ -> },
     onNextVerse: (Int) -> Unit = {},
     onPreviousVerse: (Int) -> Unit = {},
     onDismissActionOptionVerse: () -> Unit = {},
 ) {
 
-    Log.d("VerseScreen", versesStates.markedVerses.toString())
+    val markedVerses = versesStates.markedVerses.collectAsState()
+    Log.d("VerseScreen", markedVerses.value.toString())
 
     Column(
         modifier = modifier
@@ -74,7 +76,7 @@ fun VersesScreen(
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-            book?.verses?.get(((chapterNumber?.toInt() ?: 0).minus(1)))?.forEachIndexed { line, verse ->
+            book?.verses?.get(((chapterNumber?.toInt() ?: 0).minus(1)))?.forEachIndexed { versicle, verse ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -82,7 +84,7 @@ fun VersesScreen(
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
-                        text = (line + 1).toString(),
+                        text = (versicle + 1).toString(),
                         fontSize = 14.sp,
                         color = PrincipalColor,
                         textAlign = TextAlign.Start,
@@ -92,13 +94,13 @@ fun VersesScreen(
                     VerseText(
                         verse = verse,
                         selectedVerse = versesStates.selectedVerse,
-                        markedVerse = versesStates.markedVerses,
+                        markedVerse = markedVerses.value,
                         modifier = Modifier
-                            .padding(bottom = 1.dp)
-                            .background(color = if (versesStates.markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
+                            .padding(bottom = 4.dp)
+                            .background(color = if (markedVerses.value.contains(verse)) PrincipalColor else Color.Transparent)
                             .clickable {
                                 versesStates.onShowVerseAction(true)
-                                onSelectedVerse(verse)
+                                onSelectedVerse(verse, versicle + 1)
                             }
                     )
                 }

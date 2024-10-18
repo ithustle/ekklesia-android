@@ -1,21 +1,19 @@
 package com.toquemedia.ekklesia.dao
 
 import android.content.Context
-import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.lifecycle.asLiveData
 import com.toquemedia.ekklesia.model.EkklesiaDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 
 
 class VerseDao(context: Context) : EkklesiaDataStore(context) {
+
+    private val _versesFlow = MutableStateFlow<List<String>>(emptyList())
+    var versesMarked: MutableStateFlow<List<String>> = _versesFlow
 
     override suspend fun savePreference(key: Preferences.Key<String>, value: String) {
         dataStore.edit { preference ->
@@ -51,18 +49,15 @@ class VerseDao(context: Context) : EkklesiaDataStore(context) {
         return this.getPreference(stringPreferencesKey(bookAndCap))
     }
 
-    suspend fun getVerseMarked(): SnapshotStateList<String> {
+    suspend fun getVerseMarked() {
         val preferences = this.getPreferences()
-        val verses = mutableStateListOf<String>()
+        val verses = mutableListOf<String>()
         preferences.collect { preference ->
             for (key in preference.asMap().keys) {
                 val value = preference[key].toString()
-                Log.i("DADAOS", value.toString())
                 verses.add(value)
             }
-
+            _versesFlow.value = verses
         }
-        Log.i("DADOS", verses.toString())
-        return verses
     }
 }
