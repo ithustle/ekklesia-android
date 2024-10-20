@@ -26,7 +26,7 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 fun TestamentScreen(
     modifier: Modifier = Modifier,
     states: TestamentUiState,
-    onNavigateToBook: (bookName: String) -> Unit = {}
+    onNavigateToChapter: (bookName: String) -> Unit = {}
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabTitles = listOf("Antigo", "Novo")
@@ -67,13 +67,13 @@ fun TestamentScreen(
             0 -> BookListScreen(
                 books = states.books.slice(0..38),
                 onNavigateToBook = {
-                    onNavigateToBook(it.bookName)
+                    onNavigateToChapter(it.bookName)
                 }
             )
             1 -> BookListScreen(
                 books = states.books.slice(39..65),
                 onNavigateToBook = {
-                    onNavigateToBook(it.bookName)
+                    onNavigateToChapter(it.bookName)
                 }
             )
         }

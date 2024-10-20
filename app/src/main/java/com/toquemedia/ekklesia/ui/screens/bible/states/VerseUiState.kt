@@ -11,5 +11,11 @@ data class VerseUiState(
     var onMarkVerse: (String) -> Unit = {},
     var onUnMarkVerse: (String) -> Unit = {},
     var onShowVerseAction: (Boolean) -> Unit = {},
-    val showVerseActionOption: Boolean = false
+    var onShowAddNote: (Boolean) -> Unit = {},
+    val showVerseActionOption: Boolean = false,
+    val showAddNote: Boolean = false,
+    val entryNote: String = "",
+    val onEntryNoteChange: (String) -> Unit = {},
+    val savingNote: Boolean = false,
+    val onSavingNote: (Boolean) -> Unit = {}
 )

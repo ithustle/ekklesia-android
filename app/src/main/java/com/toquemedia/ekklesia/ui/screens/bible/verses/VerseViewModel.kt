@@ -2,6 +2,8 @@ package com.toquemedia.ekklesia.ui.screens.bible.verses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toquemedia.ekklesia.model.NoteType
+import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
 import com.toquemedia.ekklesia.ui.screens.bible.states.VerseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class VerseViewModel @Inject constructor(
     private val verseRepository: VerseRepositoryImpl,
+    private val noteRepository: NoteRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<VerseUiState> = MutableStateFlow(VerseUiState())
@@ -40,8 +43,14 @@ class VerseViewModel @Inject constructor(
                         markedVerses = MutableStateFlow(updatedVerses)
                     )
                 },
+                onShowAddNote = {
+                    _uiState.value = _uiState.value.copy(showAddNote = it)
+                },
                 onShowVerseAction = {
                     _uiState.value = _uiState.value.copy(showVerseActionOption = it)
+                },
+                onEntryNoteChange = {
+                    _uiState.value = _uiState.value.copy(entryNote = it)
                 },
                 markedVerses = verseRepository.markedVerses
             )
@@ -52,13 +61,44 @@ class VerseViewModel @Inject constructor(
         }
     }
 
-    suspend fun markVerse(bookName: String?, chapter: String?, versicle: String, verse: String) {
-        if (bookName == null || chapter == null) return
-        verseRepository.markVerse(bookName, chapter.toInt(), versicle.toInt(), verse)
+    fun markVerse(bookName: String?, chapter: String?, versicle: String, verse: String) {
+        viewModelScope.launch {
+            if (bookName == null || chapter == null) return@launch
+            verseRepository.markVerse(bookName, chapter.toInt(), versicle.toInt(), verse)
+            _uiState.value.onMarkVerse(verse)
+            _uiState.value.onSelectVerse("", -1)
+            _uiState.value.onShowVerseAction(false)
+        }
     }
 
-    suspend fun unMarkVerse(bookName: String?, chapter: String?, versicle: String) {
-        if (bookName == null || chapter == null) return
-        verseRepository.unMarkVerse(bookName, chapter.toInt(), versicle.toInt())
+    fun unMarkVerse(bookName: String?, chapter: String?, versicle: String, verse: String) {
+        viewModelScope.launch {
+            if (bookName == null || chapter == null) return@launch
+            verseRepository.unMarkVerse(bookName, chapter.toInt(), versicle.toInt())
+            _uiState.value.onUnMarkVerse(verse)
+        }
+    }
+
+    fun addNoteToVerse(
+        bookName: String,
+        chapter: Int,
+        versicle: Int,
+        verse: String,
+    ) {
+        _uiState.value.onSavingNote(true)
+        viewModelScope.launch {
+            val note = NoteType(
+                bookName = bookName,
+                chapter = chapter,
+                versicle = versicle,
+                verse = verse,
+                note = _uiState.value.entryNote,
+                id = "${bookName}_${chapter}_$versicle"
+            )
+            noteRepository.addNoteToVerse(note)
+            _uiState.value.onShowAddNote(false)
+            _uiState.value.onSelectVerse("", -1)
+            _uiState.value.onSavingNote(false)
+        }
     }
 }

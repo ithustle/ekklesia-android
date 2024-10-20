@@ -56,11 +56,15 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.material)
+    implementation(libs.androidx.room)
+    implementation(libs.androidx.room.ktx)
 
     implementation(libs.hilt.android)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.storage)
     kapt(libs.hilt.compiler)
+    kapt(libs.androidx.compiler)
 
     implementation(libs.gson)
     implementation(libs.androidx.core.ktx)

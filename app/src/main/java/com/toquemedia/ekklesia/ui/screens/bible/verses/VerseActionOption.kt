@@ -30,9 +30,9 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerseActionOption(
-    sheetState: SheetState = rememberModalBottomSheetState(),
+    sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false),
     modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit = {},
+    onDismissRequest: (SheetState) -> Unit = {},
     onFavoriteVerse: () -> Unit = {},
     onShareVerse: () -> Unit = {},
     onAddNoteToVerse: () -> Unit = {},
@@ -42,7 +42,7 @@ fun VerseActionOption(
         modifier = modifier,
         sheetState = sheetState,
         onDismissRequest = {
-            onDismissRequest()
+            onDismissRequest(sheetState)
         }
     ) {
         ActionOptions(

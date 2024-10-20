@@ -17,6 +17,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.toquemedia.ekklesia.ui.navigation.navigateToBible
+import com.toquemedia.ekklesia.ui.navigation.navigateToHome
 import com.toquemedia.ekklesia.ui.screens.EkklesiaNavHost
 import com.toquemedia.ekklesia.ui.theme.EkklesiaTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,12 +50,9 @@ class MainActivity : ComponentActivity() {
                     EkklesiaApp(
                         tabSelected = selectedItem,
                         onTabItemChange = {
-                            navController.navigate(it.route) {
-                                popUpTo(navController.graph.id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
+                            when(it.label) {
+                                BottomBarItem.Home.label -> navController.navigateToHome()
+                                BottomBarItem.Bible.label -> navController.navigateToBible()
                             }
                         }
                     ) {

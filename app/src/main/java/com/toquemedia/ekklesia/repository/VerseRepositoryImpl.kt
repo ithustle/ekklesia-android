@@ -1,11 +1,11 @@
 package com.toquemedia.ekklesia.repository
 
 import com.toquemedia.ekklesia.dao.VerseDao
-import com.toquemedia.ekklesia.model.VerseRepository
+import com.toquemedia.ekklesia.model.interfaces.VerseRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
-class VerseRepositoryImpl @Inject constructor (
+class VerseRepositoryImpl @Inject constructor(
     private val verse: VerseDao
 ): VerseRepository {
 

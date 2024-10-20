@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.model
+package com.toquemedia.ekklesia.model.interfaces
 
 import android.content.Context
 import androidx.datastore.core.DataStore

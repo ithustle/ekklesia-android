@@ -1,7 +1,9 @@
 package com.toquemedia.ekklesia.di
 
 import android.content.Context
+import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
+import com.toquemedia.ekklesia.dao.NoteDao
 import com.toquemedia.ekklesia.dao.VerseDao
 import dagger.Module
 import dagger.Provides
@@ -16,4 +18,6 @@ class DatabaseModule {
     fun provideBibleDao(@ApplicationContext context: Context): BibleDao = BibleDao(context)
     @Provides
     fun provideVerseDao(@ApplicationContext context: Context): VerseDao = VerseDao(context)
+    @Provides
+    fun provideNoteDao(appDatabase: AppDatabase) : NoteDao = appDatabase.NoteDao()
 }

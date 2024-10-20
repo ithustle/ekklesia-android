@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,21 +29,17 @@ import com.toquemedia.ekklesia.ui.screens.bible.states.VerseUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.BookMock
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VersesScreen(
     modifier: Modifier = Modifier,
     book: BookType?,
     versesStates: VerseUiState,
     scrollState: ScrollState,
-    sheetState: SheetState,
     chapterNumber: String?,
-    onFavoriteVerse: () -> Unit = {},
     onSelectedVerse: (verse: String, versicle: Int) -> Unit = { _, _ -> },
     onNextVerse: (Int) -> Unit = {},
     onPreviousVerse: (Int) -> Unit = {},
     onUnMarkVerse: (String, Int) -> Unit = { _, _ -> },
-    onDismissActionOptionVerse: () -> Unit = {},
 ) {
 
     val markedVerses by versesStates.markedVerses.collectAsState()
@@ -101,8 +95,10 @@ fun VersesScreen(
                             .clickable {
                                 if (markedVerses.contains(verse)) {
                                     onUnMarkVerse(verse, versicle + 1)
+                                    //selectedVersicle = -1
                                 } else {
                                     versesStates.onShowVerseAction(true)
+                                    //selectedVersicle = versicle + 1
                                     onSelectedVerse(verse, versicle + 1)
                                 }
                             }
@@ -122,18 +118,9 @@ fun VersesScreen(
             onPreviousVerse = onPreviousVerse
         )
         Spacer(modifier = Modifier.padding(vertical = 16.dp))
-
-        if (versesStates.showVerseActionOption) {
-            VerseActionOption(
-                sheetState = sheetState,
-                onDismissRequest = onDismissActionOptionVerse,
-                onFavoriteVerse = onFavoriteVerse
-            )
-        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun VersesScreenPrev() {
@@ -142,6 +129,5 @@ private fun VersesScreenPrev() {
         chapterNumber = "1",
         versesStates = VerseUiState(),
         scrollState = rememberScrollState(),
-        sheetState = rememberModalBottomSheetState()
     )
 }

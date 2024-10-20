@@ -1,12 +1,12 @@
-package com.toquemedia.ekklesia.ui.screens.notes.composables
+package com.toquemedia.ekklesia.ui.composables
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -27,15 +27,14 @@ fun VerseToAnnotation(
     modifier: Modifier = Modifier,
     bookName: String,
     chapter: String,
-    versicle: String,
-    verse: String
+    versicle: Int,
+    verse: String,
 ) {
 
     val paragraphs = verse.splitTextByLineWidth(maxCharsPerLine = 2)
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
     ) {
         Text(
             "$bookName $chapter:$versicle",
@@ -68,7 +67,7 @@ private fun VerseToAnnotationPrev() {
     VerseToAnnotation(
         bookName = "Provérbios",
         chapter = "13",
-        versicle = "1",
+        versicle = 1,
         verse = "Provérbios de Salomão: O filho sábio da alegria ao pai; o filho tolo dá tristeza à mãe."
     )
 }
