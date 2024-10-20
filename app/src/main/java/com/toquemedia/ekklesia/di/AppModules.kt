@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.di
 
-import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.toquemedia.ekklesia.dao.AppDatabase

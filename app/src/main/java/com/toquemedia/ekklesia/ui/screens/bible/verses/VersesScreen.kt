@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -89,6 +88,7 @@ fun VersesScreen(
                         verse = verse,
                         selectedVerse = versesStates.selectedVerse,
                         markedVerse = markedVerses,
+                        hasNote = versesStates.notes.find { it.verse == verse } != null,
                         modifier = Modifier
                             .padding(bottom = 4.dp)
                             .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)

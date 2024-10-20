@@ -59,6 +59,15 @@ class VerseViewModel @Inject constructor(
         viewModelScope.launch {
             verseRepository.getMarkedVerse()
         }
+        viewModelScope.launch {
+            try {
+                noteRepository.getAllNotes().collect {
+                    _uiState.value = _uiState.value.copy(notes = it)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun markVerse(bookName: String?, chapter: String?, versicle: String, verse: String) {
@@ -98,6 +107,7 @@ class VerseViewModel @Inject constructor(
             noteRepository.addNoteToVerse(note)
             _uiState.value.onShowAddNote(false)
             _uiState.value.onSelectVerse("", -1)
+            _uiState.value.onEntryNoteChange("")
             _uiState.value.onSavingNote(false)
         }
     }
