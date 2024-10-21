@@ -12,7 +12,7 @@ interface NoteDao {
     @Insert
     suspend fun save(vararg note: NoteType)
 
-    @Query("SELECT * FROM notetype")
+    @Query("SELECT * FROM notes")
     fun getAll(): Flow<List<NoteType>>
 
     @Delete

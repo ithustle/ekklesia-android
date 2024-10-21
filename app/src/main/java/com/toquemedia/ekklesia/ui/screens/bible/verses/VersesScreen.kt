@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.model.BookType
+import com.toquemedia.ekklesia.ui.screens.bible.states.DevocionalUiState
 import com.toquemedia.ekklesia.ui.screens.bible.states.VerseUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.BookMock
@@ -33,6 +34,7 @@ fun VersesScreen(
     modifier: Modifier = Modifier,
     book: BookType?,
     versesStates: VerseUiState,
+    devocionalState: DevocionalUiState,
     scrollState: ScrollState,
     chapterNumber: String?,
     onSelectedVerse: (verse: String, versicle: Int) -> Unit = { _, _ -> },
@@ -89,6 +91,7 @@ fun VersesScreen(
                         selectedVerse = versesStates.selectedVerse,
                         markedVerse = markedVerses,
                         hasNote = versesStates.notes.find { it.verse == verse } != null,
+                        hasDevocional = devocionalState.allDevocional.find { it.verse == verse } != null,
                         modifier = Modifier
                             .padding(bottom = 4.dp)
                             .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
@@ -129,5 +132,6 @@ private fun VersesScreenPrev() {
         chapterNumber = "1",
         versesStates = VerseUiState(),
         scrollState = rememberScrollState(),
+        devocionalState = DevocionalUiState()
     )
 }

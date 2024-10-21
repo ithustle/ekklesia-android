@@ -1,9 +1,11 @@
 package com.toquemedia.ekklesia.di
 
 import com.toquemedia.ekklesia.model.interfaces.BibleRepository
+import com.toquemedia.ekklesia.model.interfaces.DevocionalRepository
 import com.toquemedia.ekklesia.model.interfaces.NoteRepository
 import com.toquemedia.ekklesia.model.interfaces.VerseRepository
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
+import com.toquemedia.ekklesia.repository.DevocionalRepositoryImpl
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
 import dagger.Binds
@@ -32,4 +34,10 @@ abstract class RepositoryModule {
     abstract fun bindNoteRepository(
         impl: NoteRepositoryImpl
     ) : NoteRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDevocionalRepository(
+        impl: DevocionalRepositoryImpl
+    ) : DevocionalRepository
 }

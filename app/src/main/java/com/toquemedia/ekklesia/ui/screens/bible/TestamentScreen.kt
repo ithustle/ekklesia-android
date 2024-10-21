@@ -3,6 +3,7 @@ package com.toquemedia.ekklesia.ui.screens.bible
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -29,21 +30,12 @@ fun TestamentScreen(
     onNavigateToChapter: (bookName: String) -> Unit = {}
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabTitles = listOf("Antigo", "Novo")
+    val tabTitles = listOf("Antigo Testamento", "Novo Testamento")
 
-    Column(
-        modifier = modifier.padding(horizontal = 16.dp, vertical = 32.dp)
-    ) {
-
-        Text(
-            "Testamento",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color(PrincipalColor.value)
-        )
-
+    Column {
         PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
+            containerColor = MaterialTheme.colorScheme.background,
             modifier = modifier
                 .padding(top = 8.dp)
         ) {
@@ -65,12 +57,14 @@ fun TestamentScreen(
 
         when(selectedTabIndex) {
             0 -> BookListScreen(
+                modifier = modifier.padding(horizontal = 16.dp),
                 books = states.books.slice(0..38),
                 onNavigateToBook = {
                     onNavigateToChapter(it.bookName)
                 }
             )
             1 -> BookListScreen(
+                modifier = modifier.padding(horizontal = 16.dp),
                 books = states.books.slice(39..65),
                 onNavigateToBook = {
                     onNavigateToChapter(it.bookName)

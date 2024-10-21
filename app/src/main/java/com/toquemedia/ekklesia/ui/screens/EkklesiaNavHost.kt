@@ -12,7 +12,12 @@ import com.toquemedia.ekklesia.ui.navigation.homeNavigation
 import com.toquemedia.ekklesia.ui.navigation.verseNavigation
 
 @Composable
-fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostController) {
+fun EkklesiaNavHost(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    showDevocionalModal: (@Composable () -> Unit) -> Unit,
+    hideDevocionalModal: () -> Unit
+) {
     NavHost(
         navController,
         startDestination = BottomBarItem.Home.route,
@@ -21,7 +26,10 @@ fun EkklesiaNavHost(modifier: Modifier = Modifier, navController: NavHostControl
         homeNavigation()
         bibleNavigation(navController = navController)
         chapterNavigation(navController = navController)
-        verseNavigation()
+        verseNavigation(
+            showDevocionalModal = showDevocionalModal,
+            hideDevocionalModal = hideDevocionalModal
+        )
     }
 }
 

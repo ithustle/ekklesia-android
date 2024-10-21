@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.ui.theme.backgroundLightColor
@@ -49,7 +50,7 @@ fun EkklesiaBottomNavigation(
 ) {
     BottomNavigation(
         modifier = modifier,
-        backgroundColor = backgroundLightColor,
+        backgroundColor = Color.White,
     ) {
         barItems.forEach { screen ->
             BottomNavigationItem(
@@ -66,7 +67,10 @@ fun EkklesiaBottomNavigation(
                     )
                 },
                 label = {
-                    Text(stringResource(screen.label))
+                    Text(
+                        stringResource(screen.label),
+                        fontSize = 12.sp
+                    )
                 },
             )
         }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Diversity3
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -26,14 +27,15 @@ fun VerseText(
     verse: String,
     selectedVerse: String,
     markedVerse: List<String>,
-    hasNote: Boolean
+    hasNote: Boolean,
+    hasDevocional: Boolean
 ) {
     val paragraphs = verse.splitTextByLineWidth(maxCharsPerLine = 39)
 
     Column {
         paragraphs.forEachIndexed { index, paragraph ->
 
-            if (index == paragraphs.size - 1 && hasNote) {
+            if (index == paragraphs.size - 1 && (hasNote || hasDevocional)) {
                 Row {
                     Text(
                         text = paragraph,
@@ -43,14 +45,29 @@ fun VerseText(
                         fontWeight = if (selectedVerse == verse) FontWeight.SemiBold else FontWeight.Normal,
                         modifier = modifier
                     )
-                    Spacer(modifier = Modifier.padding(start = 4.dp))
-                    Icon(
-                        imageVector = Icons.Default.EditNote,
-                        contentDescription = null,
-                        tint = PrincipalColor,
-                        modifier = Modifier
-                            .size(20.dp)
-                    )
+
+                    if (hasNote) {
+                        Spacer(modifier = Modifier.padding(start = 4.dp))
+                        Icon(
+                            imageVector = Icons.Default.EditNote,
+                            contentDescription = null,
+                            tint = PrincipalColor,
+                            modifier = Modifier
+                                .size(20.dp)
+                        )
+                    }
+
+                    if (hasDevocional) {
+                        Spacer(modifier = Modifier.padding(start = 4.dp))
+                        Icon(
+                            imageVector = Icons.Default.Diversity3,
+                            contentDescription = null,
+                            tint = PrincipalColor,
+                            modifier = Modifier
+                                .size(20.dp)
+                        )
+                    }
+
                 }
             } else {
                 Text(
@@ -73,6 +90,7 @@ private fun VerseTextPrev() {
         verse = "Observem o mês de abibe e celebrem a Páscoa do Senhor, do seu Deus, pois no mês de abibe, de noite, ele os tirou do Egito.",
         selectedVerse = "",
         markedVerse = listOf("Observem o mês de abibe e celebrem a Páscoa do Senhor, do seu Deus, pois no mês de abibe, de noite, ele os tirou do Egito"),
-        hasNote = true
+        hasNote = true,
+        hasDevocional = false,
     )
 }

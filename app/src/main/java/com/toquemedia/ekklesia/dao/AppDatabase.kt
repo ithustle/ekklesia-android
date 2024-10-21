@@ -2,12 +2,14 @@ package com.toquemedia.ekklesia.dao
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.toquemedia.ekklesia.model.DevocionalType
 import com.toquemedia.ekklesia.model.NoteType
 
 @Database(
-    entities = [NoteType::class],
+    entities = [NoteType::class, DevocionalType::class],
     version = 1
 )
 abstract class AppDatabase: RoomDatabase() {
     abstract fun NoteDao(): NoteDao
+    abstract fun DevocionalDao(): DevocionalDao
 }
