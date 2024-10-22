@@ -3,6 +3,342 @@ package com.toquemedia.ekklesia.utils.mocks
 import com.toquemedia.ekklesia.model.BookType
 
 object BookMock {
+
+    fun getAll(): List<BookType> {
+        return listOf(
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Genesis",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Exodos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+            BookType(
+                bookName = "Leviticos",
+                numberOfChapters = 50,
+                verses = this.get().verses
+            ),
+        )
+    }
+
     fun get(): BookType {
         return BookType(
             bookName = "Judas",

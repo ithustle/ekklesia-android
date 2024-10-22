@@ -12,10 +12,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -27,13 +29,13 @@ fun EkklesiaTextField(
     placeholder: String,
     height: Dp,
     singleLine: Boolean = false,
-    onChangeValue: (String) -> Unit = {}
+    onChangeValue: (TextFieldValue) -> Unit = {}
 ) {
     Box {
         BasicTextField(
             value = value,
             onValueChange = {
-                onChangeValue(it)
+                onChangeValue(TextFieldValue(it, TextRange(it.length)))
             },
             textStyle = TextStyle(
                 color = Color.Black,

@@ -1,5 +1,8 @@
 package com.toquemedia.ekklesia.ui.screens.bible.devocional
 
+import android.util.Log
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.model.DevocionalType
@@ -43,7 +46,7 @@ class DevocionalViewModel @Inject constructor(
         }
     }
 
-    fun saveDevocional(bookName: String, chapter: Int?, versicle: Int, verse: String) {
+    fun saveDevocional(bookName: String, chapter: Int?, versicle: Int, verse: String, isDraft: Boolean = false) {
         viewModelScope.launch {
             val devocional = DevocionalType(
                 id = "${bookName}_${chapter}_$versicle",
@@ -51,9 +54,22 @@ class DevocionalViewModel @Inject constructor(
                 versicle = versicle,
                 chapter = chapter ?: 0,
                 verse = verse,
-                devocional = _uiState.value.devocionalContent
+                title = _uiState.value.devocionalTitle.text.trimEnd(),
+                devocional = _uiState.value.devocionalContent.text,
+                draft = isDraft
             )
             repository.saveDevocional(devocional)
+        }
+    }
+
+    fun addVerseToDevocional(verse: String) {
+        _uiState.update { state ->
+            val updatedText = state.devocionalContent.text + verse
+            val newTextFieldValue = TextFieldValue(
+                text = updatedText,
+                selection = TextRange(updatedText.length)
+            )
+            state.copy(devocionalContent = newTextFieldValue)
         }
     }
 }

@@ -1,11 +1,12 @@
 package com.toquemedia.ekklesia.ui.screens.bible.states
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.toquemedia.ekklesia.model.DevocionalType
 
 data class DevocionalUiState(
-    val devocionalTitle: String = "",
-    val devocionalContent: String = "",
+    val devocionalTitle: TextFieldValue = TextFieldValue(),
+    var devocionalContent: TextFieldValue = TextFieldValue(),
     val allDevocional: List<DevocionalType> = emptyList(),
-    val onDevocionalTitleChange: (String) -> Unit = {},
-    val onDevocionalContentChange: (String) -> Unit = {}
+    val onDevocionalTitleChange: (TextFieldValue) -> Unit = {},
+    val onDevocionalContentChange: (TextFieldValue) -> Unit = {}
 )

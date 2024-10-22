@@ -11,5 +11,7 @@ data class DevocionalType(
     @ColumnInfo(name = "chapter") val chapter: Int,
     @ColumnInfo(name = "versicle") val versicle: Int,
     @ColumnInfo(name = "verse") val verse: String,
-    @ColumnInfo(name = "devocional") val devocional: String
+    @ColumnInfo(name = "title") val title: String,
+    @ColumnInfo(name = "devocional") val devocional: String,
+    @ColumnInfo(name = "draft") val draft: Boolean
 )

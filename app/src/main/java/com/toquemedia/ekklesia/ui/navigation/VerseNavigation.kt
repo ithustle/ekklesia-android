@@ -17,7 +17,6 @@ import com.toquemedia.ekklesia.ui.screens.bible.TestamentViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.devocional.CreateDevocionalScreen
 import com.toquemedia.ekklesia.ui.screens.bible.devocional.DevocionalViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.notes.ModalNoteScreen
-import com.toquemedia.ekklesia.ui.screens.bible.states.DevocionalUiState
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseActionOption
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VersesScreen
@@ -83,6 +82,20 @@ fun NavGraphBuilder.verseNavigation(
                                 )
                                 versesStates.onSelectVerse("", -1)
                                 hideDevocionalModal()
+                            },
+                            onSaveAsDraftDevocional = {
+                                vmDevocional.saveDevocional(
+                                    bookName.toString(),
+                                    chapterNumber?.toInt(),
+                                    versesStates.versicle,
+                                    versesStates.selectedVerse,
+                                    isDraft = true
+                                )
+                                versesStates.onSelectVerse("", -1)
+                                hideDevocionalModal()
+                            },
+                            onAddVerseToDevocional = {
+                                vmDevocional.addVerseToDevocional(it)
                             }
                         )
                     }

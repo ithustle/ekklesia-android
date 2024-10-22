@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.screens.bible
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl

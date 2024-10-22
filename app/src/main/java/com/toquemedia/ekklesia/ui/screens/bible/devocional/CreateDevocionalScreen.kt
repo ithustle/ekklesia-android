@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.bible.devocional
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +39,8 @@ fun CreateDevocionalScreen(
     verse: String,
     state: DevocionalUiState,
     onSaveDevocional: () -> Unit = {},
-    onSaveAsDraftDevocional: () -> Unit = {}
+    onSaveAsDraftDevocional: () -> Unit = {},
+    onAddVerseToDevocional: (String) -> Unit = {}
 ) {
 
     Column(
@@ -57,20 +60,22 @@ fun CreateDevocionalScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         EkklesiaTextField(
-            value = state.devocionalTitle,
+            value = state.devocionalTitle.text,
             placeholder = stringResource(R.string.devocional_title),
             height = 41.dp,
+            singleLine = true,
             onChangeValue = state.onDevocionalTitleChange
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         EkklesiaTextField(
-            value = state.devocionalContent,
+            value = state.devocionalContent.text,
             placeholder = stringResource(R.string.let_holy_spirit_come),
             height = 250.dp,
-            singleLine = true,
-            onChangeValue = state.onDevocionalContentChange
+            onChangeValue = {
+                state.onDevocionalContentChange(it)
+            }
         )
 
         Row(
@@ -79,6 +84,9 @@ fun CreateDevocionalScreen(
             modifier = Modifier
                 .padding(vertical = 16.dp)
                 .fillMaxWidth()
+                .clickable {
+                    onAddVerseToDevocional(verse)
+                }
         ) {
             Icon(
                 imageVector = Icons.Rounded.AddBox,

@@ -11,6 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -47,7 +52,6 @@ fun VersesScreen(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
             .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
     ) {
@@ -91,7 +95,7 @@ fun VersesScreen(
                         selectedVerse = versesStates.selectedVerse,
                         markedVerse = markedVerses,
                         hasNote = versesStates.notes.find { it.verse == verse } != null,
-                        hasDevocional = devocionalState.allDevocional.find { it.verse == verse } != null,
+                        hasDevocional = devocionalState.allDevocional.find { it.verse == verse && !it.draft } != null,
                         modifier = Modifier
                             .padding(bottom = 4.dp)
                             .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
