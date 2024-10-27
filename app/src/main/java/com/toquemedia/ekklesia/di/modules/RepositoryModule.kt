@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.di
+package com.toquemedia.ekklesia.di.modules
 
 import com.toquemedia.ekklesia.model.interfaces.BibleRepository
 import com.toquemedia.ekklesia.model.interfaces.DevocionalRepository

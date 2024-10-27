@@ -111,4 +111,27 @@ class VerseViewModel @Inject constructor(
             _uiState.value.onSavingNote(false)
         }
     }
+
+    fun saveAndShareNote(
+        bookName: String,
+        chapter: Int,
+        versicle: Int,
+        verse: String,
+    ) {
+        viewModelScope.launch {
+            val note = NoteType(
+                bookName = bookName,
+                chapter = chapter,
+                versicle = versicle,
+                verse = verse,
+                note = _uiState.value.entryNote,
+                id = "${bookName}_${chapter}_$versicle"
+            )
+            noteRepository.shareNote(note)
+            _uiState.value.onShowAddNote(false)
+            _uiState.value.onSelectVerse("", -1)
+            _uiState.value.onEntryNoteChange("")
+            _uiState.value.onSavingNote(false)
+        }
+    }
 }

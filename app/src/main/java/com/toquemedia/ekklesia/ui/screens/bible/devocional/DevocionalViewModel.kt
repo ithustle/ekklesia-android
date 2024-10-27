@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.ui.screens.bible.devocional
 
-import android.util.Log
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel

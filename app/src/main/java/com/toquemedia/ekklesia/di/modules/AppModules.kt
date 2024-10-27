@@ -1,7 +1,10 @@
-package com.toquemedia.ekklesia.di
+package com.toquemedia.ekklesia.di.modules
 
 import android.content.Context
 import androidx.room.Room
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.toquemedia.ekklesia.dao.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -18,4 +21,13 @@ object AppModules {
     fun provideDatabase(@ApplicationContext context: Context): AppDatabase = Room.databaseBuilder(
         context, AppDatabase::class.java, "ekklesiaDb"
     ).build()
+
+    fun provideFirestoreDatabase(): FirebaseFirestore = FirebaseFirestore.getInstance().apply {
+        firestoreSettings =
+            FirebaseFirestoreSettings.Builder().build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthEmulator(): FirebaseAuth = FirebaseAuth.getInstance()
 }

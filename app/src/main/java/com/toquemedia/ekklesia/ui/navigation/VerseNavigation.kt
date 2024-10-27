@@ -131,6 +131,15 @@ fun NavGraphBuilder.verseNavigation(
                         verse = versesStates.selectedVerse
                     )
                     Toast.makeText(context, "Nota adicionada com sucesso", Toast.LENGTH_SHORT).show()
+                },
+                onSaveAndShareNote = {
+                    vmVerses.saveAndShareNote(
+                        bookName = bookName.toString(),
+                        chapter = chapterNumber?.toInt() ?: 0,
+                        versicle = versesStates.versicle,
+                        verse = versesStates.selectedVerse
+                    )
+                    Toast.makeText(context, "Nota salva e partilhada com sucesso", Toast.LENGTH_SHORT).show()
                 }
             )
         }

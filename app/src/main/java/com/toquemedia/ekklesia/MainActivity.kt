@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.FirebaseApp
 import com.toquemedia.ekklesia.ui.composables.EkklesiaModalSheet
 import com.toquemedia.ekklesia.ui.navigation.navigateToBible
 import com.toquemedia.ekklesia.ui.navigation.navigateToHome
