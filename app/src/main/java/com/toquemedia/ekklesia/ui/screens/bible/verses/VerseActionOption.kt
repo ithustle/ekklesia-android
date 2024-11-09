@@ -31,6 +31,8 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 @Composable
 fun VerseActionOption(
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false),
+    hasNote: Boolean,
+    hasDevocional: Boolean,
     modifier: Modifier = Modifier,
     onDismissRequest: (SheetState) -> Unit = {},
     onFavoriteVerse: () -> Unit = {},
@@ -49,7 +51,9 @@ fun VerseActionOption(
             onFavoriteVerse = onFavoriteVerse,
             onShareVerse = onShareVerse,
             onAddNoteToVerse = onAddNoteToVerse,
-            onSelectVerseForDevocional = onSelectVerseForDevocional
+            onSelectVerseForDevocional = onSelectVerseForDevocional,
+            hasNote = hasNote,
+            hasDevocional = hasDevocional,
         )
     }
 }
@@ -80,6 +84,8 @@ fun ActionOption(
 @Composable
 fun ActionOptions(
     modifier: Modifier = Modifier,
+    hasNote: Boolean,
+    hasDevocional: Boolean,
     onFavoriteVerse: () -> Unit = {},
     onShareVerse: () -> Unit = {},
     onAddNoteToVerse: () -> Unit = {},
@@ -98,20 +104,24 @@ fun ActionOptions(
                 onFavoriteVerse()
             }
         )
-        ActionOption(
-            modifier = modifier,
-            actionOptionIcon = Icons.Rounded.Diversity3,
-            onActionOptionClick = {
-                onSelectVerseForDevocional()
-            }
-        )
-        ActionOption(
-            modifier = modifier,
-            actionOptionIcon = Icons.Rounded.EditNote,
-            onActionOptionClick = {
-                onAddNoteToVerse()
-            }
-        )
+        if (!hasDevocional) {
+            ActionOption(
+                modifier = modifier,
+                actionOptionIcon = Icons.Rounded.Diversity3,
+                onActionOptionClick = {
+                    onSelectVerseForDevocional()
+                }
+            )
+        }
+        if (!hasNote) {
+            ActionOption(
+                modifier = modifier,
+                actionOptionIcon = Icons.Rounded.EditNote,
+                onActionOptionClick = {
+                    onAddNoteToVerse()
+                }
+            )
+        }
         ActionOption(
             modifier = modifier,
             actionOptionIcon = Icons.Rounded.Share,
@@ -128,6 +138,8 @@ fun ActionOptions(
 @Composable
 private fun VerseActionOptionPrev() {
     VerseActionOption(
+        hasDevocional = false,
+        hasNote = false,
         onDismissRequest = {},
         onFavoriteVerse = {},
         onShareVerse = {},

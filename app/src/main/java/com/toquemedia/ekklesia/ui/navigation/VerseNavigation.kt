@@ -48,6 +48,8 @@ fun NavGraphBuilder.verseNavigation(
 
         if (versesStates.showVerseActionOption) {
             VerseActionOption(
+                hasNote = versesStates.notes.find { it.verse == versesStates.selectedVerse } != null,
+                hasDevocional = devocionalStates.allDevocional.find { it.verse == versesStates.selectedVerse && !it.draft } != null,
                 onDismissRequest = { sheetState ->
                     versesStates.onSelectVerse("", -1)
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
