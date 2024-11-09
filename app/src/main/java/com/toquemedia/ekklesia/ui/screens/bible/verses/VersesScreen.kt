@@ -1,47 +1,51 @@
 package com.toquemedia.ekklesia.ui.screens.bible.verses
 
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
+import com.toquemedia.ekklesia.model.BookType
+import com.toquemedia.ekklesia.ui.screens.bible.states.DevocionalUiState
+import com.toquemedia.ekklesia.ui.screens.bible.states.VerseUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.toquemedia.ekklesia.utils.mocks.BookMock
 
 @Composable
 fun VersesScreen(
     modifier: Modifier = Modifier,
-    states: TestamentUiState,
-    chapterNumber: String?
+    book: BookType?,
+    versesStates: VerseUiState,
+    devocionalState: DevocionalUiState,
+    scrollState: ScrollState,
+    chapterNumber: String?,
+    onSelectedVerse: (verse: String, versicle: Int) -> Unit = { _, _ -> },
+    onNextVerse: (Int) -> Unit = {},
+    onPreviousVerse: (Int) -> Unit = {},
+    onUnMarkVerse: (String, Int) -> Unit = { _, _ -> },
 ) {
 
-    val book = states.book
-    var chapter by remember { mutableIntStateOf(chapterNumber?.toInt() ?: 0) }
-    val scrollState = rememberScrollState()
+    val markedVerses by versesStates.markedVerses.collectAsState()
 
     Column(
         modifier = modifier
-            .fillMaxSize()
             .padding(horizontal = 16.dp)
             .verticalScroll(scrollState)
     ) {
@@ -58,32 +62,47 @@ fun VersesScreen(
                 color = PrincipalColor
             )
             Text(
-                text = chapter.toString(),
+                text = chapterNumber.toString(),
                 fontSize = 40.sp,
                 color = PrincipalColor
             )
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-            book?.verses?.get((chapter.minus(1)))?.forEachIndexed { line, verse ->
+            book?.verses?.get(((chapterNumber?.toInt() ?: 0).minus(1)))?.forEachIndexed { versicle, verse ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
                     Text(
-                        text = (line + 1).toString(),
-                        fontSize = 20.sp,
+                        text = (versicle + 1).toString(),
+                        fontSize = 14.sp,
                         color = PrincipalColor,
                         textAlign = TextAlign.Start,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = modifier.padding(horizontal = 4.dp))
-                    Text(
-                        text = verse,
-                        fontSize = 20.sp,
-                        color = PrincipalColor,
+                    VerseText(
+                        verse = verse,
+                        selectedVerse = versesStates.selectedVerse,
+                        markedVerse = markedVerses,
+                        hasNote = versesStates.notes.find { it.verse == verse } != null,
+                        hasDevocional = devocionalState.allDevocional.find { it.verse == verse && !it.draft } != null,
+                        modifier = Modifier
+                            .padding(bottom = 4.dp)
+                            .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
+                            .clickable {
+                                if (markedVerses.contains(verse)) {
+                                    onUnMarkVerse(verse, versicle + 1)
+                                    //selectedVersicle = -1
+                                } else {
+                                    versesStates.onShowVerseAction(true)
+                                    //selectedVersicle = versicle + 1
+                                    onSelectedVerse(verse, versicle + 1)
+                                }
+                            }
                     )
                 }
             }
@@ -94,22 +113,10 @@ fun VersesScreen(
         VersesNavigation(
             modifier = Modifier
                 .padding(top = 20.dp),
-            currentVerse = chapter,
+            currentVerse = chapterNumber?.toInt() ?: 0,
             bookName = book?.bookName.toString(),
-            onNextVerse = {
-                chapter += 1
-                CoroutineScope(Dispatchers.Main).launch {
-                    scrollState.scrollTo(0)
-                }
-            },
-            onPreviousVerse = {
-                if (chapter > 1) {
-                    chapter -= 1
-                    CoroutineScope(Dispatchers.Main).launch {
-                        scrollState.scrollTo(0)
-                    }
-                }
-            }
+            onNextVerse = onNextVerse,
+            onPreviousVerse = onPreviousVerse
         )
         Spacer(modifier = Modifier.padding(vertical = 16.dp))
     }
@@ -118,5 +125,11 @@ fun VersesScreen(
 @Preview(showBackground = true)
 @Composable
 private fun VersesScreenPrev() {
-    VersesScreen(states = TestamentUiState(), chapterNumber = "2")
+    VersesScreen(
+        book = BookMock.get(),
+        chapterNumber = "1",
+        versesStates = VerseUiState(),
+        scrollState = rememberScrollState(),
+        devocionalState = DevocionalUiState()
+    )
 }

@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBackIos
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
@@ -29,8 +29,8 @@ fun VersesNavigation(
     modifier: Modifier = Modifier,
     currentVerse: Int = 0,
     bookName: String,
-    onNextVerse: () -> Unit = {},
-    onPreviousVerse: () -> Unit = {},
+    onNextVerse: (Int) -> Unit = {},
+    onPreviousVerse: (Int) -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -45,7 +45,7 @@ fun VersesNavigation(
                 .width(48.dp)
                 .height(48.dp)
                 .clickable {
-                    onPreviousVerse()
+                    onPreviousVerse(currentVerse)
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -69,7 +69,7 @@ fun VersesNavigation(
                 .width(48.dp)
                 .height(48.dp)
                 .clickable {
-                    onNextVerse()
+                    onNextVerse(currentVerse)
                 },
             contentAlignment = Alignment.Center
         ) {

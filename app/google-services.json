@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "91789490626",
+    "project_id": "ekklesia-6aa62",
+    "storage_bucket": "ekklesia-6aa62.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91789490626:android:dca01d257823a0b8f1be5b",
+        "android_client_info": {
+          "package_name": "com.toquemedia.ekklesia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoJ38ZaK88CC-Kj_oaOUheNOY4DIE5ie4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

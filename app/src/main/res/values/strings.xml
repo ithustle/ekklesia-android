@@ -4,4 +4,11 @@
     <string name="bible">Bíblia</string>
     <string name="home">Início</string>
     <string name="book">book</string>
+    <string name="tap_to_add_verse">Toque para adicionar a passagem</string>
+    <string name="devocional_title">Intitule o seu devocional</string>
+    <string name="let_holy_spirit_come">Deixe o Espírito Santo habitar em ti...</string>
+    <string name="done">Concluir</string>
+    <string name="salvar_as_draft">Salvar como rascunho</string>
+    <string name="new_testament">Novo Testamento</string>
+    <string name="old_testament">Antigo Testamento</string>
 </resources>

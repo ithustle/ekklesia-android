@@ -2,6 +2,7 @@ package com.toquemedia.ekklesia.ui.screens.home
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -10,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,7 +20,7 @@ import com.toquemedia.ekklesia.ui.screens.home.today.TodayScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen() {
 
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabTitles = listOf("Hoje", "Comunidade")
@@ -28,6 +28,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     Column {
         PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
+            containerColor = MaterialTheme.colorScheme.background,
         ) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(

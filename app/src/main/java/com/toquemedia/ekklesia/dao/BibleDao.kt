@@ -5,12 +5,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.toquemedia.ekklesia.model.BibleType
 
-class BibleDao {
-    companion object {
-        val shared = BibleDao()
-    }
+class BibleDao(private val context: Context) {
 
-    fun loadFileBible(context: Context): List<BibleType> {
+    fun loadFileBible(): List<BibleType> {
         return context.assets.open("pt_nvi.json")
             .bufferedReader().use {
                 this.parseJson(it.readText())
