@@ -1,6 +1,6 @@
 package com.toquemedia.ekklesia.ui.navigation
 
-import Screen
+import com.toquemedia.ekklesia.model.Screen
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel

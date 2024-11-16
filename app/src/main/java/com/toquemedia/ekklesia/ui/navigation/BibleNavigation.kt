@@ -1,6 +1,6 @@
 package com.toquemedia.ekklesia.ui.navigation
 
-import BottomBarItem
+import com.toquemedia.ekklesia.model.BottomBarItem
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel

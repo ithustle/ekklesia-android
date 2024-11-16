@@ -11,4 +11,6 @@
     <string name="salvar_as_draft">Salvar como rascunho</string>
     <string name="new_testament">Novo Testamento</string>
     <string name="old_testament">Antigo Testamento</string>
+    <string name="community">Comunidades</string>
+    <string name="newCommunity">Nova comunidade</string>
 </resources>

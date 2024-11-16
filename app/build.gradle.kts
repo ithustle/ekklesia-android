@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.toquemedia.ekklesia"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.toquemedia.ekklesia"
@@ -67,7 +67,10 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
+    implementation(libs.play.services.auth)
     implementation(libs.firebase.analytics)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
     kapt(libs.hilt.compiler)
     kapt(libs.androidx.compiler)
 

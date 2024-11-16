@@ -1,6 +1,6 @@
 package com.toquemedia.ekklesia.ui.navigation
 
-import BottomBarItem
+import com.toquemedia.ekklesia.model.BottomBarItem
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable

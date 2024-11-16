@@ -1,6 +1,6 @@
 package com.toquemedia.ekklesia.ui.screens
 
-import BottomBarItem
+import com.toquemedia.ekklesia.model.BottomBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.toquemedia.ekklesia.ui.navigation.bibleNavigation
 import com.toquemedia.ekklesia.ui.navigation.chapterNavigation
+import com.toquemedia.ekklesia.ui.navigation.communityNavigation
 import com.toquemedia.ekklesia.ui.navigation.homeNavigation
 import com.toquemedia.ekklesia.ui.navigation.verseNavigation
 
@@ -25,6 +26,7 @@ fun EkklesiaNavHost(
     ) {
         homeNavigation()
         bibleNavigation(navController = navController)
+        communityNavigation(navController = navController)
         chapterNavigation(navController = navController)
         verseNavigation(
             showDevocionalModal = showDevocionalModal,

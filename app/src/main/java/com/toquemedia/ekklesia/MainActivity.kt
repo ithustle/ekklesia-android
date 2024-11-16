@@ -1,7 +1,10 @@
 package com.toquemedia.ekklesia
 
-import BottomBarItem
-import EkklesiaBottomNavigation
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+import com.toquemedia.ekklesia.model.BottomBarItem
+import com.toquemedia.ekklesia.model.EkklesiaBottomNavigation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,11 +13,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ModalBottomSheetState
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ModalBottomSheetValue
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,14 +27,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.FirebaseApp
 import com.toquemedia.ekklesia.ui.composables.EkklesiaModalSheet
 import com.toquemedia.ekklesia.ui.navigation.navigateToBible
+import com.toquemedia.ekklesia.ui.navigation.navigateToCommunity
 import com.toquemedia.ekklesia.ui.navigation.navigateToHome
 import com.toquemedia.ekklesia.ui.screens.EkklesiaNavHost
 import com.toquemedia.ekklesia.ui.theme.EkklesiaTheme
 import dagger.hilt.android.AndroidEntryPoint
-import ekklesiaBottomBarItems
+import com.toquemedia.ekklesia.model.ekklesiaBottomBarItems
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -62,7 +62,8 @@ class MainActivity : ComponentActivity() {
                     val selectedItem = remember(currentDestination) {
                         when (currentRoute) {
                             "home" -> BottomBarItem.Home
-                            else -> BottomBarItem.Bible
+                            "bible" -> BottomBarItem.Bible
+                            else -> BottomBarItem.Community
                         }
                     }
 
@@ -74,6 +75,7 @@ class MainActivity : ComponentActivity() {
                             when(it.label) {
                                 BottomBarItem.Home.label -> navController.navigateToHome()
                                 BottomBarItem.Bible.label -> navController.navigateToBible()
+                                BottomBarItem.Community.label -> navController.navigateToCommunity()
                             }
                         }
                     ) {

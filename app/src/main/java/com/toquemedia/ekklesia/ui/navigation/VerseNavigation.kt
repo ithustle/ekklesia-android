@@ -1,6 +1,6 @@
 package com.toquemedia.ekklesia.ui.navigation
 
-import Screen
+import com.toquemedia.ekklesia.model.Screen
 import android.widget.Toast
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
