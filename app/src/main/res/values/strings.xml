@@ -6,11 +6,14 @@
     <string name="book">book</string>
     <string name="tap_to_add_verse">Toque para adicionar a passagem</string>
     <string name="devocional_title">Intitule o seu devocional</string>
+    <string name="community_title">Introduza o nome da comunidade</string>
     <string name="let_holy_spirit_come">Deixe o Espírito Santo habitar em ti...</string>
+    <string name="community_description">Sobre a comunidade...</string>
     <string name="done">Concluir</string>
     <string name="salvar_as_draft">Salvar como rascunho</string>
     <string name="new_testament">Novo Testamento</string>
     <string name="old_testament">Antigo Testamento</string>
     <string name="community">Comunidades</string>
     <string name="newCommunity">Nova comunidade</string>
+    <string name="save_community">Criar comunidade</string>
 </resources>
