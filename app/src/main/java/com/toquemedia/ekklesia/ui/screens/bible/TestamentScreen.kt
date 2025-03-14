@@ -42,7 +42,7 @@ fun TestamentScreen(
     val tabTitles = listOf(stringResource(R.string.old_testament), stringResource(R.string.new_testament))
 
     Scaffold(
-        floatingActionButton = {
+        /*floatingActionButton = {
             FloatingActionButton(
                 containerColor = MaterialTheme.colorScheme.background,
                 shape = CircleShape,
@@ -56,7 +56,7 @@ fun TestamentScreen(
                     tint = PrincipalColor
                 )
             }
-        },
+        }, */
         content = { innerPadding ->
             Column {
                 PrimaryTabRow(

@@ -14,7 +14,10 @@ import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.ui.composables.HeadTitle
 
 @Composable
-fun CommunityListScreen(modifier: Modifier = Modifier) {
+fun CommunityListScreen(
+    modifier: Modifier = Modifier,
+    onOpenToCreateCommunity: () -> Unit = {}
+) {
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 30.dp)
@@ -25,15 +28,17 @@ fun CommunityListScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(24.dp))
 
         CommunityButtonAdd(
-            onTapAction = {}
+            onTapAction = onOpenToCreateCommunity
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        CommunityCard(
-            communityName = "Minha comunidade",
-            onTapAction = {}
-        )
+        List(5) {
+            CommunityCard(
+                communityName = "Minha comunidade",
+                onTapAction = {}
+            )
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.navigation
 
+import android.util.Log
 import com.toquemedia.ekklesia.model.BottomBarItem
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue

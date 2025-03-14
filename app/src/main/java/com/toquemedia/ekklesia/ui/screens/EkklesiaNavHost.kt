@@ -6,25 +6,33 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.toquemedia.ekklesia.ui.navigation.authNavigation
 import com.toquemedia.ekklesia.ui.navigation.bibleNavigation
 import com.toquemedia.ekklesia.ui.navigation.chapterNavigation
 import com.toquemedia.ekklesia.ui.navigation.communityNavigation
-import com.toquemedia.ekklesia.ui.navigation.homeNavigation
 import com.toquemedia.ekklesia.ui.navigation.verseNavigation
+import com.toquemedia.ekklesia.ui.screens.login.LoginScreen
 
 @Composable
 fun EkklesiaNavHost(
     modifier: Modifier = Modifier,
+    isLoginActive: Boolean,
     navController: NavHostController,
     showDevocionalModal: (@Composable () -> Unit) -> Unit,
+    onClickLogin: () -> Unit,
     hideDevocionalModal: () -> Unit
 ) {
     NavHost(
         navController,
-        startDestination = BottomBarItem.Home.route,
+        startDestination = if (isLoginActive) BottomBarItem.Bible.route else BottomBarItem.Login.route,
         modifier = modifier
     ) {
-        homeNavigation()
+        authNavigation(
+            navController = navController,
+            onClickLogin = onClickLogin
+        )
+        //homeNavigation()
         bibleNavigation(navController = navController)
         communityNavigation(navController = navController)
         chapterNavigation(navController = navController)

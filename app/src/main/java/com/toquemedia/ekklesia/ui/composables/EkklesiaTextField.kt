@@ -29,6 +29,7 @@ fun EkklesiaTextField(
     placeholder: String,
     height: Dp,
     singleLine: Boolean = false,
+    enabled: Boolean = true,
     onChangeValue: (TextFieldValue) -> Unit = {}
 ) {
     Box {
@@ -50,7 +51,8 @@ fun EkklesiaTextField(
                 .fillMaxWidth()
                 .height(height = height)
                 .padding(vertical = 12.dp, horizontal = 10.dp),
-            singleLine = singleLine
+            singleLine = singleLine,
+            enabled = enabled
         )
 
         if (value.isEmpty()) {
@@ -74,6 +76,7 @@ private fun EkklesiaTextFieldPrev() {
         placeholder = "Placeholder",
         height = 41.dp,
         singleLine = true,
-        onChangeValue = {}
+        onChangeValue = {},
+        enabled = false
     )
 }

@@ -23,6 +23,11 @@ sealed class BottomBarItem(
     val icon: ImageVector,
     val route: String
 ) {
+    data object Login : BottomBarItem(
+        label = R.string.login,
+        icon = Icons.Rounded.Dashboard,
+        route = "home"
+    )
     data object Home : BottomBarItem(
         label = R.string.home,
         icon = Icons.Rounded.Dashboard,
@@ -45,9 +50,10 @@ sealed class BottomBarItem(
 sealed class Screen(val route: String) {
     data object Chapters : Screen("chapters")
     data object Verses : Screen("verses")
+    data object CreateCommunity: Screen("createCommunity")
 }
 
-val ekklesiaBottomBarItems = listOf(BottomBarItem.Home, BottomBarItem.Bible, BottomBarItem.Community)
+val ekklesiaBottomBarItems = listOf(BottomBarItem.Bible, BottomBarItem.Community)
 
 @Composable
 fun EkklesiaBottomNavigation(

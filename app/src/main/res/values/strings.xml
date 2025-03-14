@@ -3,6 +3,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="bible">Bíblia</string>
     <string name="home">Início</string>
+    <string name="login">Login</string>
     <string name="book">book</string>
     <string name="tap_to_add_verse">Toque para adicionar a passagem</string>
     <string name="devocional_title">Intitule o seu devocional</string>
@@ -16,4 +17,5 @@
     <string name="community">Comunidades</string>
     <string name="newCommunity">Nova comunidade</string>
     <string name="save_community">Criar comunidade</string>
+    <string name="default_web_client_id">106484845222925049776</string>
 </resources>

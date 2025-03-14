@@ -1,10 +1,12 @@
 package com.toquemedia.ekklesia.di.modules
 
 import com.toquemedia.ekklesia.model.interfaces.BibleRepository
+import com.toquemedia.ekklesia.model.interfaces.CommunityRepository
 import com.toquemedia.ekklesia.model.interfaces.DevocionalRepository
 import com.toquemedia.ekklesia.model.interfaces.NoteRepository
 import com.toquemedia.ekklesia.model.interfaces.VerseRepository
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
+import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
 import com.toquemedia.ekklesia.repository.DevocionalRepositoryImpl
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
@@ -40,4 +42,10 @@ abstract class RepositoryModule {
     abstract fun bindDevocionalRepository(
         impl: DevocionalRepositoryImpl
     ) : DevocionalRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCommunityRepository(
+        impl: CommunityRepositoryImpl
+    ) : CommunityRepository
 }
