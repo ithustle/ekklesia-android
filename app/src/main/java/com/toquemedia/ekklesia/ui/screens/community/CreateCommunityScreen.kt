@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.ui.screens.community
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -55,7 +54,6 @@ fun CreateCommunityScreen(
 
     LaunchedEffect(key1 = true) {
         validation.collect { result ->
-            Log.i("LAUNCH", result.toString())
             when(result) {
                 is ValidationResult.Success -> {
                     isLoading = false

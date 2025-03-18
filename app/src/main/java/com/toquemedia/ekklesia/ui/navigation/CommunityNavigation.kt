@@ -6,6 +6,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -14,14 +15,22 @@ import com.toquemedia.ekklesia.model.Screen
 import com.toquemedia.ekklesia.ui.screens.community.CommunityListScreen
 import com.toquemedia.ekklesia.ui.screens.community.CommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.CreateCommunityScreen
-import com.toquemedia.ekklesia.ui.screens.navigateBetweenTabs
+import com.toquemedia.ekklesia.routes.navigateBetweenTabs
 
-fun NavGraphBuilder.communityNavigation(navController: NavHostController) {
+fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable(BottomBarItem.Community.route) {
+
+        val viewModel = hiltViewModel<CommunityViewModel>()
+        val uiState by viewModel.uiState.collectAsState()
+
         CommunityListScreen(
             onOpenToCreateCommunity = {
                 navController.navigateToCreateCommunity()
-            }
+            },
+            onNavigateToProfile = {
+                navController.navigateToProfile()
+            },
+            state = uiState
         )
     }
 
@@ -53,10 +62,10 @@ fun NavGraphBuilder.communityNavigation(navController: NavHostController) {
     }
 }
 
-fun NavHostController.navigateToCommunity() {
+fun NavController.navigateToCommunity() {
     this.navigateBetweenTabs(BottomBarItem.Community.route)
 }
 
-fun NavHostController.navigateToCreateCommunity() {
+fun NavController.navigateToCreateCommunity() {
     this.navigateBetweenTabs(Screen.CreateCommunity.route)
 }

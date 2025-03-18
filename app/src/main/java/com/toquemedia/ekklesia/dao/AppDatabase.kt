@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.DevocionalType
 import com.toquemedia.ekklesia.model.NoteType
-import com.toquemedia.ekklesia.services.CommunityService
 
 @Database(
     entities = [NoteType::class, DevocionalType::class, CommunityType::class],

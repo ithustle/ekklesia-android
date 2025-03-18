@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.toquemedia.ekklesia.ui.screens.home.HomeScreen
-import com.toquemedia.ekklesia.ui.screens.navigateBetweenTabs
+import com.toquemedia.ekklesia.routes.navigateBetweenTabs
 
 fun NavGraphBuilder.homeNavigation() {
     composable(BottomBarItem.Home.route) {

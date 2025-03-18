@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.composables
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -19,7 +20,8 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @Composable
 fun HeadTitle(
-    title: String
+    title: String,
+    onNavigateToProfile: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -37,7 +39,10 @@ fun HeadTitle(
             painter = painterResource(R.drawable.user),
             contentDescription = null,
             modifier = Modifier
-                .size(48.dp),
+                .size(48.dp)
+                .clickable {
+                    onNavigateToProfile()
+                },
             colorFilter = ColorFilter.tint(color = PrincipalColor)
         )
     }

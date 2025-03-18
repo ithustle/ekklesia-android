@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream
 import android.util.Base64
 import androidx.core.graphics.scale
 import java.util.Locale
+import kotlin.math.sqrt
 
 fun String.splitTextByLineWidth(maxCharsPerLine: Int): List<String> {
     val words = this.split(" ")
@@ -41,6 +42,11 @@ fun String.uriToBase64(context: Context): String {
     }
 }
 
+fun String.base64ToBitmap(): Bitmap {
+    val decodedBytes = Base64.decode(this, Base64.DEFAULT)
+    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+}
+
 fun String.textSlug(): String {
     return this
         .lowercase(Locale.ROOT)
@@ -67,7 +73,7 @@ private fun bitmapToBase64WithSizeLimit(bitmap: Bitmap): String {
     }
 
     if (outputStream.size() > maxSizeKB * 1024) {
-        val scaleFactor = Math.sqrt((maxSizeKB * 1024.0) / outputStream.size())
+        val scaleFactor = sqrt((maxSizeKB * 1024.0) / outputStream.size())
         val newWidth = (bitmap.width * scaleFactor).toInt()
         val newHeight = (bitmap.height * scaleFactor).toInt()
 

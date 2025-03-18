@@ -38,6 +38,7 @@ class CommunityViewModel @Inject constructor(
                 }
             )
         }
+        getAllCommunities()
     }
 
     fun createCommunity() {
@@ -72,6 +73,14 @@ class CommunityViewModel @Inject constructor(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun getAllCommunities() {
+        viewModelScope.launch {
+            repository.getAll().collect {
+                _uiState.value = _uiState.value.copy(communities = it)
             }
         }
     }

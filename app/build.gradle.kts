@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.google.services)
 }
 
@@ -35,6 +36,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -43,7 +45,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.13"
+        kotlinCompilerExtensionVersion = "1.7.21"
     }
     packaging {
         resources {
@@ -65,14 +67,17 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.storage)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.analytics)
+    implementation(libs.credentials.play.service.auth)
+    implementation(libs.credentials)
+    implementation(libs.google.id)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
-    kapt(libs.hilt.compiler)
-    kapt(libs.androidx.compiler)
+    ksp(libs.hilt.compiler)
+    ksp(libs.androidx.compiler)
 
     implementation(libs.gson)
     implementation(libs.androidx.core.ktx)

@@ -6,9 +6,9 @@ import com.toquemedia.ekklesia.dao.BibleDao
 import com.toquemedia.ekklesia.dao.CommunityDao
 import com.toquemedia.ekklesia.dao.DevocionalDao
 import com.toquemedia.ekklesia.dao.NoteDao
-import com.toquemedia.ekklesia.services.NoteService
 import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.services.CommunityService
+import com.toquemedia.ekklesia.services.NoteService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

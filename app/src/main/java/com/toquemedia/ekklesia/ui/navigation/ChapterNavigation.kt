@@ -4,13 +4,14 @@ import com.toquemedia.ekklesia.model.Screen
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.chapter.ChapterScreen
 
-fun NavGraphBuilder.chapterNavigation(navController: NavHostController) {
+fun NavGraphBuilder.chapterNavigation(navController: NavController) {
     composable("${Screen.Chapters.route}/{bookName}") { backStackEntry ->
 
         val viewModel: TestamentViewModel = hiltViewModel()
@@ -30,7 +31,7 @@ fun NavGraphBuilder.chapterNavigation(navController: NavHostController) {
     }
 }
 
-fun NavHostController.navigateToChapter(bookName: String) {
+fun NavController.navigateToChapter(bookName: String) {
     navigate("${Screen.Chapters.route}/$bookName") {
         launchSingleTop = true
         popUpTo(Screen.Chapters.route)

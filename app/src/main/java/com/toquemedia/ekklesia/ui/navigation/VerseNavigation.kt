@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -183,7 +184,7 @@ fun NavGraphBuilder.verseNavigation(
     }
 }
 
-fun NavHostController.navigateToChapterVerse(bookName: String?, chapterNumber: String) {
+fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: String) {
     this.navigate("${Screen.Verses.route}/${bookName}/${chapterNumber}") {
         launchSingleTop = true
         popUpTo("${Screen.Verses.route}/{bookName}/{chapterNumber}")

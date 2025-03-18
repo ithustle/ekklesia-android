@@ -25,7 +25,8 @@ class CommunityRepositoryImpl @Inject constructor(
                 id = UUID.randomUUID().toString(),
                 communityName = name.trim(),
                 communityDescription = description,
-                communityImage = image.uriToBase64(context)
+                communityImage = image.uriToBase64(context),
+                members = 0
             )
 
             try {

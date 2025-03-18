@@ -26,7 +26,7 @@ sealed class BottomBarItem(
     data object Login : BottomBarItem(
         label = R.string.login,
         icon = Icons.Rounded.Dashboard,
-        route = "home"
+        route = "login"
     )
     data object Home : BottomBarItem(
         label = R.string.home,
@@ -51,6 +51,7 @@ sealed class Screen(val route: String) {
     data object Chapters : Screen("chapters")
     data object Verses : Screen("verses")
     data object CreateCommunity: Screen("createCommunity")
+    data object Profile: Screen("profile")
 }
 
 val ekklesiaBottomBarItems = listOf(BottomBarItem.Bible, BottomBarItem.Community)

@@ -18,4 +18,10 @@
     <string name="newCommunity">Nova comunidade</string>
     <string name="save_community">Criar comunidade</string>
     <string name="default_web_client_id">106484845222925049776</string>
+    <string name="web_client_id">91789490626-5sgtajltqmvuasg148f2u3402km1hd9p.apps.googleusercontent.com</string>
+    <string name="privacy_terms_login">Ao continuar, você concorda com nossos Termos de Serviço e Política de Privacidade</string>
+    <string name="welcome_login">Bem-vindo</string>
+    <string name="continue_login">Faça login para continuar</string>
+    <string name="profile_image_description">Imagem de perfil de utilizador</string>
+    <string name="menu_logout">Sair</string>
 </resources>

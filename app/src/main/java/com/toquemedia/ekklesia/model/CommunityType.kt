@@ -9,5 +9,6 @@ data class CommunityType(
     @PrimaryKey val id: String,
     @ColumnInfo(name = "community_name") val communityName: String,
     @ColumnInfo(name = "community_description") val communityDescription: String,
+    @ColumnInfo(name = "members") val members: Int,
     @ColumnInfo(name = "community_image") val communityImage: String,
 )
