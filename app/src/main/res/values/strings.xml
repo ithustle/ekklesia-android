@@ -24,4 +24,8 @@
     <string name="continue_login">Faça login para continuar</string>
     <string name="profile_image_description">Imagem de perfil de utilizador</string>
     <string name="menu_logout">Sair</string>
+    <string name="profileTitleScreen">Perfil</string>
+    <string name="back_description">Botão voltar</string>
+    <string name="message_voice_description">Enviar mensagem de voz</string>
+    <string name="message_placeholder">Mensagem...</string>
 </resources>

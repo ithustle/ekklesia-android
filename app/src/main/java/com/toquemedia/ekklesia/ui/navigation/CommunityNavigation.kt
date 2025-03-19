@@ -8,13 +8,12 @@ import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.toquemedia.ekklesia.model.BottomBarItem
 import com.toquemedia.ekklesia.model.Screen
-import com.toquemedia.ekklesia.ui.screens.community.CommunityListScreen
+import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
 import com.toquemedia.ekklesia.ui.screens.community.CommunityViewModel
-import com.toquemedia.ekklesia.ui.screens.community.CreateCommunityScreen
+import com.toquemedia.ekklesia.ui.screens.community.create.CreateCommunityScreen
 import com.toquemedia.ekklesia.routes.navigateBetweenTabs
 
 fun NavGraphBuilder.communityNavigation(navController: NavController) {

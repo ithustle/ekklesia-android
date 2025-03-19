@@ -6,23 +6,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import coil3.compose.AsyncImage
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.UserType
+import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @Composable
@@ -34,18 +32,17 @@ fun PersonalInfo(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(
+        EkklesiaImage(
             model = user.photo,
             contentDescription = stringResource(id = R.string.profile_image_description),
-            contentScale = ContentScale.Crop,
-            placeholder = painterResource(R.drawable.ic_launcher_background),
             modifier = Modifier
-                .size(78.dp)
+                .size(64.dp)
                 .clip(CircleShape)
         )
+
         Column(
             modifier = Modifier
-                .padding(start = 16.dp)
+                .padding(start = 8.dp)
 
         ) {
             Text(
@@ -53,7 +50,7 @@ fun PersonalInfo(
                 color = PrincipalColor,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                lineHeight = 30.sp
+                lineHeight = 20.sp
             )
             Text(
                 text = user.email.toString(),

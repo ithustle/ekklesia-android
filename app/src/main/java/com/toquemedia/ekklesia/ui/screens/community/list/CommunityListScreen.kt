@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.ui.screens.community
+package com.toquemedia.ekklesia.ui.screens.community.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,6 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.ui.composables.HeadTitle
+import com.toquemedia.ekklesia.ui.screens.community.CommunityUiState
+import com.toquemedia.ekklesia.ui.screens.community.composables.CommunityButtonAdd
+import com.toquemedia.ekklesia.ui.screens.community.composables.CommunityCard
 import com.toquemedia.ekklesia.ui.theme.backgroundLightColor
 
 @Composable
@@ -31,6 +34,7 @@ fun CommunityListScreen(
             .fillMaxSize()
     ) {
         HeadTitle(
+            photo = state.userPhoto,
             title = stringResource(R.string.community),
             onNavigateToProfile = onNavigateToProfile
         )
@@ -47,7 +51,9 @@ fun CommunityListScreen(
             items(state.communities) { community ->
                 CommunityCard(
                     community = community,
-                    onTapAction = {}
+                    onTapAction = {},
+                    modifier = modifier
+                        .padding(bottom = 10.dp)
                 )
             }
         }

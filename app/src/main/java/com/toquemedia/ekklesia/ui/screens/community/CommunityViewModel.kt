@@ -2,7 +2,9 @@ package com.toquemedia.ekklesia.ui.screens.community
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.model.ValidationResult
+import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
-    private val repository: CommunityRepositoryImpl
+    private val repository: CommunityRepositoryImpl,
+    private val authRepository: AuthRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CommunityUiState())
@@ -23,6 +26,8 @@ class CommunityViewModel @Inject constructor(
 
     private val _validationEvent = MutableSharedFlow<ValidationResult>()
     val validationEvent = _validationEvent.asSharedFlow()
+
+    private val user = authRepository.getCurrentUser()
 
     init {
         _uiState.update { current ->
@@ -35,7 +40,8 @@ class CommunityViewModel @Inject constructor(
                 },
                 onCommunityDescriptionChange = {
                     _uiState.value = _uiState.value.copy(communityDescription = it)
-                }
+                },
+                userPhoto = user?.photo
             )
         }
         getAllCommunities()
