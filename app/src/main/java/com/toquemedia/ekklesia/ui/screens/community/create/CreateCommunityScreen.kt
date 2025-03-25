@@ -7,10 +7,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,11 +36,11 @@ import com.toquemedia.ekklesia.model.ValidationResult
 import com.toquemedia.ekklesia.ui.composables.EkklesiaButton
 import com.toquemedia.ekklesia.ui.composables.EkklesiaTextField
 import com.toquemedia.ekklesia.ui.screens.community.CommunityUiState
-import com.toquemedia.ekklesia.ui.screens.community.composables.CommunityImageProfile
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.ui.theme.backgroundLightColor
 import kotlinx.coroutines.flow.SharedFlow
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateCommunityScreen(
     modifier: Modifier = Modifier,
@@ -69,19 +75,30 @@ fun CreateCommunityScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                backgroundColor = Color.Transparent,
-                contentColor = PrincipalColor,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = PrincipalColor
+                ),
                 title = {
                     Text(
-                        stringResource(R.string.newCommunity),
+                        text = stringResource(R.string.newCommunity),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.SemiBold
                     )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { onCreateSuccessfulCommunity(false) }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back_description),
+                            tint = PrincipalColor
+                        )
+                    }
                 }
             )
         },
-        backgroundColor = backgroundLightColor,
+        containerColor = backgroundLightColor,
     ) { innerPadding ->
         Column(
             modifier = modifier

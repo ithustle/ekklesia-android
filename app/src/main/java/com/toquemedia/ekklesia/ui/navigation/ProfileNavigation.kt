@@ -6,13 +6,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.toquemedia.ekklesia.model.Screen
-import com.toquemedia.ekklesia.routes.navigateBetweenTabs
+import com.toquemedia.ekklesia.routes.Screen
+import com.toquemedia.ekklesia.routes.navigateBetweenScreens
 import com.toquemedia.ekklesia.ui.screens.login.AuthViewModel
 import com.toquemedia.ekklesia.ui.screens.profile.ProfileScreen
 
 fun NavGraphBuilder.profileNavigation(navController: NavController) {
-    composable(route = Screen.Profile.route) {
+    composable<Screen.Profile> {
 
         val viewModel = hiltViewModel<AuthViewModel>()
         val uiState by viewModel.uiState.collectAsState()
@@ -30,5 +30,5 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
 }
 
 fun NavController.navigateToProfile() {
-    this.navigateBetweenTabs(Screen.Profile.route)
+    this.navigateBetweenScreens(Screen.Profile)
 }

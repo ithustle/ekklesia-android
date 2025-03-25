@@ -2,7 +2,6 @@ package com.toquemedia.ekklesia.ui.screens.community
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.model.ValidationResult
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
@@ -18,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
     private val repository: CommunityRepositoryImpl,
-    private val authRepository: AuthRepositoryImpl
+    authRepository: AuthRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CommunityUiState())

@@ -11,7 +11,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.toquemedia.ekklesia.model.Screen
+import com.toquemedia.ekklesia.routes.Screen
+import com.toquemedia.ekklesia.routes.navigateBetweenScreens
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.devocional.CreateDevocionalScreen
 import com.toquemedia.ekklesia.ui.screens.bible.devocional.DevocionalViewModel
@@ -20,12 +21,13 @@ import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseActionOption
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VersesScreen
 import kotlinx.coroutines.launch
+import kotlin.collections.find
 
 fun NavGraphBuilder.verseNavigation(
     showDevocionalModal: (@Composable () -> Unit) -> Unit = {},
     hideDevocionalModal: () -> Unit = {}
 ) {
-    composable("${Screen.Verses.route}/{bookName}/{chapterNumber}") { backStackEntry ->
+    composable<Screen.Verses> { backStackEntry ->
         val vmTestament: TestamentViewModel = hiltViewModel()
         val vmVerses: VerseViewModel = hiltViewModel()
         val vmDevocional: DevocionalViewModel = hiltViewModel()
@@ -182,8 +184,5 @@ fun NavGraphBuilder.verseNavigation(
 }
 
 fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: String) {
-    this.navigate("${Screen.Verses.route}/${bookName}/${chapterNumber}") {
-        launchSingleTop = true
-        popUpTo("${Screen.Verses.route}/{bookName}/{chapterNumber}")
-    }
+    this.navigateBetweenScreens(Screen.Verses(bookName = bookName, chapterNumber = chapterNumber))
 }

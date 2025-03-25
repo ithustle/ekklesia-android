@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.model.BookType
-import com.toquemedia.ekklesia.ui.screens.bible.composables.Book
+import com.toquemedia.ekklesia.ui.composables.Book
 
 @Composable
 fun BookListScreen(

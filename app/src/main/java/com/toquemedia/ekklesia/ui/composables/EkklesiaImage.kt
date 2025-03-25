@@ -30,7 +30,7 @@ fun EkklesiaImage(
 
     if (isPreview) {
         Image(
-            painter = painterResource(R.drawable.user),
+            painter = painterResource(R.drawable.avatar),
             contentDescription = contentDescription,
             contentScale = ContentScale.Crop,
             modifier = modifier

@@ -1,7 +1,7 @@
 [versions]
 agp = "8.7.3"
-gson = "2.11.0"
-hilt = "2.52"
+gson = "2.12.1"
+hilt = "2.56"
 kotlin = "2.1.10"
 ksp = "2.0.21-1.0.27"
 coreKtx = "1.15.0"
@@ -11,9 +11,10 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2025.03.00"
-firebaseBom = "33.10.0"
+firebaseBom = "33.11.0"
 googleServices = "4.4.2"
 navigationCompose = "2.8.9"
+navigationSerialization = "1.8.0"
 material = "1.7.8"
 datastorePreferences = "1.1.3"
 lifecycleViewmodelCompose = "2.8.7"
@@ -24,6 +25,7 @@ playServices = "21.3.0"
 coil = "3.1.0"
 credentialPlayServices = "1.5.0"
 googleId = "1.1.1"
+serialization = "2.0.21"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,6 +45,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "navigationSerialization" }
 androidx-material = { group = "androidx.compose.material", name = "material", version.ref = "material"}
 androidx-datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastorePreferences" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt"}
@@ -71,4 +74,5 @@ hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 google-services = { id = "com.google.gms.google-services",  version.ref = "googleServices" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }

@@ -2,7 +2,7 @@ package com.toquemedia.ekklesia.ui.screens.bible.verses
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.toquemedia.ekklesia.model.NoteType
+import com.toquemedia.ekklesia.model.NoteEntity
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
 import com.toquemedia.ekklesia.ui.screens.bible.states.VerseUiState
@@ -96,7 +96,7 @@ class VerseViewModel @Inject constructor(
     ) {
         _uiState.value.onSavingNote(true)
         viewModelScope.launch {
-            val note = NoteType(
+            val note = NoteEntity(
                 bookName = bookName,
                 chapter = chapter,
                 versicle = versicle,
@@ -119,7 +119,7 @@ class VerseViewModel @Inject constructor(
         verse: String,
     ) {
         viewModelScope.launch {
-            val note = NoteType(
+            val note = NoteEntity(
                 bookName = bookName,
                 chapter = chapter,
                 versicle = versicle,

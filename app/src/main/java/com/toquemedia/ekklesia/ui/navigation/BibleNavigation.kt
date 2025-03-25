@@ -35,7 +35,3 @@ fun NavGraphBuilder.bibleNavigation(navController: NavController) {
         }
     }
 }
-
-fun NavHostController.navigateToBible() {
-    this.navigateBetweenTabs(BottomBarItem.Bible.route)
-}

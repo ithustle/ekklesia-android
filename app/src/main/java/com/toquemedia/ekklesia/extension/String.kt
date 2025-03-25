@@ -3,10 +3,10 @@ package com.toquemedia.ekklesia.extension
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.core.net.toUri
-import java.io.ByteArrayOutputStream
 import android.util.Base64
 import androidx.core.graphics.scale
+import androidx.core.net.toUri
+import java.io.ByteArrayOutputStream
 import java.util.Locale
 import kotlin.math.sqrt
 
@@ -47,17 +47,13 @@ fun String.base64ToBitmap(): Bitmap {
     return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
 }
 
-fun String.textSlug(): String {
-    return this
-        .lowercase(Locale.ROOT)
-        .replace(" ", "-")
-        .replace("[áàãâä]".toRegex(), "a")
-        .replace("[éèêë]".toRegex(), "e")
-        .replace("[íìîï]".toRegex(), "i")
-        .replace("[óòõôö]".toRegex(), "o")
-        .replace("[úùûü]".toRegex(), "u")
-        .replace("ç", "c")
-        .replace("[^a-z0-9-]".toRegex(), "")
+fun String.getInitials(): String {
+    val ignoredWords = listOf("da", "de", "do", "das", "dos", "e", "a", "o")
+    val words = this.trim().split("\\s+".toRegex()).filter { it.isNotEmpty() }
+    return words
+        .filter { it.lowercase() !in ignoredWords }
+        .mapNotNull { it.firstOrNull()?.uppercase() }
+        .joinToString("")
 }
 
 private fun bitmapToBase64WithSizeLimit(bitmap: Bitmap): String {

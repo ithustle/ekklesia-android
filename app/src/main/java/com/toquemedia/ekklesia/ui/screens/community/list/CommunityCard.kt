@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.ui.screens.community.composables
+package com.toquemedia.ekklesia.ui.screens.community.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,22 +23,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.base64ToBitmap
-import com.toquemedia.ekklesia.model.CommunityType
+import com.toquemedia.ekklesia.model.CommunityEntity
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
 @Composable
 fun CommunityCard(
     modifier: Modifier = Modifier,
-    community: CommunityType,
-    onTapAction: () -> Unit = {}
+    community: CommunityEntity,
+    onNavigateToCommunity: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
             .clickable {
-                onTapAction()
+                onNavigateToCommunity()
             }
     ) {
         Image(
@@ -71,6 +71,6 @@ fun CommunityCard(
 @Composable
 private fun CommunityCardPrev() {
     CommunityCard(
-        community = CommunityMock.getAll().first()
+        community = CommunityMock.getAll().first() as CommunityEntity
     )
 }

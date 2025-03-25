@@ -3,7 +3,7 @@ package com.toquemedia.ekklesia.repository
 import android.content.Context
 import com.toquemedia.ekklesia.dao.CommunityDao
 import com.toquemedia.ekklesia.extension.uriToBase64
-import com.toquemedia.ekklesia.model.CommunityType
+import com.toquemedia.ekklesia.model.CommunityEntity
 import com.toquemedia.ekklesia.model.interfaces.CommunityRepository
 import com.toquemedia.ekklesia.services.CommunityService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -21,7 +21,7 @@ class CommunityRepositoryImpl @Inject constructor(
 
     override suspend fun createCommunity(name: String, description: String, image: String) {
         withContext(Dispatchers.IO) {
-            val community = CommunityType(
+            val community = CommunityEntity(
                 id = UUID.randomUUID().toString(),
                 communityName = name.trim(),
                 communityDescription = description,
@@ -33,7 +33,7 @@ class CommunityRepositoryImpl @Inject constructor(
                 dao.insert(community)
 
                 try {
-                    service.createCommunity(community)
+                    service.createCommunity(community as CommunityEntity)
                 } catch (firestoreException: Exception) {
                     dao.deleteCommunity(community.id)
                     throw firestoreException
@@ -46,7 +46,7 @@ class CommunityRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAll(): Flow<List<CommunityType>> {
+    override suspend fun getAll(): Flow<List<CommunityEntity>> {
         return dao.getAll()
     }
 

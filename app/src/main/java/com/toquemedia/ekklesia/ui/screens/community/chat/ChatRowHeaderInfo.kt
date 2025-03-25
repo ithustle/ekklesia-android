@@ -35,19 +35,20 @@ fun ChatRowHeaderInfo(
             model = communityImage,
             contentDescription = stringResource(R.string.community_description),
             modifier = modifier
-                .size(48.dp)
+                .size(42.dp)
                 .clip(CircleShape)
         )
 
         Column {
             Text(
                 text = communityName,
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                maxLines = 1
             )
             Text(
                 text = "12 membros",
                 fontSize = 12.sp,
-                lineHeight = 15.sp,
+                lineHeight = 12.sp,
                 color = Color.LightGray
             )
         }

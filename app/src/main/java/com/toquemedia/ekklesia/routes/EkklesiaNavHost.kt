@@ -16,16 +16,17 @@ fun EkklesiaNavHost(
 ) {
     NavHost(
         navController,
-        startDestination = bibleGraphRoute,
+        startDestination = homeGraphRoute,
         modifier = modifier
     ) {
         authGraph(navController = navController)
+        homeGraph(navController = navController)
         bibleGraph(
             navController = navController,
             showDevocionalModal = showDevocionalModal,
             hideDevocionalModal = hideDevocionalModal
         )
-        homeGraph(navController = navController)
+        communityGraph(navController = navController)
     }
 }
 
@@ -37,7 +38,13 @@ fun NavController.navigateBetweenTabs(destination: String) = this.navigate(desti
     restoreState = true
 }
 
-fun NavController.navigateToFirstScreen(route: String) =
+fun NavController.navigateToFirstScreen(route: Screen) =
     this.navigate(route) {
         popUpTo(this@navigateToFirstScreen.graph.id)
+    }
+
+fun NavController.navigateBetweenScreens(route: Screen) =
+    this.navigate(route) {
+        launchSingleTop = true
+        popUpTo(route)
     }

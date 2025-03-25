@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.plugin.serialization)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -65,6 +67,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.storage)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)

@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.ui.screens.community.composables
+package com.toquemedia.ekklesia.ui.screens.community.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

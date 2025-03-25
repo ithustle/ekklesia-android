@@ -7,8 +7,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Book
 import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.Groups
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,11 +23,6 @@ sealed class BottomBarItem(
     val icon: ImageVector,
     val route: String
 ) {
-    data object Login : BottomBarItem(
-        label = R.string.login,
-        icon = Icons.Rounded.Dashboard,
-        route = "login"
-    )
     data object Home : BottomBarItem(
         label = R.string.home,
         icon = Icons.Rounded.Dashboard,
@@ -47,18 +42,10 @@ sealed class BottomBarItem(
     )
 }
 
-sealed class Screen(val route: String) {
-    data object Chapters : Screen("chapters")
-    data object Verses : Screen("verses")
-    data object CreateCommunity: Screen("createCommunity")
-    data object Profile: Screen("profile")
-}
-
-val ekklesiaBottomBarItems = listOf(BottomBarItem.Bible, BottomBarItem.Community)
+val ekklesiaBottomBarItems = listOf(BottomBarItem.Home, BottomBarItem.Bible, BottomBarItem.Community)
 
 @Composable
 fun EkklesiaBottomNavigation(
-    barItems: List<BottomBarItem>,
     currentScreen: BottomBarItem,
     onTabSelected: (BottomBarItem) -> Unit,
     modifier: Modifier = Modifier,
@@ -67,7 +54,7 @@ fun EkklesiaBottomNavigation(
         modifier = modifier,
         backgroundColor = Color.White,
     ) {
-        barItems.forEach { screen ->
+        ekklesiaBottomBarItems.forEach { screen ->
             BottomNavigationItem(
                 onClick = {
                     onTabSelected(screen)

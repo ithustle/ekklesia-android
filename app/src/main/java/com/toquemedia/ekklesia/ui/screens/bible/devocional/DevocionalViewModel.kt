@@ -4,7 +4,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.toquemedia.ekklesia.model.DevocionalType
+import com.toquemedia.ekklesia.model.DevocionalEntity
 import com.toquemedia.ekklesia.repository.DevocionalRepositoryImpl
 import com.toquemedia.ekklesia.ui.screens.bible.states.DevocionalUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,7 +47,7 @@ class DevocionalViewModel @Inject constructor(
 
     fun saveDevocional(bookName: String, chapter: Int?, versicle: Int, verse: String, isDraft: Boolean = false) {
         viewModelScope.launch {
-            val devocional = DevocionalType(
+            val devocional = DevocionalEntity(
                 id = "${bookName}_${chapter}_$versicle",
                 bookName = bookName,
                 versicle = versicle,

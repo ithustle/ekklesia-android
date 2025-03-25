@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +49,7 @@ fun EkklesiaTextField(
             ),
             modifier = modifier
                 .background(color = Color.White, shape = RoundedCornerShape(4.dp))
+                .fillMaxWidth()
                 .height(height = height)
                 .padding(vertical = 12.dp, horizontal = 10.dp),
             singleLine = singleLine,
@@ -64,7 +65,6 @@ fun EkklesiaTextField(
                     .padding(vertical = 10.dp, horizontal = 10.dp)
             )
         }
-
     }
 }
 

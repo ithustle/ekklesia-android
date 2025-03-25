@@ -3,7 +3,7 @@ package com.toquemedia.ekklesia.ui.screens.community.chat
 import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,7 +41,7 @@ fun ChatTopBar(
         actions = {
             IconButton(onClick = {}) {
                 Icon(
-                    imageVector = Icons.Rounded.MoreVert,
+                    imageVector = Icons.Outlined.Info,
                     contentDescription = "More",
                     tint = Color.White
                 )

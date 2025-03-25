@@ -5,6 +5,7 @@ import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
 import com.toquemedia.ekklesia.dao.CommunityDao
 import com.toquemedia.ekklesia.dao.DevocionalDao
+import com.toquemedia.ekklesia.dao.MessageDao
 import com.toquemedia.ekklesia.dao.NoteDao
 import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.services.CommunityService
@@ -30,6 +31,8 @@ class DatabaseModule {
     fun provideNoteService(): NoteService = NoteService()
     @Provides
     fun provideCommunityDao(appDatabase: AppDatabase): CommunityDao = appDatabase.CommunityDao()
+    @Provides
+    fun provideMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.MessageDao()
     @Provides
     fun provideCommunityService(): CommunityService = CommunityService()
 }

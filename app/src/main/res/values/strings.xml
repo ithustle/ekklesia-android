@@ -28,4 +28,12 @@
     <string name="back_description">Botão voltar</string>
     <string name="message_voice_description">Enviar mensagem de voz</string>
     <string name="message_placeholder">Mensagem...</string>
+    <string name="community_details">Detalhes</string>
+    <string name="invite_link_description">Link de convite ao grupo</string>
+    <string name="invite_link">Link de convite</string>
+    <string name="invite_link_tip">Toque para copiar o link para convidar</string>
+    <string name="change_community_description">Mudança de comunidade</string>
+    <string name="like_icon_description">Gostar da publicação</string>
+    <string name="add_stories_description">Adicionar uma storie</string>
+    <string name="join_to_community">Aderir</string>
 </resources>

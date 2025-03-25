@@ -9,22 +9,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -33,9 +33,10 @@ import com.toquemedia.ekklesia.model.BottomBarItem
 import com.toquemedia.ekklesia.model.EkklesiaBottomNavigation
 import com.toquemedia.ekklesia.model.ekklesiaBottomBarItems
 import com.toquemedia.ekklesia.routes.EkklesiaNavHost
+import com.toquemedia.ekklesia.routes.navigateToBibleGraph
+import com.toquemedia.ekklesia.routes.navigateToCommunityGraph
+import com.toquemedia.ekklesia.routes.navigateToHomeGraph
 import com.toquemedia.ekklesia.ui.composables.EkklesiaModalSheet
-import com.toquemedia.ekklesia.ui.navigation.navigateToBible
-import com.toquemedia.ekklesia.ui.navigation.navigateToCommunity
 import com.toquemedia.ekklesia.ui.theme.EkklesiaTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -77,10 +78,9 @@ class MainActivity : ComponentActivity() {
                         }
                         mutableStateOf(item)
                     }
-
                     val containsInBottomAppBarItems = when(currentRoute) {
-                        BottomBarItem.Login.route -> false
-                        else -> true
+                        BottomBarItem.Home.route, BottomBarItem.Bible.route, BottomBarItem.Community.route -> true
+                        else -> false
                     }
 
                     EkklesiaApp(
@@ -89,8 +89,9 @@ class MainActivity : ComponentActivity() {
                         sheetContent = sheetContent.value,
                         onTabItemChange = {
                             when(it.label) {
-                                BottomBarItem.Bible.label -> navController.navigateToBible()
-                                BottomBarItem.Community.label -> navController.navigateToCommunity()
+                                BottomBarItem.Home.label -> navController.navigateToHomeGraph()
+                                BottomBarItem.Bible.label -> navController.navigateToBibleGraph()
+                                BottomBarItem.Community.label -> navController.navigateToCommunityGraph()
                             }
                         },
                         isLoginActive = containsInBottomAppBarItems
@@ -142,7 +143,6 @@ fun EkklesiaApp(
             bottomBar = {
                 if (isLoginActive) {
                     EkklesiaBottomNavigation(
-                        barItems = ekklesiaBottomBarItems,
                         currentScreen = tabSelected,
                         onTabSelected = onTabItemChange
                     )
@@ -151,7 +151,7 @@ fun EkklesiaApp(
         ) { padding ->
             Box(
                 modifier = modifier
-                    .padding(padding)
+                    .padding(padding.calculateStartPadding(LayoutDirection.Ltr))
             ) {
                 content()
             }

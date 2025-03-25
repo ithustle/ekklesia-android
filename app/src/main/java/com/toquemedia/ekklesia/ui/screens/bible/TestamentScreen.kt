@@ -2,11 +2,11 @@ package com.toquemedia.ekklesia.ui.screens.bible
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.BookType
 import com.toquemedia.ekklesia.ui.screens.bible.book.BookListScreen
 import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
@@ -54,7 +55,7 @@ fun TestamentScreen(
             Column {
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
-                    backgroundColor = MaterialTheme.colors.background,
+                    backgroundColor = MaterialTheme.colorScheme.background,
                     modifier = modifier
                         .padding(innerPadding)
                 ) {

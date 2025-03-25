@@ -5,22 +5,34 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
+import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.BottomBarItem
-import com.toquemedia.ekklesia.model.Screen
-import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
+import com.toquemedia.ekklesia.model.CommunityType
+import com.toquemedia.ekklesia.model.createNavParametersScreenType
+import com.toquemedia.ekklesia.routes.Screen
+import com.toquemedia.ekklesia.routes.navigateBetweenScreens
 import com.toquemedia.ekklesia.ui.screens.community.CommunityViewModel
+import com.toquemedia.ekklesia.ui.screens.community.chat.ChatScreen
+import com.toquemedia.ekklesia.ui.screens.community.chat.ChatViewModel
 import com.toquemedia.ekklesia.ui.screens.community.create.CreateCommunityScreen
-import com.toquemedia.ekklesia.routes.navigateBetweenTabs
+import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
+import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
+import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
+import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable(BottomBarItem.Community.route) {
 
         val viewModel = hiltViewModel<CommunityViewModel>()
         val uiState by viewModel.uiState.collectAsState()
+
+        val context = LocalContext.current
 
         CommunityListScreen(
             onOpenToCreateCommunity = {
@@ -29,11 +41,15 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             onNavigateToProfile = {
                 navController.navigateToProfile()
             },
+            onNavigateToCommunity = {
+                var community = it.toCommunity(context)
+                navController.navigateToCommunityFeed(community = community)
+            },
             state = uiState
         )
     }
 
-    composable(Screen.CreateCommunity.route) {
+    composable<Screen.CreateCommunity> {
 
         val viewModel = hiltViewModel<CommunityViewModel>()
         val uiState by viewModel.uiState.collectAsState()
@@ -59,12 +75,39 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             }
         )
     }
+
+    composable<Screen.CommunityFeed>(
+        typeMap = mapOf(typeOf<CommunityType>() to createNavParametersScreenType<CommunityType>())
+    ) { stackEntry ->
+
+        val viewModel = hiltViewModel<FeedCommunityViewModel>()
+        val state by viewModel.uiState.collectAsState()
+        val args = stackEntry.toRoute<Screen.CommunityFeed>()
+
+        FeedScreen(
+            community = args.community,
+            state = state,
+            onNavigateToChat = {
+                navController.navigateToChatScreen(community = args.community)
+            }
+        )
+    }
+
+    composable<Screen.Chat>(
+        typeMap = mapOf(typeOf<CommunityType>() to createNavParametersScreenType<CommunityType>())
+    ) { stackEntry ->
+
+        val viewModel = hiltViewModel<ChatViewModel>()
+        val state by viewModel.uiState.collectAsState()
+        val arg = stackEntry.toRoute<Screen.Chat>()
+
+        ChatScreen(
+            community = arg.community,
+            state = state
+        )
+    }
 }
 
-fun NavController.navigateToCommunity() {
-    this.navigateBetweenTabs(BottomBarItem.Community.route)
-}
-
-fun NavController.navigateToCreateCommunity() {
-    this.navigateBetweenTabs(Screen.CreateCommunity.route)
-}
+fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
+fun NavController.navigateToCommunityFeed(community: CommunityType) = this.navigateBetweenScreens(Screen.CommunityFeed(community))
+fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(community))

@@ -26,5 +26,4 @@ fun NavGraphBuilder.bibleGraph(
     }
 }
 
-fun NavController.navigateToBibleGraph() =
-    this.navigateToFirstScreen(bibleGraphRoute)
+fun NavController.navigateToBibleGraph() = this.navigateBetweenTabs(bibleGraphRoute)

@@ -8,19 +8,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
-import com.toquemedia.ekklesia.ui.screens.community.CommunityUiState
+import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
 @Composable
 fun ChatScreen(
     modifier: Modifier = Modifier,
-    state: CommunityUiState
+    community: CommunityType,
+    state: ChatUiState
 ) {
     Scaffold(
         topBar = {
             ChatTopBar(
-                communityName = state.community?.communityName.toString(),
-                communityImage = state.community?.communityImage?.toUri()
+                communityName = community.communityName.toString(),
+                communityImage = community.communityImage.toUri()
             )
         }
     ) { innerPadding ->
@@ -33,15 +34,19 @@ fun ChatScreen(
             }
             Spacer(modifier = Modifier.weight(1f))
 
-            ChatInputMessage()
+            ChatInputMessage(
+                value = "",
+                onChangeValue = {}
+            )
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun ChatScreenPrev() {
     ChatScreen(
-        state = CommunityUiState(community = CommunityMock.getAll().first())
+        community = CommunityMock.getAll().first(),
+        state = ChatUiState()
     )
 }
