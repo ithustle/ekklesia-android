@@ -1,18 +1,10 @@
 package com.toquemedia.ekklesia.repository
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import androidx.annotation.StyleRes
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.dao.AppCacheDao
 import com.toquemedia.ekklesia.dao.VerseDao
-import com.toquemedia.ekklesia.extension.currentDateAsString
 import com.toquemedia.ekklesia.extension.toPortuguese
 import com.toquemedia.ekklesia.model.interfaces.VerseRepository
 import com.toquemedia.ekklesia.services.OurmannaService
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.util.Date
 import javax.inject.Inject
 
 class VerseRepositoryImpl @Inject constructor(
@@ -21,7 +13,6 @@ class VerseRepositoryImpl @Inject constructor(
 ): VerseRepository {
 
     val markedVerses: MutableStateFlow<List<String>> = verse.versesMarked
-    var verseOfDay: MutableStateFlow<Triple<String, Int, Int>?> = MutableStateFlow(null)
 
     override suspend fun markVerse(bookName: String, chapter: Int, versicle: Int, verse: String) {
         val verseId = "${bookName}_${chapter}_$versicle"
@@ -42,18 +33,15 @@ class VerseRepositoryImpl @Inject constructor(
         return this.verse.getVerseMarked()
     }
 
-    override suspend fun getVerseOfDay() {
+    override suspend fun getVerseOfDay(): Triple<String, Int, Int>? {
         val regex = Regex("""([\w\s]+)\s(\d+):(\d+)""")
         val response = ourmannaService.getVerseOfDay()
 
         val matchResult = regex.find(response.verse.details.reference)
 
-        val result = matchResult?.let {
+        return matchResult?.let {
             val (book, cap, verse) = it.destructured
-            val verseTriple = Triple(book.toPortuguese(), cap.toInt(), verse.toInt())
-            verseTriple
+            Triple(book.toPortuguese(), cap.toInt(), verse.toInt())
         }
-
-        verseOfDay = MutableStateFlow(result)
     }
 }

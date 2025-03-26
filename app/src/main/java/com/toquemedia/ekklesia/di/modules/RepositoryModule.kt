@@ -64,5 +64,4 @@ abstract class RepositoryModule {
     abstract fun bindMessageRepository(
         impl: MessageRepositoryImpl
     ) : MessageRepository
-
 }

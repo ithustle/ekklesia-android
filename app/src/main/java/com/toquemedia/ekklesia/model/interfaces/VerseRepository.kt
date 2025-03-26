@@ -5,5 +5,5 @@ interface VerseRepository {
     suspend fun unMarkVerse(bookName: String, chapter: Int, versicle: Int)
     suspend fun getMarkedVerse(bookName: String, chapter: Int, versicle: Int): String?
     suspend fun getMarkedVerse()
-    suspend fun getVerseOfDay()
+    suspend fun getVerseOfDay(): Triple<String, Int, Int>?
 }

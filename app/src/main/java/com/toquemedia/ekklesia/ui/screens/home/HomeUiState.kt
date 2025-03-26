@@ -1,5 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.home
 
+import com.toquemedia.ekklesia.model.VerseType
+
 data class HomeUiState(
-    val verseOfDay: Triple<String, Int, Int>? = null
+    val verseOfDay: VerseType? = null
 )

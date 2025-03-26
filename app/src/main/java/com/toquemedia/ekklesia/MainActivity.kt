@@ -10,13 +10,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -25,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,7 +54,9 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val appViewModel = hiltViewModel<AppViewModel>()
 
-            println("MainActivity")
+            appViewModel.activityContext = this
+
+            println("MainActivity ${appViewModel.currentUser}")
 
             CompositionLocalProvider(LocalAppViewModel provides appViewModel) {
                 EkklesiaTheme {
@@ -100,6 +100,7 @@ class MainActivity : ComponentActivity() {
                         ) {
                             EkklesiaNavHost(
                                 navController = navController,
+                                isLoginActive = appViewModel.currentUser != null,
                                 showDevocionalModal = { content ->
                                     sheetContent.value = content
                                     scope.launch { bottomSheetState.show() }
@@ -154,7 +155,7 @@ fun EkklesiaApp(
         ) { padding ->
             Box(
                 modifier = modifier
-                    .padding(padding.calculateStartPadding(LayoutDirection.Ltr))
+                    .padding(padding)
             ) {
                 content()
             }

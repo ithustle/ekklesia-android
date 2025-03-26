@@ -40,4 +40,5 @@
     <string name="verse_of_the_day">Versículo do dia</string>
     <string name="verse_day">verso_do_dia</string>
     <string name="date_verse_day">data_do_verso_do_dia</string>
+    <string name="background_image_verse">Imagem de fundo do versículo</string>
 </resources>

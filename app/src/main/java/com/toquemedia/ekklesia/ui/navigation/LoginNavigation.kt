@@ -6,6 +6,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.routes.navigateToFirstScreen
 import com.toquemedia.ekklesia.routes.navigateToHomeGraph
@@ -18,12 +19,15 @@ fun NavGraphBuilder.loginNavigation(navController: NavController) {
         val viewModel = hiltViewModel<AuthViewModel>()
         val uiState by viewModel.uiState.collectAsState()
 
+        val appViewModel = LocalAppViewModel.current
+
         LoginScreen(
             state = uiState,
             onClickLogin = {
-                viewModel.signIn()
+                viewModel.signIn(appViewModel.activityContext)
             },
             onUserAuthenticated = {
+                appViewModel.currentUser = it
                 navController.navigateToHomeGraph()
             }
         )

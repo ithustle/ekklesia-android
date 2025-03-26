@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.ui.screens.login.composable.GoogleSignInButton
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
@@ -32,13 +33,12 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 fun LoginScreen(
     state: AuthUiState,
     onClickLogin: () -> Unit = {},
-    onUserAuthenticated: () -> Unit = {}
+    onUserAuthenticated: (UserType) -> Unit = {}
 ) {
 
     LaunchedEffect(state.user) {
         if (state.user != null) {
-            println("LOGADO ${state.user}")
-            onUserAuthenticated()
+            onUserAuthenticated(state.user)
         }
     }
 

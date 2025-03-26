@@ -10,13 +10,15 @@ import androidx.navigation.compose.NavHost
 @Composable
 fun EkklesiaNavHost(
     modifier: Modifier = Modifier,
+    isLoginActive: Boolean,
     navController: NavHostController,
     showDevocionalModal: (@Composable () -> Unit) -> Unit,
     hideDevocionalModal: () -> Unit
 ) {
+    println("isLoginActive: $isLoginActive")
     NavHost(
         navController,
-        startDestination = homeGraphRoute,
+        startDestination = if (isLoginActive) Screen.HomeScreenGraph else Screen.AuthScreenGraph,
         modifier = modifier
     ) {
         authGraph(navController = navController)
@@ -30,7 +32,7 @@ fun EkklesiaNavHost(
     }
 }
 
-fun NavController.navigateBetweenTabs(destination: String) = this.navigate(destination) {
+fun NavController.navigateBetweenTabs(destination: Screen) = this.navigate(destination) {
     popUpTo(this@navigateBetweenTabs.graph.findStartDestination().id) {
         saveState = true
     }

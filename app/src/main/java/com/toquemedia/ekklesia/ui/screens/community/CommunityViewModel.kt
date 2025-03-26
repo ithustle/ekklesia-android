@@ -2,6 +2,7 @@ package com.toquemedia.ekklesia.ui.screens.community
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.ValidationResult
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
@@ -46,7 +47,7 @@ class CommunityViewModel @Inject constructor(
         getAllCommunities()
     }
 
-    fun createCommunity() {
+    fun createCommunity(ownerEmail: String?) {
         viewModelScope.launch {
             _uiState.value.let {
                 _validationEvent.emit(ValidationResult.Loading)
@@ -70,7 +71,8 @@ class CommunityViewModel @Inject constructor(
                             repository.createCommunity(
                                 name = it.communityName,
                                 description = it.communityDescription,
-                                image = it.imageUri
+                                image = it.imageUri,
+                                email = ownerEmail
                             )
                             _validationEvent.emit(ValidationResult.Success)
                         } catch (e: Exception) {
@@ -84,7 +86,7 @@ class CommunityViewModel @Inject constructor(
 
     private fun getAllCommunities() {
         viewModelScope.launch {
-            repository.getAll().collect {
+            repository.getAllLocal().collect {
                 _uiState.value = _uiState.value.copy(communities = it)
             }
         }

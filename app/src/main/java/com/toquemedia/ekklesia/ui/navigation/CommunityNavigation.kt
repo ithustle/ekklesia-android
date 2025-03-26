@@ -11,8 +11,8 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.extension.toCommunity
-import com.toquemedia.ekklesia.model.BottomBarItem
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.createNavParametersScreenType
 import com.toquemedia.ekklesia.routes.Screen
@@ -27,7 +27,7 @@ import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
 import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
-    composable(BottomBarItem.Community.route) {
+    composable<Screen.Communities> {
 
         val viewModel = hiltViewModel<CommunityViewModel>()
         val uiState by viewModel.uiState.collectAsState()
@@ -54,6 +54,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val viewModel = hiltViewModel<CommunityViewModel>()
         val uiState by viewModel.uiState.collectAsState()
 
+        val user = LocalAppViewModel.current.currentUser
+
         val launcherCommunityPhoto =
             rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
                 it?.let {
@@ -68,7 +70,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 launcherCommunityPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             },
             onCreateCommunity = {
-                viewModel.createCommunity()
+                viewModel.createCommunity(user?.email)
             },
             onCreateSuccessfulCommunity = {
                 navController.popBackStack()

@@ -14,6 +14,7 @@ data class CommunityEntity(
     @ColumnInfo(name = "community_description") val communityDescription: String,
     @ColumnInfo(name = "members") val members: Int,
     @ColumnInfo(name = "community_image") var communityImage: String,
+    @ColumnInfo(name = "email") var email: String,
 )
 
 @Parcelize
@@ -24,4 +25,5 @@ data class CommunityType(
     val communityDescription: String,
     val members: Int,
     val communityImage: String,
+    val email: String,
 ): Parcelable

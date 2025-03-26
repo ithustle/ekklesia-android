@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.repository
 
+import android.app.Activity
 import android.content.Context
 import androidx.core.content.ContextCompat.getString
 import androidx.credentials.ClearCredentialStateRequest
@@ -23,14 +24,12 @@ import javax.inject.Inject
 
 
 class AuthRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val auth: FirebaseAuth
+    @ApplicationContext private val applicationContext: Context,
+    private val auth: FirebaseAuth,
 ) : AuthRepository {
 
-    private val credentialManager = CredentialManager.create(context)
-
-    override suspend fun googleSignIn(): UserType? {
-        val user = this.handleSignIn()
+    override suspend fun googleSignIn(activityContext: Activity): UserType? {
+        val user = this.handleSignIn(activityContext)
         return user?.let { user ->
             UserType(
                 id = user.uid,
@@ -54,14 +53,18 @@ class AuthRepositoryImpl @Inject constructor(
         return null
     }
     override suspend fun signOut() {
+        val credentialManager = CredentialManager.create(applicationContext)
         credentialManager.clearCredentialState(ClearCredentialStateRequest())
         auth.signOut()
     }
 
-    private suspend fun buildCredentialRequest(): GetCredentialResponse {
+    private suspend fun buildCredentialRequest(
+        credentialManager: CredentialManager,
+        activity: Activity
+    ): GetCredentialResponse {
         val option = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(getString(context, R.string.web_client_id))
+            .setServerClientId(getString(applicationContext, R.string.web_client_id))
             .setAutoSelectEnabled(false)
             .build()
 
@@ -69,12 +72,13 @@ class AuthRepositoryImpl @Inject constructor(
             .addCredentialOption(option)
             .build()
 
-        return credentialManager.getCredential(request = request, context = context)
+        return credentialManager.getCredential(request = request, context = activity)
     }
 
-    private suspend fun handleSignIn(): FirebaseUser? {
+    private suspend fun handleSignIn(activityContext: Activity): FirebaseUser? {
         try {
-            val result = buildCredentialRequest()
+            val credentialManager = CredentialManager.create(activityContext)
+            val result = buildCredentialRequest(credentialManager, activityContext)
             val credential = result.credential
 
             if (

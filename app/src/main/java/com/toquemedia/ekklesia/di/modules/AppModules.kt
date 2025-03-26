@@ -24,6 +24,8 @@ object AppModules {
         context, AppDatabase::class.java, "ekklesiaDb"
     ).build()
 
+    @Provides
+    @Singleton
     fun provideFirestoreDatabase(): FirebaseFirestore = FirebaseFirestore.getInstance().apply {
         firestoreSettings =
             FirebaseFirestoreSettings.Builder().build()

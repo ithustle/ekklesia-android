@@ -13,7 +13,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,31 +21,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.UserType
+import com.toquemedia.ekklesia.model.VerseType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaTopBar
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
 @Composable
 fun HomeScreen(
-    state: HomeUiState = HomeUiState()
+    state: HomeUiState = HomeUiState(),
+    currentUser: UserType? = null
 ) {
-
-    val appViewModel = LocalAppViewModel.current
-    val avatarUser = appViewModel.currentUser
-
-    LaunchedEffect(state.verseOfDay) {
-        appViewModel.getVerseOfDay(state.verseOfDay)
-    }
-
     Scaffold(
         topBar = {
             EkklesiaTopBar(
-                title = "Bom dia, ${avatarUser?.displayName}",
+                title = "Bom dia, ${currentUser?.displayName}",
                 isBackgroundTransparent = true,
                 navigationBack = false,
-                userAvatar = avatarUser?.photo
+                userAvatar = currentUser?.photo
             )
         }
     ) { innerPadding ->
@@ -56,7 +49,6 @@ fun HomeScreen(
                 .padding(horizontal = 16.dp)
 
         ) {
-
             if (state.verseOfDay == null) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -75,7 +67,7 @@ fun HomeScreen(
                 VerseOfDay(
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp)),
-                    verse = appViewModel.verseOfTheDay
+                    verse = state.verseOfDay
                 )
             }
 
@@ -109,5 +101,18 @@ fun HomeScreen(
 @Preview(showBackground = true)
 @Composable
 private fun HomePrev() {
-    HomeScreen()
+    HomeScreen(
+        state = HomeUiState(
+            verseOfDay = VerseType(
+                bookName = "Jó",
+                chapter = 42,
+                versicle = 2,
+                text = "Bem sei que tudo podes, e que nada te impede de ser feito."
+            )
+        ),
+        currentUser = UserType(
+            id = "222",
+            displayName = "João da Silva",
+        )
+    )
 }

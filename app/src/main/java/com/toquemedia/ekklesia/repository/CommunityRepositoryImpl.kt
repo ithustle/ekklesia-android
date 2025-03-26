@@ -19,35 +19,42 @@ class CommunityRepositoryImpl @Inject constructor(
     private val dao : CommunityDao
 ) : CommunityRepository {
 
-    override suspend fun createCommunity(name: String, description: String, image: String) {
+    override suspend fun createCommunity(name: String, description: String, image: String, email: String?) {
         withContext(Dispatchers.IO) {
-            val community = CommunityEntity(
-                id = UUID.randomUUID().toString(),
-                communityName = name.trim(),
-                communityDescription = description,
-                communityImage = image.uriToBase64(context),
-                members = 0
-            )
-
-            try {
-                dao.insert(community)
+            email?.let {
+                val community = CommunityEntity(
+                    id = UUID.randomUUID().toString(),
+                    communityName = name.trim(),
+                    communityDescription = description,
+                    communityImage = image.uriToBase64(context),
+                    members = 0,
+                    email = it
+                )
 
                 try {
-                    service.createCommunity(community as CommunityEntity)
-                } catch (firestoreException: Exception) {
-                    dao.deleteCommunity(community.id)
-                    throw firestoreException
-                }
+                    dao.insert(community)
 
-            } catch (e: Exception) {
-                e.printStackTrace()
-                throw e
+                    try {
+                        service.createCommunity(community)
+                    } catch (firestoreException: Exception) {
+                        dao.deleteCommunity(community.id)
+                        throw firestoreException
+                    }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    throw e
+                }
             }
         }
     }
 
-    override suspend fun getAll(): Flow<List<CommunityEntity>> {
+    override suspend fun getAllLocal(): Flow<List<CommunityEntity>> {
         return dao.getAll()
+    }
+
+    override suspend fun getAll(): List<CommunityEntity> {
+        return service.getAll()
     }
 
     override suspend fun deleteCommunity(id: String) {

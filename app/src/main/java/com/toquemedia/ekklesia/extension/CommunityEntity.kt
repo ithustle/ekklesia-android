@@ -13,6 +13,7 @@ fun CommunityEntity.toCommunity(context: Context): CommunityType {
         communityName = this.communityName,
         communityDescription = this.communityDescription,
         members = this.members,
-        communityImage = escapedUri
+        communityImage = escapedUri,
+        email = this.email
     )
 }

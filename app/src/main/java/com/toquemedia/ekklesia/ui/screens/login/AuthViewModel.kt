@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.screens.login
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
@@ -22,15 +23,17 @@ class AuthViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(user = repository.getCurrentUser())
     }
 
-    fun signIn() {
+    fun signIn(activityContext: Activity?) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true)
-            try {
-                val user = repository.googleSignIn()
-                _uiState.value = _uiState.value.copy(user = user, isLoading = false)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _uiState.value = _uiState.value.copy(isLoading = false)
+            activityContext?.let {
+                _uiState.value = _uiState.value.copy(isLoading = true)
+                try {
+                    val user = repository.googleSignIn(it)
+                    _uiState.value = _uiState.value.copy(user = user, isLoading = false)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _uiState.value = _uiState.value.copy(isLoading = false)
+                }
             }
         }
     }

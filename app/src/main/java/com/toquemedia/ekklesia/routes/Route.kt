@@ -5,8 +5,30 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 sealed class Screen {
+
+    @Serializable
+    object AuthScreenGraph: Screen()
+
+    @Serializable
+    object HomeScreenGraph: Screen()
+
+    @Serializable
+    object BibleScreenGraph: Screen()
+
+    @Serializable
+    object CommunityScreenGraph: Screen()
+
     @Serializable
     object Login: Screen()
+
+    @Serializable
+    object Home: Screen()
+
+    @Serializable
+    object Bible: Screen()
+
+    @Serializable
+    object Communities: Screen()
 
     @Serializable
     data class Chapters(val bookName: String) : Screen()

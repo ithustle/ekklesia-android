@@ -44,7 +44,7 @@ fun VerseOfDay(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.background_verse),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.background_image_verse),
                 contentScale = ContentScale.FillWidth,
                 alpha = 0.25f,
                 modifier = Modifier
@@ -62,13 +62,14 @@ fun VerseOfDay(
                         text = stringResource(R.string.verse_of_the_day),
                         color = Color.White.copy(alpha = 0.8f),
                         fontSize = 10.sp,
-                        lineHeight = 10.sp
+                        lineHeight = 2.sp
                     )
 
                     Text(
                         text = "${verse?.bookName} ${verse?.chapter}:${verse?.versicle}",
                         color = Color.White,
                         fontSize = 14.sp,
+                        lineHeight = 2.sp,
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
