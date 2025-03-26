@@ -79,6 +79,9 @@ dependencies {
     implementation(libs.google.id)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.retrofit.http)
+    implementation(libs.converter.gson)
+
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.compiler)
 

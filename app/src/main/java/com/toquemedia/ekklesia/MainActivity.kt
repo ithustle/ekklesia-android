@@ -19,6 +19,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.toquemedia.ekklesia.model.BottomBarItem
@@ -52,60 +54,61 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
+            val appViewModel = hiltViewModel<AppViewModel>()
 
-            EkklesiaTheme {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                ) {
+            println("MainActivity")
 
-                    val bottomSheetState = rememberModalBottomSheetState(
-                        initialValue = ModalBottomSheetValue.Hidden,
-                        skipHalfExpanded = true
-                    )
-                    val sheetContent = remember { mutableStateOf<@Composable () -> Unit>({ }) }
-                    val scope = rememberCoroutineScope()
-
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
-                    val currentDestination = navBackStackEntry?.destination
-
-                    val currentRoute = currentDestination?.route
-                    val selectedItem by remember(currentDestination) {
-                        val item = when (currentRoute) {
-                            "home" -> BottomBarItem.Home
-                            "bible" -> BottomBarItem.Bible
-                            else -> BottomBarItem.Community
-                        }
-                        mutableStateOf(item)
-                    }
-                    val containsInBottomAppBarItems = when(currentRoute) {
-                        BottomBarItem.Home.route, BottomBarItem.Bible.route, BottomBarItem.Community.route -> true
-                        else -> false
-                    }
-
-                    EkklesiaApp(
-                        tabSelected = selectedItem,
-                        sheetState = bottomSheetState,
-                        sheetContent = sheetContent.value,
-                        onTabItemChange = {
-                            when(it.label) {
-                                BottomBarItem.Home.label -> navController.navigateToHomeGraph()
-                                BottomBarItem.Bible.label -> navController.navigateToBibleGraph()
-                                BottomBarItem.Community.label -> navController.navigateToCommunityGraph()
-                            }
-                        },
-                        isLoginActive = containsInBottomAppBarItems
+            CompositionLocalProvider(LocalAppViewModel provides appViewModel) {
+                EkklesiaTheme {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize(),
                     ) {
-                        EkklesiaNavHost(
-                            navController = navController,
-                            showDevocionalModal = { content ->
-                                sheetContent.value = content
-                                scope.launch { bottomSheetState.show() }
-                            },
-                            hideDevocionalModal = {
-                                scope.launch { bottomSheetState.hide() }
-                            }
+
+                        val bottomSheetState = rememberModalBottomSheetState(
+                            initialValue = ModalBottomSheetValue.Hidden,
+                            skipHalfExpanded = true
                         )
+                        val sheetContent = remember { mutableStateOf<@Composable () -> Unit>({ }) }
+                        val scope = rememberCoroutineScope()
+
+                        val navBackStackEntry by navController.currentBackStackEntryAsState()
+                        val currentDestination = navBackStackEntry?.destination
+
+                        val currentRoute = currentDestination?.route
+                        val selectedItem by remember(currentDestination) {
+                            val item = when (currentRoute) {
+                                "home" -> BottomBarItem.Home
+                                "bible" -> BottomBarItem.Bible
+                                else -> BottomBarItem.Community
+                            }
+                            mutableStateOf(item)
+                        }
+
+                        EkklesiaApp(
+                            tabSelected = selectedItem,
+                            sheetState = bottomSheetState,
+                            sheetContent = sheetContent.value,
+                            onTabItemChange = {
+                                when(it.label) {
+                                    BottomBarItem.Home.label -> navController.navigateToHomeGraph()
+                                    BottomBarItem.Bible.label -> navController.navigateToBibleGraph()
+                                    BottomBarItem.Community.label -> navController.navigateToCommunityGraph()
+                                }
+                            },
+                            isLoginActive = appViewModel.currentUser != null
+                        ) {
+                            EkklesiaNavHost(
+                                navController = navController,
+                                showDevocionalModal = { content ->
+                                    sheetContent.value = content
+                                    scope.launch { bottomSheetState.show() }
+                                },
+                                hideDevocionalModal = {
+                                    scope.launch { bottomSheetState.hide() }
+                                }
+                            )
+                        }
                     }
                 }
             }

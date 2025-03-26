@@ -21,36 +21,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.BookType
+import com.toquemedia.ekklesia.model.UserType
+import com.toquemedia.ekklesia.ui.composables.EkklesiaTopBar
 import com.toquemedia.ekklesia.ui.screens.bible.book.BookListScreen
-import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.BookMock
 
 @Composable
 fun TestamentScreen(
     modifier: Modifier = Modifier,
-    states: TestamentUiState,
-    onNavigateToChapter: (bookName: String) -> Unit = {}
+    books: List<BookType>,
+    onNavigateToChapter: (String) -> Unit = {},
+    currentUser: UserType? = null
 ) {
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
     val tabTitles = listOf(stringResource(R.string.old_testament), stringResource(R.string.new_testament))
 
     Scaffold(
-        /*floatingActionButton = {
-            FloatingActionButton(
-                containerColor = MaterialTheme.colorScheme.background,
-                shape = CircleShape,
-                onClick = {
-
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.AccessTime,
-                    contentDescription = null,
-                    tint = PrincipalColor
-                )
-            }
-        }, */
+        topBar = {
+            EkklesiaTopBar(
+                title = stringResource(R.string.bible_all),
+                isBackgroundTransparent = true,
+                navigationBack = false,
+                userAvatar = currentUser?.photo
+            )
+        },
         content = { innerPadding ->
             Column {
                 TabRow(
@@ -78,14 +73,14 @@ fun TestamentScreen(
                 when(selectedTabIndex) {
                     0 -> BookListScreen(
                         modifier = modifier.padding(horizontal = 16.dp),
-                        books = states.books.slice(0..38),
+                        books = books.slice(0..38),
                         onNavigateToBook = {
                             onNavigateToChapter(it.bookName)
                         }
                     )
                     1 -> BookListScreen(
                         modifier = modifier.padding(horizontal = 16.dp),
-                        books = states.books.slice(39..65),
+                        books = books.slice(39..65),
                         onNavigateToBook = {
                             onNavigateToChapter(it.bookName)
                         }
@@ -101,7 +96,7 @@ fun TestamentScreen(
 @Preview(showSystemUi = true)
 @Composable
 private fun TestamentScreenPrev() {
-    TestamentScreen(states = TestamentUiState(
+    TestamentScreen(
         books = BookMock.getAll()
-    ))
+    )
 }

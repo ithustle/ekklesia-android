@@ -42,7 +42,6 @@ fun FeedScreen(
                 title = community.communityName,
                 isBackgroundTransparent = true,
                 showTitleAvatar = true,
-                showUserAvatar = true,
                 actions = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.Chat,

@@ -19,7 +19,6 @@ class AuthViewModel @Inject constructor(
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     init {
-        println("OLHA EU AQUI")
         _uiState.value = _uiState.value.copy(user = repository.getCurrentUser())
     }
 

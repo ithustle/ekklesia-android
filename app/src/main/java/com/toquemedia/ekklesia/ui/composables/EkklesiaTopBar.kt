@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.composables
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -23,10 +25,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.getInitials
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
@@ -37,7 +39,7 @@ fun EkklesiaTopBar(
     title: String,
     navigationBack: Boolean = true,
     showTitleAvatar: Boolean = false,
-    showUserAvatar: Boolean = false,
+    userAvatar: Uri? = null,
     isBackgroundTransparent: Boolean = false,
     onNavigateToProfile: () -> Unit = {},
     actions: @Composable (RowScope.() -> Unit) = {}
@@ -76,9 +78,12 @@ fun EkklesiaTopBar(
                 Text(
                     text = title,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 18.sp,
-                    minLines = 1,
+                    fontSize = 20.sp,
+                    maxLines = 1,
                     color = PrincipalColor,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .width(256.dp)
                 )
             }
         },
@@ -97,13 +102,13 @@ fun EkklesiaTopBar(
 
             actions()
 
-            if (showUserAvatar) {
+            if (userAvatar != null) {
                 EkklesiaImage(
-                    model = "photo".toUri(),
+                    model = userAvatar,
                     contentDescription = stringResource(R.string.profileTitleScreen),
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
-                        .size(38.dp)
+                        .size(32.dp)
                         .clip(CircleShape)
                         .clickable {
                             onNavigateToProfile()
@@ -121,7 +126,7 @@ private fun EkklesiaTopBarPrev() {
     EkklesiaTopBar(
         title = "Título",
         isBackgroundTransparent = true,
-        showUserAvatar = true,
+        userAvatar = null,
         showTitleAvatar = true
     )
 }

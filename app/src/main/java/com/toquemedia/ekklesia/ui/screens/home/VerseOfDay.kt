@@ -19,14 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.VerseType
 
 @Composable
-fun VerseOfDay(modifier: Modifier = Modifier) {
+fun VerseOfDay(
+    modifier: Modifier = Modifier,
+    verse: VerseType?
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -52,17 +57,16 @@ fun VerseOfDay(modifier: Modifier = Modifier) {
                     .fillMaxSize()
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
-                Column(
-
-                ) {
+                Column {
                     Text(
-                        text = "Versículo do dia",
+                        text = stringResource(R.string.verse_of_the_day),
                         color = Color.White.copy(alpha = 0.8f),
-                        fontSize = 10.sp
+                        fontSize = 10.sp,
+                        lineHeight = 10.sp
                     )
 
                     Text(
-                        text = "Mateus 5:10",
+                        text = "${verse?.bookName} ${verse?.chapter}:${verse?.versicle}",
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -70,7 +74,7 @@ fun VerseOfDay(modifier: Modifier = Modifier) {
                 }
 
                 Text(
-                    text = "Felizes os perseguidos por causa da justiça, pois o reino dos céus lhes pertence.",
+                    text = verse?.text.toString(),
                     color = Color.White,
                     fontSize = 18.sp
                 )
@@ -98,5 +102,12 @@ fun VerseOfDay(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 private fun VerseOfDayPrev() {
-    VerseOfDay()
+    VerseOfDay(
+        verse = VerseType(
+            bookName = "Mateus",
+            chapter = 5,
+            versicle = 10,
+            text = "Felizes os perseguidos por causa da justiça, pois o reino dos céus lhes pertence."
+        )
+    )
 }

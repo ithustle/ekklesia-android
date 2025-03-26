@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.toquemedia.ekklesia.routes.Screen
-import com.toquemedia.ekklesia.routes.navigateToBibleGraph
 import com.toquemedia.ekklesia.routes.navigateToFirstScreen
 import com.toquemedia.ekklesia.routes.navigateToHomeGraph
 import com.toquemedia.ekklesia.ui.screens.login.AuthViewModel
