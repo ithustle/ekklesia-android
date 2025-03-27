@@ -1,22 +1,15 @@
 package com.toquemedia.ekklesia
 
-//noinspection UsingMaterialAndMaterial3Libraries
-//noinspection UsingMaterialAndMaterial3Libraries
-//noinspection UsingMaterialAndMaterial3Libraries
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -29,14 +22,12 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.toquemedia.ekklesia.model.BottomBarItem
-import com.toquemedia.ekklesia.model.EkklesiaBottomNavigation
-import com.toquemedia.ekklesia.model.ekklesiaBottomBarItems
 import com.toquemedia.ekklesia.routes.EkklesiaNavHost
+import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.routes.navigateToBibleGraph
 import com.toquemedia.ekklesia.routes.navigateToCommunityGraph
 import com.toquemedia.ekklesia.routes.navigateToHomeGraph
-import com.toquemedia.ekklesia.ui.composables.EkklesiaModalSheet
+import com.toquemedia.ekklesia.ui.navigation.navigateToProfile
 import com.toquemedia.ekklesia.ui.theme.EkklesiaTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -55,8 +46,6 @@ class MainActivity : ComponentActivity() {
             val appViewModel = hiltViewModel<AppViewModel>()
 
             appViewModel.activityContext = this
-
-            println("MainActivity ${appViewModel.currentUser}")
 
             CompositionLocalProvider(LocalAppViewModel provides appViewModel) {
                 EkklesiaTheme {
@@ -77,39 +66,45 @@ class MainActivity : ComponentActivity() {
 
                         val currentRoute = currentDestination?.route
                         val selectedItem by remember(currentDestination) {
-                            val item = when (currentRoute) {
-                                "home" -> BottomBarItem.Home
-                                "bible" -> BottomBarItem.Bible
-                                else -> BottomBarItem.Community
+                            val item = when(currentRoute) {
+                                Screen.Home::class.qualifiedName -> Screen.Home
+                                Screen.Bible::class.qualifiedName -> Screen.Bible
+                                Screen.Communities::class.qualifiedName -> Screen.Communities
+                                else -> Screen.Home
                             }
                             mutableStateOf(item)
                         }
 
                         EkklesiaApp(
-                            tabSelected = selectedItem,
                             sheetState = bottomSheetState,
                             sheetContent = sheetContent.value,
+                            tabSelected = selectedItem,
                             onTabItemChange = {
-                                when(it.label) {
-                                    BottomBarItem.Home.label -> navController.navigateToHomeGraph()
-                                    BottomBarItem.Bible.label -> navController.navigateToBibleGraph()
-                                    BottomBarItem.Community.label -> navController.navigateToCommunityGraph()
+                                when(it) {
+                                    Screen.Home -> navController.navigateToHomeGraph()
+                                    Screen.Bible -> navController.navigateToBibleGraph()
+                                    else -> navController.navigateToCommunityGraph()
                                 }
                             },
-                            isLoginActive = appViewModel.currentUser != null
-                        ) {
-                            EkklesiaNavHost(
-                                navController = navController,
-                                isLoginActive = appViewModel.currentUser != null,
-                                showDevocionalModal = { content ->
-                                    sheetContent.value = content
-                                    scope.launch { bottomSheetState.show() }
-                                },
-                                hideDevocionalModal = {
-                                    scope.launch { bottomSheetState.hide() }
-                                }
-                            )
-                        }
+                            currentUser = appViewModel.currentUser,
+                            topBarTitle = appViewModel.topBarTitle,
+                            onNavigateToProfile = {
+                                navController.navigateToProfile()
+                            },
+                            content = {
+                                EkklesiaNavHost(
+                                    navController = navController,
+                                    isLoginActive = appViewModel.currentUser != null,
+                                    showDevocionalModal = { content ->
+                                        sheetContent.value = content
+                                        scope.launch { bottomSheetState.show() }
+                                    },
+                                    hideDevocionalModal = {
+                                        scope.launch { bottomSheetState.hide() }
+                                    }
+                                )
+                            }
+                        )
                     }
                 }
             }
@@ -126,39 +121,5 @@ class MainActivity : ComponentActivity() {
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                 1
             )
-    }
-}
-
-@Composable
-fun EkklesiaApp(
-    modifier: Modifier = Modifier,
-    sheetState: ModalBottomSheetState,
-    sheetContent: @Composable () -> Unit,
-    tabSelected: BottomBarItem = ekklesiaBottomBarItems.first(),
-    onTabItemChange: (BottomBarItem) -> Unit,
-    isLoginActive: Boolean,
-    content: @Composable () -> Unit,
-) {
-    EkklesiaModalSheet(
-        sheetState = sheetState,
-        sheetContent = sheetContent,
-    ) {
-        Scaffold(
-            bottomBar = {
-                if (isLoginActive) {
-                    EkklesiaBottomNavigation(
-                        currentScreen = tabSelected,
-                        onTabSelected = onTabItemChange
-                    )
-                }
-            }
-        ) { padding ->
-            Box(
-                modifier = modifier
-                    .padding(padding)
-            ) {
-                content()
-            }
-        }
     }
 }

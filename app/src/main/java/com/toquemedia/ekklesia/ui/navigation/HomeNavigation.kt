@@ -15,13 +15,14 @@ import com.toquemedia.ekklesia.ui.screens.home.HomeViewModel
 fun NavGraphBuilder.homeNavigation() {
     composable<Screen.Home> {
 
-        val currentUser = LocalAppViewModel.current.currentUser
+        val appViewModel = LocalAppViewModel.current
         val viewModel = hiltViewModel<HomeViewModel>()
         val state by viewModel.uiState.collectAsState()
 
+        appViewModel.topBarTitle = "Bom dia, ${appViewModel.currentUser?.displayName}"
+
         HomeScreen(
-            state = state,
-            currentUser = currentUser
+            state = state
         )
     }
 }

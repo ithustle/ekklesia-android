@@ -2,6 +2,7 @@ package com.toquemedia.ekklesia.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toquemedia.ekklesia.extension.toPortuguese
 import com.toquemedia.ekklesia.model.VerseType
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
 import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
@@ -32,11 +33,11 @@ class HomeViewModel @Inject constructor(
             val books = bibleRepository.getBooks()
 
             result?.let { res ->
-                val verses = books.find { it.bookName == res.first }?.verses
+                val verses = books.find { it.bookName == res.first.toPortuguese() }?.verses
 
                 _uiState.value = _uiState.value.copy(
                     verseOfDay = VerseType(
-                        bookName = result.first,
+                        bookName = result.first.toPortuguese(),
                         chapter = result.second,
                         versicle = result.third,
                         text = verses?.get(res.second)?.get(res.third).toString()
@@ -47,6 +48,6 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getAllCommunity() {
-
+        
     }
 }

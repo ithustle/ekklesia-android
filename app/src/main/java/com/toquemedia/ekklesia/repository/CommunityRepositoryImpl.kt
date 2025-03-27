@@ -4,6 +4,7 @@ import android.content.Context
 import com.toquemedia.ekklesia.dao.CommunityDao
 import com.toquemedia.ekklesia.extension.uriToBase64
 import com.toquemedia.ekklesia.model.CommunityEntity
+import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.interfaces.CommunityRepository
 import com.toquemedia.ekklesia.services.CommunityService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -53,7 +54,7 @@ class CommunityRepositoryImpl @Inject constructor(
         return dao.getAll()
     }
 
-    override suspend fun getAll(): List<CommunityEntity> {
+    override suspend fun getAll(): List<CommunityType> {
         return service.getAll()
     }
 

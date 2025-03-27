@@ -36,6 +36,7 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EkklesiaTopBar(
+    modifier: Modifier = Modifier,
     title: String,
     navigationBack: Boolean = true,
     showTitleAvatar: Boolean = false,
@@ -54,6 +55,7 @@ fun EkklesiaTopBar(
     )
 
     TopAppBar(
+        modifier = modifier,
         windowInsets = TopAppBarDefaults.windowInsets,
         title = {
             Row {

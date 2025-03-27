@@ -19,6 +19,10 @@ abstract class FirebaseFirestoreDao {
         return db.collection(collection).get().await().toObjects(T::class.java)
     }
 
+    suspend inline fun <reified T> getAllWithQuery(collection: String, id: String): T? {
+        return db.collection(collection).document(id).get().await().toObject(T::class.java)
+    }
+
     suspend fun remove(collection: String, id: String) {
         db.collection(collection).document(id).delete().await()
     }

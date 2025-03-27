@@ -1,7 +1,6 @@
 package com.toquemedia.ekklesia
 
 import android.app.Activity
-import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -28,6 +27,8 @@ class AppViewModel @Inject constructor(
 
     var currentUser by mutableStateOf<UserType?>(authRepository.getCurrentUser())
         internal set
+
+    var topBarTitle by mutableStateOf("")
 
     var activityContext: Activity? = null
         get() = field

@@ -6,12 +6,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.toquemedia.ekklesia.LocalAppViewModel
+import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.createNavParametersScreenType
@@ -29,17 +31,17 @@ import kotlin.reflect.typeOf
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.Communities> {
 
+        val appViewModel = LocalAppViewModel.current
         val viewModel = hiltViewModel<CommunityViewModel>()
         val uiState by viewModel.uiState.collectAsState()
 
         val context = LocalContext.current
 
+        appViewModel.topBarTitle = stringResource(R.string.community)
+
         CommunityListScreen(
             onOpenToCreateCommunity = {
                 navController.navigateToCreateCommunity()
-            },
-            onNavigateToProfile = {
-                navController.navigateToProfile()
             },
             onNavigateToCommunity = {
                 var community = it.toCommunity(context)

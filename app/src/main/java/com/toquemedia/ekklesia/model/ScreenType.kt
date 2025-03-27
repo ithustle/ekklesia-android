@@ -5,8 +5,8 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Book
-import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.Groups
+import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,38 +16,43 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 sealed class BottomBarItem(
     @StringRes val label: Int,
     val icon: ImageVector,
-    val route: String
+    val route: Screen
 ) {
     data object Home : BottomBarItem(
         label = R.string.home,
-        icon = Icons.Rounded.Dashboard,
-        route = "home"
+        icon = Icons.Rounded.Home,
+        route = Screen.Home
     )
 
     data object Bible : BottomBarItem(
         label = R.string.bible,
         icon = Icons.Rounded.Book,
-        route = "bible"
+        route = Screen.Bible
     )
 
     data object Community : BottomBarItem(
         label = R.string.community,
         icon = Icons.Rounded.Groups,
-        route = "community"
+        route = Screen.Communities
     )
 }
 
-val ekklesiaBottomBarItems = listOf(BottomBarItem.Home, BottomBarItem.Bible, BottomBarItem.Community)
+val ekklesiaBottomBarItems = listOf(
+    BottomBarItem.Home,
+    BottomBarItem.Bible,
+    BottomBarItem.Community
+)
 
 @Composable
 fun EkklesiaBottomNavigation(
-    currentScreen: BottomBarItem,
-    onTabSelected: (BottomBarItem) -> Unit,
+    currentScreen: Screen,
+    onTabSelected: (Screen) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BottomNavigation(
@@ -57,15 +62,17 @@ fun EkklesiaBottomNavigation(
         ekklesiaBottomBarItems.forEach { screen ->
             BottomNavigationItem(
                 onClick = {
-                    onTabSelected(screen)
+                    if (currentScreen != screen.route) {
+                        onTabSelected(screen.route)
+                    }
                 },
-                selected = currentScreen.label == screen.label,
-                selectedContentColor = if (currentScreen.label == screen.label) PrincipalColor else Color.Gray,
+                selected = currentScreen == screen.route,
+                selectedContentColor = if (currentScreen == screen.route) PrincipalColor else Color.Gray,
                 icon = {
                     Icon(
                         imageVector = screen.icon,
                         contentDescription = null,
-                        tint = if (currentScreen.label == screen.label) PrincipalColor else Color.Gray
+                        tint = if (currentScreen == screen.route) PrincipalColor else Color.Gray
                     )
                 },
                 label = {
