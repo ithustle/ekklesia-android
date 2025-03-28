@@ -2,12 +2,18 @@ package com.toquemedia.ekklesia.ui.screens.community.list
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +37,9 @@ import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 fun CommunityCard(
     modifier: Modifier = Modifier,
     community: CommunityEntity,
-    onNavigateToCommunity: () -> Unit = {}
+    onNavigateToCommunity: () -> Unit = {},
+    onOpenMoreMenu: () -> Unit = {},
+    contentMenu: @Composable () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -59,10 +67,23 @@ fun CommunityCard(
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = "Membros: ${community.members}",
+                text = "${stringResource(R.string.members)}: ${community.members}",
                 fontSize = 13.sp,
                 color = Color.DarkGray,
             )
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        Box {
+            IconButton(onClick = onOpenMoreMenu) {
+                Icon(
+                    imageVector = Icons.Rounded.MoreVert,
+                    contentDescription = stringResource(R.string.more_option),
+                    tint = Color.DarkGray
+                )
+            }
+            contentMenu()
         }
     }
 }
@@ -71,6 +92,6 @@ fun CommunityCard(
 @Composable
 private fun CommunityCardPrev() {
     CommunityCard(
-        community = CommunityMock.getAll().first() as CommunityEntity
+        community = CommunityMock.getAll().first()
     )
 }

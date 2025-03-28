@@ -1,7 +1,9 @@
 package com.toquemedia.ekklesia.ui.screens.home
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,20 +18,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.VerseType
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
 @Composable
 fun HomeScreen(
-    state: HomeUiState = HomeUiState()
+    context: Context,
+    state: HomeUiState = HomeUiState(),
+    onJoinToCommunity: (String) -> Unit = {}
 ) {
+
+    val communities = state.communities
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -67,24 +76,43 @@ fun HomeScreen(
             Spacer(Modifier.height(38.dp))
         }
 
-        item {
-            Text(
-                text = stringResource(R.string.community),
-                fontSize = 24.sp,
-                color = PrincipalColor,
-                fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .padding(bottom = 12.dp)
-            )
-        }
+        if (state.loadCommunities) {
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(20.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+            }
+        } else if (state.communities.isNotEmpty()) {
+            item {
+                Text(
+                    text = stringResource(R.string.community),
+                    fontSize = 24.sp,
+                    color = PrincipalColor,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier
+                        .padding(bottom = 12.dp)
+                )
+            }
 
-        items(count = CommunityMock.getAll().size) {
-            HomeCommunity(
-                community = CommunityMock.getAll()[it],
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-            )
-            Spacer(Modifier.height(16.dp))
+            items(count = communities.size) {index ->
+                HomeCommunity(
+                    community = communities[index].community!!.toCommunity(context),
+                    members = communities[index].allMembers!!,
+                    loading = state.joiningToCommunity,
+                    onJoinToCommunity = onJoinToCommunity,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                )
+                Spacer(Modifier.height(16.dp))
+            }
         }
     }
 }
@@ -99,7 +127,9 @@ private fun HomePrev() {
                 chapter = 42,
                 versicle = 2,
                 text = "Bem sei que tudo podes, e que nada te impede de ser feito."
-            )
-        )
+            ),
+            communities = CommunityMock.getAllCommunityWithMembers()
+        ),
+        context = LocalContext.current
     )
 }

@@ -33,7 +33,7 @@ fun PersonalInfo(
         verticalAlignment = Alignment.CenterVertically
     ) {
         EkklesiaImage(
-            model = user.photo,
+            model = user.photo?.toUri(),
             contentDescription = stringResource(id = R.string.profile_image_description),
             modifier = Modifier
                 .size(64.dp)
@@ -69,7 +69,7 @@ private fun PersonalInfoPrev() {
             id = "7890",
             displayName = "Célio Garcia",
             email = "celio.garcia@celiogarcia.com",
-            photo = "https://assetsio.gnwcdn.com/dragon-ball-super-vegeta-liberta-a-sua-furia-1517751143067.jpg?width=1200&height=1200&fit=bounds&quality=70&format=jpg&auto=webp".toUri()
+            photo = "https://assetsio.gnwcdn.com/dragon-ball-super-vegeta-liberta-a-sua-furia-1517751143067.jpg?width=1200&height=1200&fit=bounds&quality=70&format=jpg&auto=webp"
         ),
         modifier = Modifier
             .fillMaxWidth()

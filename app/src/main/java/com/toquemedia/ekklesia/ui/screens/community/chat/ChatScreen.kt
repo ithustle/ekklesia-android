@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
+import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
@@ -46,7 +48,7 @@ fun ChatScreen(
 @Composable
 private fun ChatScreenPrev() {
     ChatScreen(
-        community = CommunityMock.getAll().first(),
+        community = CommunityMock.getAll().first().toCommunity(LocalContext.current),
         state = ChatUiState()
     )
 }

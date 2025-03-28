@@ -28,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
@@ -114,7 +113,7 @@ private fun ProfileScreenPrev() {
             id = "7890",
             displayName = "Célio Garcia",
             email = "celio.garcia@celiogarcia.com",
-            photo = "https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj".toUri()
+            photo = "https://yt3.googleusercontent.com/qGrcViAdsmfdL8NhR03s6jZVi2AP4A03XeBFShu2M4Jd88k1fNXDnpMEmHU6CvNJuMyA2z1maA0=s900-c-k-c0x00ffffff-no-rj"
         )
     )
 }

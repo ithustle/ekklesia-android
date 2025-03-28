@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.ui.composables
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -29,6 +28,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import coil3.toUri
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.getInitials
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
@@ -40,7 +41,7 @@ fun EkklesiaTopBar(
     title: String,
     navigationBack: Boolean = true,
     showTitleAvatar: Boolean = false,
-    userAvatar: Uri? = null,
+    userAvatar: String? = null,
     isBackgroundTransparent: Boolean = false,
     onNavigateToProfile: () -> Unit = {},
     actions: @Composable (RowScope.() -> Unit) = {}
@@ -106,7 +107,7 @@ fun EkklesiaTopBar(
 
             if (userAvatar != null) {
                 EkklesiaImage(
-                    model = userAvatar,
+                    model = userAvatar.toUri(),
                     contentDescription = stringResource(R.string.profileTitleScreen),
                     modifier = Modifier
                         .padding(horizontal = 12.dp)

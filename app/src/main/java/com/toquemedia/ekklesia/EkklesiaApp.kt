@@ -40,6 +40,7 @@ fun EkklesiaApp(
         sheetState = sheetState,
         sheetContent = sheetContent,
     ) {
+
         Scaffold(
             topBar = {
                 if (currentUser != null) {
@@ -86,7 +87,7 @@ private fun EkklesiaAppPrev() {
     val currentUser = UserType(
         id = "1234",
         displayName = "Célio Garcia",
-        photo = "".toUri()
+        photo = ""
     )
     EkklesiaApp(
         currentUser = currentUser,

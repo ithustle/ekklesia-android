@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +40,7 @@ fun CommunityButtonAdd(
         Box(
             modifier = modifier
                 .padding(end = 12.dp)
-                .size(48.dp)
+                .size(54.dp)
                 .clip(shape = RoundedCornerShape(4.dp))
                 .background(color = PrincipalColor),
             contentAlignment = Alignment.Center

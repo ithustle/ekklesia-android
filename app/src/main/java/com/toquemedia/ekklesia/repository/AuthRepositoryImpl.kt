@@ -35,7 +35,7 @@ class AuthRepositoryImpl @Inject constructor(
                 id = user.uid,
                 displayName = user.displayName,
                 email = user.email,
-                photo = user.photoUrl
+                photo = user.photoUrl.toString()
             )
         }
     }
@@ -46,7 +46,7 @@ class AuthRepositoryImpl @Inject constructor(
                 id = user.uid,
                 displayName = user.displayName,
                 email = user.email,
-                photo = user.photoUrl
+                photo = user.photoUrl.toString()
             )
         }
 

@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.composables.EkklesiaTopBar
@@ -89,6 +91,6 @@ fun CommunityDetailScreen(
 @Composable
 private fun CommunityDetailScreenPrev() {
     CommunityDetailScreen(
-        community = CommunityMock.getAll().first()
+        community = CommunityMock.getAll().first().toCommunity(LocalContext.current)
     )
 }

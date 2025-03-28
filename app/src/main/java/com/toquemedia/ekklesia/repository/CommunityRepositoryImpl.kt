@@ -4,7 +4,9 @@ import android.content.Context
 import com.toquemedia.ekklesia.dao.CommunityDao
 import com.toquemedia.ekklesia.extension.uriToBase64
 import com.toquemedia.ekklesia.model.CommunityEntity
-import com.toquemedia.ekklesia.model.CommunityType
+import com.toquemedia.ekklesia.model.CommunityMemberType
+import com.toquemedia.ekklesia.model.CommunityWithMembers
+import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.model.interfaces.CommunityRepository
 import com.toquemedia.ekklesia.services.CommunityService
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,23 +22,32 @@ class CommunityRepositoryImpl @Inject constructor(
     private val dao : CommunityDao
 ) : CommunityRepository {
 
-    override suspend fun createCommunity(name: String, description: String, image: String, email: String?) {
+    override suspend fun createCommunity(name: String, description: String, image: String, user: UserType?) {
         withContext(Dispatchers.IO) {
-            email?.let {
+            user?.email?.let {
                 val community = CommunityEntity(
                     id = UUID.randomUUID().toString(),
                     communityName = name.trim(),
                     communityDescription = description,
                     communityImage = image.uriToBase64(context),
-                    members = 0,
+                    members = 1,
                     email = it
                 )
 
                 try {
                     dao.insert(community)
-
                     try {
-                        service.createCommunity(community)
+                        val member = CommunityMemberType(
+                            id = user.id,
+                            user = user,
+                            isAdmin = true
+                        )
+                        val communityWithMembers = CommunityWithMembers(
+                            community = community,
+                            allMembers = listOf(member)
+                        )
+
+                        service.createCommunity(communityWithMembers)
                     } catch (firestoreException: Exception) {
                         dao.deleteCommunity(community.id)
                         throw firestoreException
@@ -50,12 +61,30 @@ class CommunityRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllLocal(): Flow<List<CommunityEntity>> {
+    override suspend fun addMember(
+        communityId: String,
+        member: CommunityMemberType
+    ) {
+        withContext(Dispatchers.IO) {
+            dao.updateMembers(communityId)
+            service.addMember(communityId, member)
+        }
+    }
+
+    override suspend fun getAll(): Flow<List<CommunityEntity>> {
         return dao.getAll()
     }
 
-    override suspend fun getAll(): List<CommunityType> {
-        return service.getAll()
+    override suspend fun getAll(email: String): List<CommunityEntity> {
+        return service.getAllWithQuery(email)
+    }
+
+    override suspend fun getAllMembers(communityId: String): List<CommunityMemberType> {
+        return service.getAllMembers(communityId)
+    }
+
+    override suspend fun removeMember(communityId: String, memberId: String) {
+        service.removeMember(communityId, memberId)
     }
 
     override suspend fun deleteCommunity(id: String) {

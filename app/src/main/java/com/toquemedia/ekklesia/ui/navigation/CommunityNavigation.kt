@@ -38,14 +38,19 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val context = LocalContext.current
 
         appViewModel.topBarTitle = stringResource(R.string.community)
+        appViewModel.showBackgroundOverlay = uiState.openDialog
 
         CommunityListScreen(
-            onOpenToCreateCommunity = {
-                navController.navigateToCreateCommunity()
-            },
+            onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
             onNavigateToCommunity = {
                 var community = it.toCommunity(context)
                 navController.navigateToCommunityFeed(community = community)
+            },
+            //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
+            onDismissDialog = { appViewModel.showBackgroundOverlay = false },
+            onDeleteCommunity = {
+                viewModel.deleteCommunity(it)
+                appViewModel.showBackgroundOverlay = false
             },
             state = uiState
         )
@@ -55,8 +60,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val viewModel = hiltViewModel<CommunityViewModel>()
         val uiState by viewModel.uiState.collectAsState()
-
-        val user = LocalAppViewModel.current.currentUser
 
         val launcherCommunityPhoto =
             rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
@@ -72,7 +75,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 launcherCommunityPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             },
             onCreateCommunity = {
-                viewModel.createCommunity(user?.email)
+                viewModel.createCommunity()
             },
             onCreateSuccessfulCommunity = {
                 navController.popBackStack()

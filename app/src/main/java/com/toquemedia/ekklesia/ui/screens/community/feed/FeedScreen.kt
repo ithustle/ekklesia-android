@@ -17,10 +17,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaTopBar
 import com.toquemedia.ekklesia.ui.screens.community.feed.story.FeedStories
@@ -116,7 +118,7 @@ fun FeedScreen(
 @Composable
 private fun FeedScreenPrev() {
     FeedScreen(
-        community = CommunityMock.getAll().first(),
+        community = CommunityMock.getAll().first().toCommunity(LocalContext.current),
         state = FeedCommunityUiState(),
     )
 }

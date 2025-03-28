@@ -1,8 +1,8 @@
 package com.toquemedia.ekklesia.ui.screens.community
 
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.ValidationResult
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
@@ -41,13 +41,16 @@ class CommunityViewModel @Inject constructor(
                 onCommunityDescriptionChange = {
                     _uiState.value = _uiState.value.copy(communityDescription = it)
                 },
-                userPhoto = user?.photo
+                onOpenDialogChange = {
+                    _uiState.value = _uiState.value.copy(openDialog = it)
+                },
+                userPhoto = user?.photo?.toUri()
             )
         }
-        getAllCommunities()
+        getAllLocalCommunities()
     }
 
-    fun createCommunity(ownerEmail: String?) {
+    fun createCommunity() {
         viewModelScope.launch {
             _uiState.value.let {
                 _validationEvent.emit(ValidationResult.Loading)
@@ -72,7 +75,7 @@ class CommunityViewModel @Inject constructor(
                                 name = it.communityName,
                                 description = it.communityDescription,
                                 image = it.imageUri,
-                                email = ownerEmail
+                                user = user
                             )
                             _validationEvent.emit(ValidationResult.Success)
                         } catch (e: Exception) {
@@ -84,9 +87,15 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun getAllCommunities() {
+    fun deleteCommunity(communityId: String) {
         viewModelScope.launch {
-            repository.getAllLocal().collect {
+            repository.deleteCommunity(communityId)
+        }
+    }
+
+    private fun getAllLocalCommunities() {
+        viewModelScope.launch {
+            repository.getAll().collect {
                 _uiState.value = _uiState.value.copy(communities = it)
             }
         }

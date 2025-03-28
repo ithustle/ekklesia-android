@@ -41,4 +41,12 @@
     <string name="verse_day">verso_do_dia</string>
     <string name="date_verse_day">data_do_verso_do_dia</string>
     <string name="background_image_verse">Imagem de fundo do versículo</string>
+    <string name="more_option">Mais opções</string>
+    <string name="description_delete_community">Eliminar comunidade</string>
+    <string name="delete_community">Eliminar</string>
+    <string name="members">Membros</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="yes_confirmation">Continuar</string>
+    <string name="dialog_community_title">Eliminar comunidade</string>
+    <string name="dialog_community_text">Deseja realmente eliminar a comunidade?</string>
 </resources>

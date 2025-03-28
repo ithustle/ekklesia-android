@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.community
 
 import android.net.Uri
+import androidx.compose.runtime.mutableStateMapOf
 import com.toquemedia.ekklesia.model.CommunityEntity
 
 data class CommunityUiState(
@@ -9,9 +10,11 @@ data class CommunityUiState(
     val communityName: String = "",
     val communityDescription: String = "",
     val community: CommunityEntity? = null,
+    val openDialog: Boolean = false,
     val communities: List<CommunityEntity> = emptyList(),
     val onImageUriChange: (String) -> Unit = {},
     val onCommunityNameChange: (String) -> Unit = {},
     val onCommunityDescriptionChange: (String) -> Unit = {},
     val onUserPhotoChange: (Uri?) -> Unit = {},
+    val onOpenDialogChange: (Boolean) -> Unit = {},
 )

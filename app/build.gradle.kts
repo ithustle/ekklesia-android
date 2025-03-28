@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.plugin.serialization)
     alias(libs.plugins.kotlin.parcelize)
+    //alias(libs.plugins.androidx.room)
 }
 
 android {
