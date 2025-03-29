@@ -28,7 +28,7 @@ class AppViewModel @Inject constructor(
     var currentUser by mutableStateOf<UserType?>(authRepository.getCurrentUser())
         internal set
 
-    var topBarTitle by mutableStateOf("")
+    var topBarTitle by mutableStateOf<String?>(null)
 
     var showBackgroundOverlay by mutableStateOf(false)
 

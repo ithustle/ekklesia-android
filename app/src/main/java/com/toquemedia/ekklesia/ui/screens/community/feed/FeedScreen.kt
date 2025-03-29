@@ -35,81 +35,43 @@ fun FeedScreen(
     modifier: Modifier = Modifier,
     community: CommunityType,
     state: FeedCommunityUiState,
-    onNavigateToChat: () -> Unit = {},
-    onSelectCommunity: () -> Unit = {},
 ) {
-    Scaffold(
-        topBar = {
-            EkklesiaTopBar(
-                title = community.communityName,
-                isBackgroundTransparent = true,
-                showTitleAvatar = true,
-                actions = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.Chat,
-                        contentDescription = stringResource(R.string.change_community_description),
-                        tint = PrincipalColor,
-                        modifier = Modifier
-                            .padding(horizontal = 12.dp)
-                            .size(20.dp)
-                            .clickable {
-                                onNavigateToChat()
-                            }
-                    )
-                    Icon(
-                        imageVector = Icons.Outlined.SyncAlt,
-                        contentDescription = stringResource(R.string.change_community_description),
-                        tint = PrincipalColor,
-                        modifier = Modifier
-                            .padding(horizontal = 12.dp)
-                            .size(20.dp)
-                            .clickable {
-                                onSelectCommunity()
-                            }
-                    )
-                }
+    Column {
+        Box(
+            modifier = modifier
+                .background(color = Color.White)
+                .fillMaxWidth()
+        ) {
+            FeedStories(
+                modifier = Modifier
+                    .padding(16.dp)
             )
-        },
-        containerColor = backgroundLightColor
-    ) { innerPadding ->
-        Column {
-            Box(
-                modifier = modifier
-                    .background(color = Color.White)
-                    .padding(innerPadding)
-                    .fillMaxWidth()
-            ) {
-                FeedStories(
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
-            }
+        }
 
-            Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(8.dp))
 
-            Box(
-                modifier = modifier
-                    .background(color = Color.White)
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                FeedPost(
-                    hasNote = true,
-                    showComments = true,
-                    showLikes = true
-                )
-            }
+        Box(
+            modifier = modifier
+                .background(color = Color.White)
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            FeedPost(
+                hasNote = true,
+                showComments = true,
+                showLikes = true
+            )
+        }
 
-            Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(8.dp))
 
-            Box(
-                modifier = modifier
-                    .background(color = Color.White)
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
-                FeedPost()
-            }
+        Box(
+            modifier = modifier
+                .background(color = Color.White)
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            FeedPost()
         }
     }
 }

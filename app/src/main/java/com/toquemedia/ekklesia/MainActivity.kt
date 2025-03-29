@@ -70,7 +70,9 @@ class MainActivity : ComponentActivity() {
                                 Screen.Home::class.qualifiedName -> Screen.Home
                                 Screen.Bible::class.qualifiedName -> Screen.Bible
                                 Screen.Communities::class.qualifiedName -> Screen.Communities
-                                else -> Screen.Home
+                                Screen.Profile::class.qualifiedName -> Screen.Profile
+                                Screen.CreateCommunity::class.qualifiedName -> Screen.CreateCommunity
+                                else -> Screen.CommunityFeed(communityId = "", communityName = "")
                             }
                             mutableStateOf(item)
                         }
@@ -87,9 +89,11 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             currentUser = appViewModel.currentUser,
-                            topBarTitle = appViewModel.topBarTitle,
                             onNavigateToProfile = {
                                 navController.navigateToProfile()
+                            },
+                            onNavigateBack = {
+                                navController.popBackStack()
                             },
                             content = {
                                 EkklesiaNavHost(

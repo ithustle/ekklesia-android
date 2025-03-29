@@ -3,8 +3,10 @@ package com.toquemedia.ekklesia.ui.navigation
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -16,9 +18,9 @@ import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
-import com.toquemedia.ekklesia.model.createNavParametersScreenType
 import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.routes.navigateBetweenScreens
+import com.toquemedia.ekklesia.ui.composables.ScreenAppLoading
 import com.toquemedia.ekklesia.ui.screens.community.CommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.chat.ChatScreen
 import com.toquemedia.ekklesia.ui.screens.community.chat.ChatViewModel
@@ -26,7 +28,6 @@ import com.toquemedia.ekklesia.ui.screens.community.create.CreateCommunityScreen
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
 import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
-import kotlin.reflect.typeOf
 
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.Communities> {
@@ -38,7 +39,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val context = LocalContext.current
 
         appViewModel.topBarTitle = stringResource(R.string.community)
-        appViewModel.showBackgroundOverlay = uiState.openDialog
+        //appViewModel.showBackgroundOverlay = uiState.openDialog
 
         CommunityListScreen(
             onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
@@ -60,6 +61,9 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val viewModel = hiltViewModel<CommunityViewModel>()
         val uiState by viewModel.uiState.collectAsState()
+        val appViewModel = LocalAppViewModel.current
+
+        appViewModel.topBarTitle = stringResource(R.string.newCommunity)
 
         val launcherCommunityPhoto =
             rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
@@ -83,38 +87,77 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         )
     }
 
-    composable<Screen.CommunityFeed>(
-        typeMap = mapOf(typeOf<CommunityType>() to createNavParametersScreenType<CommunityType>())
-    ) { stackEntry ->
+    composable<Screen.CommunityFeed> { stackEntry ->
+
+        val parentEntry = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.Communities)
+        }
+
+        val sharedViewModel = hiltViewModel<CommunityViewModel>(parentEntry)
+
+        val context = LocalContext.current
+        val appViewModel = LocalAppViewModel.current
 
         val viewModel = hiltViewModel<FeedCommunityViewModel>()
         val state by viewModel.uiState.collectAsState()
         val args = stackEntry.toRoute<Screen.CommunityFeed>()
 
-        FeedScreen(
-            community = args.community,
-            state = state,
-            onNavigateToChat = {
-                navController.navigateToChatScreen(community = args.community)
-            }
-        )
+        appViewModel.topBarTitle = args.communityName
+
+        val community = sharedViewModel.getCurrentCommunity(args.communityId)
+
+        community?.let {
+            val community = it.toCommunity(context)
+            FeedScreen(
+                community = community,
+                state = state,
+                /*onNavigateToChat = {
+                    navController.navigateToChatScreen(community = community)
+                } */
+            )
+        } ?: run {
+            ScreenAppLoading(
+                screenText = stringResource(R.string.loading_community)
+            )
+        }
     }
 
-    composable<Screen.Chat>(
-        typeMap = mapOf(typeOf<CommunityType>() to createNavParametersScreenType<CommunityType>())
-    ) { stackEntry ->
+    composable<Screen.Chat> { stackEntry ->
+
+        val stackParent = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.Communities)
+        }
+
+        val sharedViewModel = hiltViewModel<CommunityViewModel>(stackParent)
+        val members = sharedViewModel.uiState.value.members
 
         val viewModel = hiltViewModel<ChatViewModel>()
         val state by viewModel.uiState.collectAsState()
         val arg = stackEntry.toRoute<Screen.Chat>()
 
-        ChatScreen(
-            community = arg.community,
-            state = state
-        )
+        val community = sharedViewModel.getCurrentCommunity(arg.communityId)
+
+        LaunchedEffect(arg.communityId) {
+            sharedViewModel.getCommunityMembers(arg.communityId)
+        }
+
+        community?.let {
+            ChatScreen(
+                community = it,
+                members = members,
+                state = state
+            )
+        } ?: run {
+            ScreenAppLoading(
+                screenText = stringResource(R.string.loading_community_messages)
+            )
+        }
     }
 }
 
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
-fun NavController.navigateToCommunityFeed(community: CommunityType) = this.navigateBetweenScreens(Screen.CommunityFeed(community))
-fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(community))
+fun NavController.navigateToCommunityFeed(community: CommunityType) = this.navigateBetweenScreens(Screen.CommunityFeed(
+    communityId = community.id,
+    communityName = community.communityName
+))
+fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(communityId = community.id))

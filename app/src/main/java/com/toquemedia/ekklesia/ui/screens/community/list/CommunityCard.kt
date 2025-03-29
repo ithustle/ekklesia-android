@@ -51,7 +51,7 @@ fun CommunityCard(
     ) {
         Image(
             bitmap = community.communityImage.base64ToBitmap().asImageBitmap(),
-            contentDescription = stringResource(R.string.title_activity_main),
+            contentDescription = stringResource(R.string.community_title),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .padding(end = 12.dp)

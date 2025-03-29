@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import coil3.toUri
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.getInitials
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
@@ -44,6 +43,7 @@ fun EkklesiaTopBar(
     userAvatar: String? = null,
     isBackgroundTransparent: Boolean = false,
     onNavigateToProfile: () -> Unit = {},
+    onNavigateBack: () -> Unit = {},
     actions: @Composable (RowScope.() -> Unit) = {}
 ) {
 
@@ -92,7 +92,7 @@ fun EkklesiaTopBar(
         },
         navigationIcon = {
             if (navigationBack) {
-                IconButton(onClick = { }) {
+                IconButton(onClick = onNavigateBack) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = stringResource(R.string.back_description),
@@ -111,7 +111,7 @@ fun EkklesiaTopBar(
                     contentDescription = stringResource(R.string.profileTitleScreen),
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
-                        .size(32.dp)
+                        .size(28.dp)
                         .clip(CircleShape)
                         .clickable {
                             onNavigateToProfile()

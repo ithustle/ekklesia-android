@@ -3,10 +3,13 @@ package com.toquemedia.ekklesia.ui.screens.community
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toquemedia.ekklesia.model.CommunityEntity
 import com.toquemedia.ekklesia.model.ValidationResult
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -87,6 +90,17 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
+    fun getCurrentCommunity(communityId: String): CommunityEntity? {
+        return _uiState.value.communities.first { it.id == communityId }
+    }
+
+    fun getCommunityMembers(communityId: String) {
+        viewModelScope.launch {
+            val members = repository.getAllMembers(communityId)
+            _uiState.value = _uiState.value.copy(members = members)
+        }
+    }
+
     fun deleteCommunity(communityId: String) {
         viewModelScope.launch {
             repository.deleteCommunity(communityId)
@@ -96,7 +110,15 @@ class CommunityViewModel @Inject constructor(
     private fun getAllLocalCommunities() {
         viewModelScope.launch {
             repository.getAll().collect {
-                _uiState.value = _uiState.value.copy(communities = it)
+                val all = it.map { community ->
+                    async {
+                        val members = repository.getAllMembers(community.id)
+                        community.members = members.size.toLong()
+                        community
+                    }
+                }.awaitAll()
+
+                _uiState.value = _uiState.value.copy(communities = all)
             }
         }
     }

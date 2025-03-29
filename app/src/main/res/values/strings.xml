@@ -49,4 +49,7 @@
     <string name="yes_confirmation">Continuar</string>
     <string name="dialog_community_title">Eliminar comunidade</string>
     <string name="dialog_community_text">Deseja realmente eliminar a comunidade?</string>
+    <string name="loading_screen">A carregar...</string>
+    <string name="loading_community">A carregar a comunidade...</string>
+    <string name="loading_community_messages">A carregar as mensagens...</string>
 </resources>

@@ -46,14 +46,13 @@ sealed class Screen {
     object Profile: Screen()
 
     @Serializable
-    @Parcelize
     data class Chat(
-        val community: CommunityType
-    ): Screen(), Parcelable
+        val communityId: String
+    ): Screen()
 
     @Serializable
-    @Parcelize
     data class CommunityFeed(
-        val community: CommunityType
-    ): Screen(), Parcelable
+        val communityId: String,
+        val communityName: String
+    ): Screen()
 }
