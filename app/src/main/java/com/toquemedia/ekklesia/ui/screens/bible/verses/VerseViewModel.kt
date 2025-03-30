@@ -3,7 +3,10 @@ package com.toquemedia.ekklesia.ui.screens.bible.verses
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.model.NoteEntity
+import com.toquemedia.ekklesia.model.PostType
+import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
+import com.toquemedia.ekklesia.repository.PostRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
 import com.toquemedia.ekklesia.ui.screens.bible.states.VerseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,11 +16,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.text.toInt
 
 @HiltViewModel
 class VerseViewModel @Inject constructor(
     private val verseRepository: VerseRepositoryImpl,
-    private val noteRepository: NoteRepositoryImpl
+    private val noteRepository: NoteRepositoryImpl,
+    private val postRepository: PostRepositoryImpl,
+    private val userRepository: AuthRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<VerseUiState> = MutableStateFlow(VerseUiState())
@@ -77,6 +83,16 @@ class VerseViewModel @Inject constructor(
             _uiState.value.onMarkVerse(verse)
             _uiState.value.onSelectVerse("", -1)
             _uiState.value.onShowVerseAction(false)
+
+            launch {
+                val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
+                val post = PostType(
+                    verse = verse,
+                    user = userRepository.getCurrentUser(),
+                    verseId = verseId
+                )
+                postRepository.addPost(post)
+            }
         }
     }
 
@@ -85,6 +101,11 @@ class VerseViewModel @Inject constructor(
             if (bookName == null || chapter == null) return@launch
             verseRepository.unMarkVerse(bookName, chapter.toInt(), versicle.toInt())
             _uiState.value.onUnMarkVerse(verse)
+
+            launch {
+                val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
+                postRepository.removePost(verseId)
+            }
         }
     }
 
@@ -109,6 +130,17 @@ class VerseViewModel @Inject constructor(
             _uiState.value.onSelectVerse("", -1)
             _uiState.value.onEntryNoteChange("")
             _uiState.value.onSavingNote(false)
+
+            launch {
+                val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
+                val post = PostType(
+                    note = note,
+                    verse = verse,
+                    user = userRepository.getCurrentUser(),
+                    verseId = "${verseId}_note"
+                )
+                postRepository.addPost(post)
+            }
         }
     }
 

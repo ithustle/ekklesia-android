@@ -94,9 +94,11 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         }
 
         val sharedViewModel = hiltViewModel<CommunityViewModel>(parentEntry)
+        val members = sharedViewModel.uiState.value.members
 
         val context = LocalContext.current
         val appViewModel = LocalAppViewModel.current
+        val user = appViewModel.currentUser
 
         val viewModel = hiltViewModel<FeedCommunityViewModel>()
         val state by viewModel.uiState.collectAsState()
@@ -106,11 +108,17 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val community = sharedViewModel.getCurrentCommunity(args.communityId)
 
+        LaunchedEffect(args.communityId) {
+            sharedViewModel.getCommunityMembers(args.communityId)
+        }
+
         community?.let {
             val community = it.toCommunity(context)
             FeedScreen(
                 community = community,
+                members = members,
                 state = state,
+                user = user
                 /*onNavigateToChat = {
                     navController.navigateToChatScreen(community = community)
                 } */

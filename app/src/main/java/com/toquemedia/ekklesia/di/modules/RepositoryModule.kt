@@ -6,6 +6,7 @@ import com.toquemedia.ekklesia.model.interfaces.CommunityRepository
 import com.toquemedia.ekklesia.model.interfaces.DevocionalRepository
 import com.toquemedia.ekklesia.model.interfaces.MessageRepository
 import com.toquemedia.ekklesia.model.interfaces.NoteRepository
+import com.toquemedia.ekklesia.model.interfaces.PostRepository
 import com.toquemedia.ekklesia.model.interfaces.VerseRepository
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
@@ -13,6 +14,7 @@ import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
 import com.toquemedia.ekklesia.repository.DevocionalRepositoryImpl
 import com.toquemedia.ekklesia.repository.MessageRepositoryImpl
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
+import com.toquemedia.ekklesia.repository.PostRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -64,4 +66,10 @@ abstract class RepositoryModule {
     abstract fun bindMessageRepository(
         impl: MessageRepositoryImpl
     ) : MessageRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPostRepository(
+        impl: PostRepositoryImpl
+    ): PostRepository
 }

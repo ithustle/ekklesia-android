@@ -7,19 +7,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import com.toquemedia.ekklesia.model.UserType
 
 @Composable
-fun FeedStories(modifier: Modifier = Modifier) {
+fun FeedStories(
+    modifier: Modifier = Modifier,
+    user: UserType? = null
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
     ) {
         FeedAddStory(
             Modifier
-                .padding(end = 6.dp)
+                .padding(end = 12.dp),
+            userPhoto = user?.photo.toString().toUri(),
         )
 
-        List(3) {
+        List(0) {
             FeedStory(
                 modifier = Modifier
                     .padding(end = 12.dp)

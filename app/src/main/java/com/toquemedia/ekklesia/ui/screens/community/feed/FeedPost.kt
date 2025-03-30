@@ -28,36 +28,47 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.extension.getBookWithChapterAndVersicle
+import com.toquemedia.ekklesia.extension.timeAgo
+import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.composables.VerseToAnnotation
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
+import com.toquemedia.ekklesia.utils.mocks.PostsMock
 
 @Composable
 fun FeedPost(
     modifier: Modifier = Modifier,
-    hasNote: Boolean = false,
     showComments: Boolean = false,
-    showLikes: Boolean = false
+    showLikes: Boolean = false,
+    post: PostType
 ) {
+
+    val verseData = post.getBookWithChapterAndVersicle()
+
     Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        PostOwner()
+        PostOwner(
+            user = post.user!!,
+            timeAgo = post.createdAt.timeAgo(),
+            postType = if (post.note == null) stringResource(R.string.post_type_without_note) else stringResource(R.string.post_type_with_note)
+        )
 
         Spacer(Modifier.height(14.dp))
 
         VerseToAnnotation(
-            bookName = "Provérbios",
-            versicle = 1,
-            chapter = "12",
-            verse = "Os tesouros de origem desonesta não servem para nada, mas a retidão livra da morte.",
+            bookName = verseData.first,
+            versicle = verseData.third,
+            chapter = verseData.second,
+            verse = post.verse,
             bookNameAsTitle = false
         )
 
         Spacer(Modifier.height(10.dp))
 
-        if (hasNote) {
+        if (post.note != null) {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(size = 4.dp))
@@ -66,7 +77,7 @@ fun FeedPost(
                     .padding(16.dp)
             ) {
                 Text(
-                    text = "Glória à Deus, toda a hora e todo o louvor! Em nome de Jesus",
+                    text = post.note.note,
                     color = PrincipalColor,
                     fontSize = 13.sp
                 )
@@ -123,7 +134,6 @@ fun FeedPost(
             Spacer(Modifier.height(20.dp))
             FeedPostComment()
         }
-
     }
 }
 
@@ -131,9 +141,9 @@ fun FeedPost(
 @Composable
 private fun FeedPostPrev() {
     FeedPost(
-        hasNote = true,
-        showComments = true,
-        showLikes = true,
+        showComments = false,
+        showLikes = false,
+        post = PostsMock.getPosts().first(),
         modifier = Modifier.padding(16.dp)
     )
 }

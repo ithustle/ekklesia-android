@@ -52,4 +52,7 @@
     <string name="loading_screen">A carregar...</string>
     <string name="loading_community">A carregar a comunidade...</string>
     <string name="loading_community_messages">A carregar as mensagens...</string>
+    <string name="add_post_type">Adicionou</string>
+    <string name="post_type_without_note">Marcou como favorito</string>
+    <string name="post_type_with_note">Adicionou uma nota</string>
 </resources>

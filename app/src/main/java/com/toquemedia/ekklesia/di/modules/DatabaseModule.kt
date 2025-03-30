@@ -1,6 +1,8 @@
 package com.toquemedia.ekklesia.di.modules
 
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.toquemedia.ekklesia.dao.AppCacheDao
 import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
@@ -12,6 +14,8 @@ import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.services.CommunityService
 import com.toquemedia.ekklesia.services.NoteService
 import com.toquemedia.ekklesia.services.OurmannaService
+import com.toquemedia.ekklesia.services.PostService
+import com.toquemedia.ekklesia.services.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,4 +47,8 @@ class DatabaseModule {
         OurmannaService::class.java)
     @Provides
     fun provideAppCacheDao(@ApplicationContext context: Context): AppCacheDao = AppCacheDao(context)
+    @Provides
+    fun providePostService(firestore: FirebaseFirestore): PostService = PostService(firestore)
+    @Provides
+    fun provideUserService(@ApplicationContext context: Context, auth: FirebaseAuth): UserService = UserService(context, auth)
 }

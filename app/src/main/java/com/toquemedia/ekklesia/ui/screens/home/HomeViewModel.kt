@@ -81,7 +81,7 @@ class HomeViewModel @Inject constructor(
                     bookName = result.first.toPortuguese(),
                     chapter = result.second,
                     versicle = result.third,
-                    text = verses?.get(res.second)?.get(res.third).toString()
+                    text = verses?.get(res.second - 1)?.get(res.third - 1).toString()
                 )
             )
         }

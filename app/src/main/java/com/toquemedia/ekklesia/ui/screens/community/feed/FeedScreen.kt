@@ -1,77 +1,68 @@
 package com.toquemedia.ekklesia.ui.screens.community.feed
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Chat
-import androidx.compose.material.icons.outlined.SyncAlt
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.toCommunity
+import com.toquemedia.ekklesia.model.CommunityMemberType
 import com.toquemedia.ekklesia.model.CommunityType
-import com.toquemedia.ekklesia.ui.composables.EkklesiaTopBar
+import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.ui.screens.community.feed.story.FeedStories
-import com.toquemedia.ekklesia.ui.theme.PrincipalColor
-import com.toquemedia.ekklesia.ui.theme.backgroundLightColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
+import com.toquemedia.ekklesia.utils.mocks.PostsMock
 
 @Composable
 fun FeedScreen(
     modifier: Modifier = Modifier,
     community: CommunityType,
+    members: List<CommunityMemberType> = emptyList(),
+    user: UserType? = null,
     state: FeedCommunityUiState,
 ) {
-    Column {
-        Box(
-            modifier = modifier
-                .background(color = Color.White)
-                .fillMaxWidth()
-        ) {
-            FeedStories(
-                modifier = Modifier
+    LazyColumn {
+        item {
+            Box(
+                modifier = modifier
+                    .background(color = Color.White)
+                    .fillMaxWidth()
+            ) {
+                FeedStories(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    user = user
+                )
+            }
+        }
+
+        item {
+            Spacer(Modifier.height(8.dp))
+        }
+
+        items(items = state.posts) {
+            Box(
+                modifier = modifier
+                    .background(color = Color.White)
                     .padding(16.dp)
-            )
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        Box(
-            modifier = modifier
-                .background(color = Color.White)
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            FeedPost(
-                hasNote = true,
-                showComments = true,
-                showLikes = true
-            )
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        Box(
-            modifier = modifier
-                .background(color = Color.White)
-                .padding(16.dp)
-                .fillMaxWidth()
-        ) {
-            FeedPost()
+                    .fillMaxWidth()
+            ) {
+                FeedPost(
+                    showComments = it.comments.isNotEmpty(),
+                    showLikes = it.likes.isNotEmpty(),
+                    post = it
+                )
+            }
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
@@ -81,6 +72,6 @@ fun FeedScreen(
 private fun FeedScreenPrev() {
     FeedScreen(
         community = CommunityMock.getAll().first().toCommunity(LocalContext.current),
-        state = FeedCommunityUiState(),
+        state = FeedCommunityUiState(posts = PostsMock.getPosts()),
     )
 }

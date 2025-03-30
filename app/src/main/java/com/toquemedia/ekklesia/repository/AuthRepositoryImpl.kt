@@ -18,83 +18,17 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.model.interfaces.AuthRepository
+import com.toquemedia.ekklesia.services.UserService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
 class AuthRepositoryImpl @Inject constructor(
-    @ApplicationContext private val applicationContext: Context,
-    private val auth: FirebaseAuth,
+    private val service: UserService,
 ) : AuthRepository {
 
-    override suspend fun googleSignIn(activityContext: Activity): UserType? {
-        val user = this.handleSignIn(activityContext)
-        return user?.let { user ->
-            UserType(
-                id = user.uid,
-                displayName = user.displayName,
-                email = user.email,
-                photo = user.photoUrl.toString()
-            )
-        }
-    }
-
-    override fun getCurrentUser(): UserType? {
-        auth.currentUser?.let { user ->
-            return UserType(
-                id = user.uid,
-                displayName = user.displayName,
-                email = user.email,
-                photo = user.photoUrl.toString()
-            )
-        }
-
-        return null
-    }
-    override suspend fun signOut() {
-        val credentialManager = CredentialManager.create(applicationContext)
-        credentialManager.clearCredentialState(ClearCredentialStateRequest())
-        auth.signOut()
-    }
-
-    private suspend fun buildCredentialRequest(
-        credentialManager: CredentialManager,
-        activity: Activity
-    ): GetCredentialResponse {
-        val option = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(getString(applicationContext, R.string.web_client_id))
-            .setAutoSelectEnabled(false)
-            .build()
-
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(option)
-            .build()
-
-        return credentialManager.getCredential(request = request, context = activity)
-    }
-
-    private suspend fun handleSignIn(activityContext: Activity): FirebaseUser? {
-        try {
-            val credentialManager = CredentialManager.create(activityContext)
-            val result = buildCredentialRequest(credentialManager, activityContext)
-            val credential = result.credential
-
-            if (
-                credential is CustomCredential &&
-                credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
-            ) {
-                val tokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                val firebaseCredential = GoogleAuthProvider.getCredential(tokenCredential.idToken, null)
-                val authResult = auth.signInWithCredential(firebaseCredential).await()
-                return authResult.user
-            }
-
-        } catch (e: GetCredentialException) {
-            e.printStackTrace()
-        }
-
-        return null
-    }
+    override suspend fun googleSignIn(activityContext: Activity): UserType? = service.googleSignIn(activityContext)
+    override fun getCurrentUser(): UserType? = service.getCurrentUser()
+    override suspend fun signOut() = service.signOut()
 }
