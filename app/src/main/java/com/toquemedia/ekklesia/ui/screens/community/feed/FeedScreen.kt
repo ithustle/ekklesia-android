@@ -57,7 +57,7 @@ fun FeedScreen(
                     .fillMaxWidth()
             ) {
                 FeedPost(
-                    showComments = it.comments.isNotEmpty(),
+                    showLastComment = it.comments.isNotEmpty(),
                     showLikes = it.likes.isNotEmpty(),
                     post = it
                 )

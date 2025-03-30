@@ -96,7 +96,7 @@ fun FeedPostComment(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun FeedPostCommentPrev() {
     FeedPostComment()

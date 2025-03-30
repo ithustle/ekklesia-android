@@ -39,7 +39,7 @@ import com.toquemedia.ekklesia.utils.mocks.PostsMock
 @Composable
 fun FeedPost(
     modifier: Modifier = Modifier,
-    showComments: Boolean = false,
+    showLastComment: Boolean = false,
     showLikes: Boolean = false,
     post: PostType
 ) {
@@ -130,7 +130,7 @@ fun FeedPost(
             }
         }
 
-        if (showComments) {
+        if (showLastComment) {
             Spacer(Modifier.height(20.dp))
             FeedPostComment()
         }
@@ -141,7 +141,7 @@ fun FeedPost(
 @Composable
 private fun FeedPostPrev() {
     FeedPost(
-        showComments = false,
+        showLastComment = false,
         showLikes = false,
         post = PostsMock.getPosts().first(),
         modifier = Modifier.padding(16.dp)
