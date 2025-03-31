@@ -1,9 +1,7 @@
 package com.toquemedia.ekklesia.routes
-import android.os.Parcelable
-import com.toquemedia.ekklesia.model.CommunityType
-import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class Screen {
 
     @Serializable
@@ -48,6 +46,11 @@ sealed class Screen {
     @Serializable
     data class Chat(
         val communityId: String
+    ): Screen()
+
+    @Serializable
+    data class CommentPost(
+        val postId: String
     ): Screen()
 
     @Serializable

@@ -4,5 +4,10 @@ import com.toquemedia.ekklesia.model.PostType
 
 data class FeedCommunityUiState(
     val posts: List<PostType> = emptyList(),
-    val loadingPosts: Boolean = false
+    val selectedPost: PostType? = null,
+    val textComment: String = "",
+    val likedPosts: List<String> = emptyList(),
+    val loadingPosts: Boolean = false,
+    val sendingComment: Boolean = false,
+    val onChangeTextComment: (String) -> Unit = {}
 )

@@ -1,7 +1,6 @@
 package com.toquemedia.ekklesia.ui.screens.community.chat
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -10,9 +9,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.rounded.AttachFile
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,11 +30,18 @@ import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
+enum class ChatInputMessage {
+    CHAT,
+    COMMENT
+}
+
 @Composable
 fun ChatInputMessage(
     modifier: Modifier = Modifier,
     value: String,
-    onChangeValue: (String) -> Unit = {}
+    inputFor: ChatInputMessage,
+    onChangeValue: (String) -> Unit = {},
+    onSendComment: () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -71,19 +79,32 @@ fun ChatInputMessage(
                 innerTextField()
             }
         )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.AttachFile,
-                contentDescription = stringResource(R.string.message_voice_description),
-                tint = PrincipalColor
-            )
-            Icon(
-                imageVector = Icons.Rounded.Mic,
-                contentDescription = stringResource(R.string.message_voice_description),
-                tint = PrincipalColor
-            )
+
+        if (inputFor == ChatInputMessage.CHAT) {
+            Row {
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.Rounded.AttachFile,
+                        contentDescription = stringResource(R.string.message_voice_description),
+                        tint = PrincipalColor
+                    )
+                }
+                IconButton(onClick = {}) {
+                    Icon(
+                        imageVector = Icons.Rounded.Mic,
+                        contentDescription = stringResource(R.string.message_voice_description),
+                        tint = PrincipalColor
+                    )
+                }
+            }
+        } else {
+            IconButton(onClick = onSendComment) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = stringResource(R.string.message_send_description),
+                    tint = PrincipalColor
+                )
+            }
         }
     }
 }
@@ -91,5 +112,8 @@ fun ChatInputMessage(
 @Preview
 @Composable
 private fun ChatInputMessagePrev() {
-    ChatInputMessage(value = "")
+    ChatInputMessage(
+        value = "",
+        inputFor = ChatInputMessage.COMMENT
+    )
 }

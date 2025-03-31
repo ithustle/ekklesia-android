@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.community.feed
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,15 +14,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ModeComment
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,19 +44,28 @@ fun FeedPost(
     modifier: Modifier = Modifier,
     showLastComment: Boolean = false,
     showLikes: Boolean = false,
-    post: PostType
+    liked: Boolean = false,
+    post: PostType,
+    onNavigateToComments: (String) -> Unit = {},
+    onLikePost: (PostType) -> Unit = {},
+    onRemoveLikePost: (PostType) -> Unit = {}
 ) {
 
     val verseData = post.getBookWithChapterAndVersicle()
 
     Column(
         modifier = modifier
+            .padding(vertical = 8.dp)
             .fillMaxWidth()
     ) {
         PostOwner(
+            modifier = Modifier
+                .padding(horizontal = 16.dp),
             user = post.user!!,
             timeAgo = post.createdAt.timeAgo(),
-            postType = if (post.note == null) stringResource(R.string.post_type_without_note) else stringResource(R.string.post_type_with_note)
+            postType = if (post.note == null) stringResource(R.string.post_type_without_note) else stringResource(
+                R.string.post_type_with_note,
+            )
         )
 
         Spacer(Modifier.height(14.dp))
@@ -63,76 +75,98 @@ fun FeedPost(
             versicle = verseData.third,
             chapter = verseData.second,
             verse = post.verse,
-            bookNameAsTitle = false
+            bookNameAsTitle = false,
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .clickable { onNavigateToComments(post.verseId) }
         )
 
         Spacer(Modifier.height(10.dp))
 
-        if (post.note != null) {
+        post.note?.let {
             Box(
                 modifier = Modifier
+                    .padding(16.dp)
                     .clip(RoundedCornerShape(size = 4.dp))
                     .background(color = Color(0xFFE1E0E0))
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
                 Text(
-                    text = post.note.note,
+                    text = it.note,
                     color = PrincipalColor,
                     fontSize = 13.sp
                 )
             }
         }
 
-        Spacer(Modifier.height(8.dp))
-
         Row(
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Rounded.FavoriteBorder,
-                contentDescription = stringResource(R.string.like_icon_description),
-                tint = PrincipalColor,
-                modifier = Modifier.size(20.dp)
-            )
+            IconButton(
+                onClick = {
+                    if (liked) {
+                        onRemoveLikePost(post)
+                    } else {
+                        onLikePost(post)
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = if (liked) Icons.Filled.Favorite else Icons.Rounded.FavoriteBorder,
+                    contentDescription = stringResource(R.string.like_icon_description),
+                    tint = PrincipalColor,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
 
-            Icon(
-                imageVector = Icons.Outlined.ModeComment,
-                contentDescription = stringResource(R.string.like_icon_description),
-                tint = PrincipalColor,
-                modifier = Modifier.size(20.dp)
-            )
+            IconButton(
+                onClick = {
+                    onNavigateToComments(post.verseId)
+                }
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.comment),
+                    contentDescription = stringResource(R.string.comment_icon_description),
+                    tint = PrincipalColor,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
 
         if (showLikes) {
             Spacer(Modifier.height(16.dp))
 
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
             ) {
-                List(4) {
+                List(post.firstUsersLiked.size) {
                     EkklesiaImage(
-                        model = "photo".toUri(),
+                        model = post.firstUsersLiked[it].photo?.toUri(),
                         contentDescription = stringResource(R.string.profileTitleScreen),
                         modifier = Modifier
                             .padding(end = 6.dp)
-                            .size(24.dp)
+                            .size(20.dp)
                             .clip(CircleShape)
                     )
                 }
 
-                Text(
-                    text = "e mais 4 gostaram",
-                    fontSize = 11.sp,
-                    color = Color.Gray
-                )
+                if (post.likes > 4) {
+                    Text(
+                        text = "e mais ${post.likes - post.firstUsersLiked.size} ${stringResource(R.string.liked)}",
+                        fontSize = 11.sp,
+                        color = Color.Gray
+                    )
+                }
             }
         }
 
         if (showLastComment) {
             Spacer(Modifier.height(20.dp))
-            FeedPostComment()
+            FeedPostComment(commentary = post.comments.first())
         }
     }
 }
@@ -143,7 +177,7 @@ private fun FeedPostPrev() {
     FeedPost(
         showLastComment = false,
         showLikes = false,
-        post = PostsMock.getPosts().first(),
-        modifier = Modifier.padding(16.dp)
+        liked = true,
+        post = PostsMock.getPosts().first()
     )
 }

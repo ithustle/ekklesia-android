@@ -26,6 +26,7 @@ import com.toquemedia.ekklesia.ui.screens.community.chat.ChatScreen
 import com.toquemedia.ekklesia.ui.screens.community.chat.ChatViewModel
 import com.toquemedia.ekklesia.ui.screens.community.create.CreateCommunityScreen
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
+import com.toquemedia.ekklesia.ui.screens.community.feed.FeedPostAddComment
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
 import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
 
@@ -118,7 +119,16 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 community = community,
                 members = members,
                 state = state,
-                user = user
+                user = user,
+                onNavigateToComments = {
+                    navController.navigateToAddCommentOnPost(postId = it)
+                },
+                onLikePost = {
+                    viewModel.likeAPost(post = it)
+                },
+                onRemoveLikePost = {
+                    viewModel.likeAPost(post = it, isRemoving = true)
+                }
                 /*onNavigateToChat = {
                     navController.navigateToChatScreen(community = community)
                 } */
@@ -126,6 +136,27 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         } ?: run {
             ScreenAppLoading(
                 screenText = stringResource(R.string.loading_community)
+            )
+        }
+    }
+
+    composable<Screen.CommentPost> { stackEntry ->
+
+        navController.previousBackStackEntry?.let {
+            val arg = stackEntry.toRoute<Screen.CommentPost>()
+
+            val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(it)
+            val state by sharedViewModel.uiState.collectAsState()
+
+            LaunchedEffect(arg.postId) {
+                sharedViewModel.selectPost(arg.postId)
+            }
+
+            FeedPostAddComment(
+                state = state,
+                onSendComment = {
+                    sharedViewModel.addCommentOnPost()
+                }
             )
         }
     }
@@ -169,3 +200,4 @@ fun NavController.navigateToCommunityFeed(community: CommunityType) = this.navig
     communityName = community.communityName
 ))
 fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
+fun NavController.navigateToAddCommentOnPost(postId: String) = this.navigateBetweenScreens(Screen.CommentPost(postId))

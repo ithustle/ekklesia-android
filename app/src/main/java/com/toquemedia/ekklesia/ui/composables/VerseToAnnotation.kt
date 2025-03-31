@@ -62,17 +62,17 @@ fun VerseToAnnotation(
             )
         }
 
-        Spacer(modifier = modifier.size(20.dp))
+        Spacer(modifier = Modifier.size(20.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = modifier
+                modifier = Modifier
                     .border(width = 3.dp, color = PrincipalColor, shape = RectangleShape)
                     .width(3.dp)
                     .height(paragraphs.size * 3.dp)
             )
-            Spacer(modifier = modifier.size(10.dp))
+            Spacer(modifier = Modifier.size(10.dp))
 
             Text(
                 text = verse,

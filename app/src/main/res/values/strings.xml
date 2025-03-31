@@ -55,4 +55,9 @@
     <string name="add_post_type">Adicionou</string>
     <string name="post_type_without_note">Marcou como favorito</string>
     <string name="post_type_with_note">Adicionou uma nota</string>
+    <string name="comment_icon_description">Comentar a publicação</string>
+    <string name="message_send_description">Enviar mensagem</string>
+    <string name="no_comments">Ainda sem comentários</string>
+    <string name="no_comments_description">Seja o primeiro a comentar</string>
+    <string name="liked">gostaram</string>
 </resources>

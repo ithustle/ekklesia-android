@@ -25,12 +25,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.extension.timeAgo
+import com.toquemedia.ekklesia.model.CommentType
+import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @Composable
-fun FeedPostComment(modifier: Modifier = Modifier) {
-    Column {
+fun FeedPostComment(
+    modifier: Modifier = Modifier,
+    commentary: CommentType
+) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -41,7 +50,7 @@ fun FeedPostComment(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 EkklesiaImage(
-                    model = "photo".toUri(),
+                    model = commentary.user?.photo?.toUri(),
                     contentDescription = stringResource(R.string.profileTitleScreen),
                     modifier = Modifier
                         .padding(end = 8.dp)
@@ -50,7 +59,7 @@ fun FeedPostComment(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "Elsa Tomás",
+                    text = commentary.user?.displayName ?: "",
                     fontWeight = FontWeight.Normal,
                     fontSize = 11.sp,
                     color = PrincipalColor
@@ -58,7 +67,7 @@ fun FeedPostComment(modifier: Modifier = Modifier) {
             }
 
             Text(
-                text = "1min",
+                text = commentary.createdAt.timeAgo(),
                 fontSize = 10.sp,
                 color = Color.DarkGray
             )
@@ -68,7 +77,7 @@ fun FeedPostComment(modifier: Modifier = Modifier) {
             Modifier.padding(start = 32.dp, end = 12.dp)
         ) {
             Text(
-                text = "Glória à Deus, toda a honra e todo o louvor! Em nome de Jesus Cristo.",
+                text = commentary.comment,
                 fontSize = 13.sp,
                 maxLines = 3,
                 color = PrincipalColor,
@@ -87,7 +96,7 @@ fun FeedPostComment(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "1k",
+                    text = commentary.likes.toString(),
                     fontSize = 12.sp,
                     color = PrincipalColor
                 )
@@ -99,5 +108,15 @@ fun FeedPostComment(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun FeedPostCommentPrev() {
-    FeedPostComment()
+    FeedPostComment(
+        commentary = CommentType(
+            user = UserType(
+                id = "",
+                displayName = "Elsa Tomás",
+                photo = "photo"
+            ),
+            likes = 12,
+            comment = "Glória à Deus, toda a honra e todo o louvor! Em nome de Jesus Cristo."
+        )
+    )
 }

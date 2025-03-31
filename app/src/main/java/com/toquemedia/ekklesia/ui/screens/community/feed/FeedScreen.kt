@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityMemberType
 import com.toquemedia.ekklesia.model.CommunityType
+import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.ui.screens.community.feed.story.FeedStories
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
@@ -29,6 +30,9 @@ fun FeedScreen(
     members: List<CommunityMemberType> = emptyList(),
     user: UserType? = null,
     state: FeedCommunityUiState,
+    onNavigateToComments: (String) -> Unit = {},
+    onLikePost: (PostType) -> Unit = {},
+    onRemoveLikePost: (PostType) -> Unit = {}
 ) {
     LazyColumn {
         item {
@@ -53,13 +57,16 @@ fun FeedScreen(
             Box(
                 modifier = modifier
                     .background(color = Color.White)
-                    .padding(16.dp)
                     .fillMaxWidth()
             ) {
                 FeedPost(
                     showLastComment = it.comments.isNotEmpty(),
-                    showLikes = it.likes.isNotEmpty(),
-                    post = it
+                    showLikes = it.likes > 0,
+                    liked = state.likedPosts.contains(it.verseId),
+                    post = it,
+                    onNavigateToComments = onNavigateToComments,
+                    onLikePost = onLikePost,
+                    onRemoveLikePost = onRemoveLikePost,
                 )
             }
             Spacer(Modifier.height(8.dp))
@@ -72,6 +79,9 @@ fun FeedScreen(
 private fun FeedScreenPrev() {
     FeedScreen(
         community = CommunityMock.getAll().first().toCommunity(LocalContext.current),
-        state = FeedCommunityUiState(posts = PostsMock.getPosts()),
+        state = FeedCommunityUiState(
+            posts = PostsMock.getPosts(),
+            likedPosts = listOf(PostsMock.getPosts().first().verseId)
+        ),
     )
 }

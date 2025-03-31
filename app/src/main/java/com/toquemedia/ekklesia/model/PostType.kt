@@ -11,5 +11,6 @@ data class PostType(
     val verseId: String = "",
     val createdAt: Date = Date(),
     val comments: List<CommentType> = emptyList(),
-    val likes: List<UserType> = emptyList(),
+    val likes: Long = 0,
+    val firstUsersLiked: List<UserType> = emptyList()
 )

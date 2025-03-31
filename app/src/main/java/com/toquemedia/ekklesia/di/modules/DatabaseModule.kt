@@ -8,6 +8,7 @@ import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
 import com.toquemedia.ekklesia.dao.CommunityDao
 import com.toquemedia.ekklesia.dao.DevocionalDao
+import com.toquemedia.ekklesia.dao.LikeDao
 import com.toquemedia.ekklesia.dao.MessageDao
 import com.toquemedia.ekklesia.dao.NoteDao
 import com.toquemedia.ekklesia.dao.VerseDao
@@ -35,18 +36,20 @@ class DatabaseModule {
     @Provides
     fun provideDevocionalDao(appDatabase: AppDatabase) : DevocionalDao = appDatabase.DevocionalDao()
     @Provides
-    fun provideNoteService(): NoteService = NoteService()
-    @Provides
     fun provideCommunityDao(appDatabase: AppDatabase): CommunityDao = appDatabase.CommunityDao()
     @Provides
     fun provideMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.MessageDao()
     @Provides
+    fun provideAppCacheDao(@ApplicationContext context: Context): AppCacheDao = AppCacheDao(context)
+    @Provides
+    fun provideLikeDao(@ApplicationContext context: Context): LikeDao = LikeDao(context)
+    @Provides
     fun provideCommunityService(): CommunityService = CommunityService()
+    @Provides
+    fun provideNoteService(): NoteService = NoteService()
     @Provides
     fun provideOurmannaService(retrofit: Retrofit) : OurmannaService = retrofit.create(
         OurmannaService::class.java)
-    @Provides
-    fun provideAppCacheDao(@ApplicationContext context: Context): AppCacheDao = AppCacheDao(context)
     @Provides
     fun providePostService(firestore: FirebaseFirestore): PostService = PostService(firestore)
     @Provides
