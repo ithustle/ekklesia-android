@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.PostType
-import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.PostRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -69,7 +68,7 @@ class FeedCommunityViewModel @Inject constructor(
 
     fun selectPost(postId: String) {
         _uiState.value =
-            _uiState.value.copy(selectedPost = _uiState.value.posts.first { it.verseId == postId })
+            _uiState.value.copy(selectedPost = _uiState.value.posts?.first { it.verseId == postId })
     }
 
     fun likeAPost(post: PostType, isRemoving: Boolean = false) {
