@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityMemberType
 import com.toquemedia.ekklesia.model.CommunityType
+import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.ui.screens.community.feed.story.FeedStories
@@ -26,8 +27,7 @@ import com.toquemedia.ekklesia.utils.mocks.PostsMock
 @Composable
 fun FeedScreen(
     modifier: Modifier = Modifier,
-    community: CommunityType,
-    members: List<CommunityMemberType> = emptyList(),
+    community: CommunityWithMembers,
     user: UserType? = null,
     state: FeedCommunityUiState,
     onNavigateToComments: (String) -> Unit = {},
@@ -78,7 +78,7 @@ fun FeedScreen(
 @Composable
 private fun FeedScreenPrev() {
     FeedScreen(
-        community = CommunityMock.getAll().first().toCommunity(LocalContext.current),
+        community = CommunityMock.getAllCommunityWithMembers().first(),
         state = FeedCommunityUiState(
             posts = PostsMock.getPosts(),
             likedPosts = listOf(PostsMock.getPosts().first().verseId)

@@ -6,7 +6,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.model.BottomBarItem
 import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentScreen
 

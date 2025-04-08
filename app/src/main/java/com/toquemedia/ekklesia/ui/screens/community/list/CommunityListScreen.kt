@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.model.CommunityEntity
+import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.ui.composables.EkklesiaDialog
 import com.toquemedia.ekklesia.ui.screens.community.CommunityUiState
 import com.toquemedia.ekklesia.ui.theme.backgroundLightColor
@@ -35,7 +35,7 @@ import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 fun CommunityListScreen(
     modifier: Modifier = Modifier,
     onOpenToCreateCommunity: () -> Unit = {},
-    onNavigateToCommunity: (CommunityEntity) -> Unit = {},
+    onNavigateToCommunity: (CommunityWithMembers) -> Unit = {},
     onDismissDialog: () -> Unit = {},
     onDeleteCommunity: (String) -> Unit = {},
     state: CommunityUiState
@@ -73,20 +73,20 @@ fun CommunityListScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         LazyColumn {
-            items(state.communities) { community ->
-                val expanded = expandedStates[community.id] ?: false
+            items(state.communities) { data ->
+                val expanded = expandedStates[data.community?.id] == true
                 CommunityCard(
-                    community = community,
+                    community = data,
                     onNavigateToCommunity = {
-                        onNavigateToCommunity(community)
+                        onNavigateToCommunity(data)
                     },
-                    onOpenMoreMenu = { expandedStates[community.id] = !expanded },
+                    onOpenMoreMenu = { expandedStates[data.community?.id.toString()] = !expanded },
                     modifier = modifier
                         .padding(bottom = 10.dp)
                 ) {
                     DropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expandedStates[community.id] = false }
+                        onDismissRequest = { expandedStates[data.community?.id.toString()] = false }
                     ) {
                         DropdownMenuItem(
                             text = {
@@ -102,8 +102,8 @@ fun CommunityListScreen(
                             },
                             onClick = {
                                 state.onOpenDialogChange(true)
-                                communityIdSelected = community.id
-                                expandedStates[community.id] = false
+                                communityIdSelected = data.community?.id
+                                expandedStates[data.community?.id.toString()] = false
                             }
                         )
                     }
@@ -117,6 +117,6 @@ fun CommunityListScreen(
 @Composable
 private fun CommunityListScreenPrev() {
     CommunityListScreen(
-        state = CommunityUiState(communities = CommunityMock.getAll())
+        state = CommunityUiState(communities = CommunityMock.getAllCommunityWithMembers())
     )
 }

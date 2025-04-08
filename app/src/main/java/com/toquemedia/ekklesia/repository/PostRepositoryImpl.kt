@@ -16,7 +16,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun addPost(post: PostType) = postService.addPost(post)
     override suspend fun removePost(postId: String) = postService.removePost(postId)
-    override suspend fun getPosts(): List<PostType> = postService.getAllPosts()
+    override suspend fun getPosts(communityId: String): List<PostType> = postService.getAllPosts(communityId)
 
     override suspend fun addComment(
         postId: String,

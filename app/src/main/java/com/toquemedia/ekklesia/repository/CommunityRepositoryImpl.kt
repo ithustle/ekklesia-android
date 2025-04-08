@@ -2,6 +2,7 @@ package com.toquemedia.ekklesia.repository
 
 import android.content.Context
 import com.toquemedia.ekklesia.dao.CommunityDao
+import com.toquemedia.ekklesia.dao.CommunityInsiderDao
 import com.toquemedia.ekklesia.extension.uriToBase64
 import com.toquemedia.ekklesia.model.CommunityEntity
 import com.toquemedia.ekklesia.model.CommunityMemberType
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class CommunityRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val service : CommunityService,
-    private val dao : CommunityDao
+    private val dao : CommunityDao,
+    private val communityInsiderDao: CommunityInsiderDao
 ) : CommunityRepository {
 
     override suspend fun createCommunity(name: String, description: String, image: String, user: UserType?) {
@@ -68,6 +70,7 @@ class CommunityRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             dao.updateMembers(communityId)
             service.addMember(communityId, member)
+            communityInsiderDao.saveCommunity(communityId)
         }
     }
 
@@ -96,5 +99,13 @@ class CommunityRepositoryImpl @Inject constructor(
                 throw e
             }
         }
+    }
+
+    override suspend fun getCommunitiesUserIn(ids: List<String>): List<CommunityWithMembers> {
+        return service.getCommunitiesUserIn(ids)
+    }
+
+    override suspend fun getCommunitiesUserInIds(): Flow<List<String>> {
+        return communityInsiderDao.getAll()
     }
 }

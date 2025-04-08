@@ -29,14 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.base64ToBitmap
-import com.toquemedia.ekklesia.model.CommunityEntity
+import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
 @Composable
 fun CommunityCard(
     modifier: Modifier = Modifier,
-    community: CommunityEntity,
+    community: CommunityWithMembers,
     onNavigateToCommunity: () -> Unit = {},
     onOpenMoreMenu: () -> Unit = {},
     contentMenu: @Composable () -> Unit = {}
@@ -49,25 +49,27 @@ fun CommunityCard(
                 onNavigateToCommunity()
             }
     ) {
-        Image(
-            bitmap = community.communityImage.base64ToBitmap().asImageBitmap(),
-            contentDescription = stringResource(R.string.community_title),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .padding(end = 12.dp)
-                .size(54.dp)
-                .clip(shape = RoundedCornerShape(4.dp)),
-        )
+        community.community?.let {
+            Image(
+                bitmap = it.communityImage.base64ToBitmap().asImageBitmap(),
+                contentDescription = stringResource(R.string.community_title),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .size(54.dp)
+                    .clip(shape = RoundedCornerShape(4.dp)),
+            )
+        }
 
         Column {
             Text(
-                text = community.communityName,
+                text = community.community?.communityName ?: "",
                 fontSize = 20.sp,
                 color = PrincipalColor,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = "${stringResource(R.string.members)}: ${community.members}",
+                text = "${stringResource(R.string.members)}: ${community.allMembers?.size}",
                 fontSize = 13.sp,
                 color = Color.DarkGray,
             )
@@ -92,6 +94,6 @@ fun CommunityCard(
 @Composable
 private fun CommunityCardPrev() {
     CommunityCard(
-        community = CommunityMock.getAll().first()
+        community = CommunityMock.getAllCommunityWithMembers().first()
     )
 }

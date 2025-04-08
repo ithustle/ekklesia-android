@@ -7,6 +7,7 @@ import com.toquemedia.ekklesia.dao.AppCacheDao
 import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
 import com.toquemedia.ekklesia.dao.CommunityDao
+import com.toquemedia.ekklesia.dao.CommunityInsiderDao
 import com.toquemedia.ekklesia.dao.DevocionalDao
 import com.toquemedia.ekklesia.dao.LikeDao
 import com.toquemedia.ekklesia.dao.MessageDao
@@ -30,8 +31,6 @@ class DatabaseModule {
     @Provides
     fun provideBibleDao(@ApplicationContext context: Context): BibleDao = BibleDao(context)
     @Provides
-    fun provideVerseDao(@ApplicationContext context: Context): VerseDao = VerseDao(context)
-    @Provides
     fun provideNoteDao(appDatabase: AppDatabase) : NoteDao = appDatabase.NoteDao()
     @Provides
     fun provideDevocionalDao(appDatabase: AppDatabase) : DevocionalDao = appDatabase.DevocionalDao()
@@ -40,11 +39,7 @@ class DatabaseModule {
     @Provides
     fun provideMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.MessageDao()
     @Provides
-    fun provideAppCacheDao(@ApplicationContext context: Context): AppCacheDao = AppCacheDao(context)
-    @Provides
-    fun provideLikeDao(@ApplicationContext context: Context): LikeDao = LikeDao(context)
-    @Provides
-    fun provideCommunityService(): CommunityService = CommunityService()
+    fun provideCommunityService(firestore: FirebaseFirestore): CommunityService = CommunityService(firestore)
     @Provides
     fun provideNoteService(): NoteService = NoteService()
     @Provides

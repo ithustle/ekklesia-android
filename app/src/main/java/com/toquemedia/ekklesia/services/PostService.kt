@@ -24,9 +24,10 @@ class PostService @Inject constructor(
         db.collection(collection).document(postId).delete().await()
     }
 
-    suspend fun getAllPosts(): List<PostType> {
+    suspend fun getAllPosts(communityId: String): List<PostType> {
         val snapshot = db.collection(collection)
             .orderBy("createdAt", Query.Direction.DESCENDING)
+            .whereArrayContains("communityId", communityId)
             .get()
             .await()
 

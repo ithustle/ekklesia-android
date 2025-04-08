@@ -2,6 +2,7 @@ package com.toquemedia.ekklesia.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toquemedia.ekklesia.dao.CommunityInsiderDao
 import com.toquemedia.ekklesia.extension.communitiesToJoin
 import com.toquemedia.ekklesia.extension.toPortuguese
 import com.toquemedia.ekklesia.model.CommunityMemberType
@@ -43,6 +44,8 @@ class HomeViewModel @Inject constructor(
                 e.printStackTrace()
             }
         }
+
+        getAllCommunitiesUserIn()
     }
 
     fun joinToCommunity(communityId: String) {
@@ -105,6 +108,15 @@ class HomeViewModel @Inject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
                 throw e
+            }
+        }
+    }
+
+    private fun getAllCommunitiesUserIn() {
+        viewModelScope.launch {
+            communityRepository.getCommunitiesUserInIds().collect {
+                val communities = communityRepository.getCommunitiesUserIn(it)
+                _uiState.value = _uiState.value.copy(communitiesUserIn = communities, loadingCommunitiesUserIn = false)
             }
         }
     }

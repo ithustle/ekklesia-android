@@ -35,7 +35,6 @@ class FeedCommunityViewModel @Inject constructor(
         }
 
         getUserLiked()
-        getAllPosts()
     }
 
     fun addCommentOnPost() {
@@ -85,11 +84,11 @@ class FeedCommunityViewModel @Inject constructor(
         }
     }
 
-    private fun getAllPosts() {
+    fun getAllPosts(communityId: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(loadingPosts = true)
 
-            val posts = repository.getPosts()
+            val posts = repository.getPosts(communityId)
 
             val all = posts.map {
                 async {

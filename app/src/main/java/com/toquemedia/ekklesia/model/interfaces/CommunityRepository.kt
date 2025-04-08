@@ -14,4 +14,6 @@ interface CommunityRepository {
     suspend fun getAllMembers(communityId: String): List<CommunityMemberType>
     suspend fun removeMember(communityId: String, memberId: String)
     suspend fun deleteCommunity(id: String)
+    suspend fun getCommunitiesUserIn(ids: List<String>): List<CommunityWithMembers>
+    suspend fun getCommunitiesUserInIds(): Flow<List<String>>
 }

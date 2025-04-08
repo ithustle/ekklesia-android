@@ -48,5 +48,5 @@ fun NavController.navigateToFirstScreen(route: Screen) =
 fun NavController.navigateBetweenScreens(route: Screen) =
     this.navigate(route) {
         launchSingleTop = true
-        popUpTo(route)
+        popUpTo(route) { inclusive = false }
     }

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface PostRepository {
     suspend fun addPost(post: PostType)
     suspend fun removePost(postId: String)
-    suspend fun getPosts(): List<PostType>
+    suspend fun getPosts(communityId: String): List<PostType>
     suspend fun addComment(postId: String, comment: CommentType)
     suspend fun getComments(postId: String, limit: Long = Long.MAX_VALUE): MutableList<CommentType>
     suspend fun getLikesOnPost(postId: String): List<UserType>

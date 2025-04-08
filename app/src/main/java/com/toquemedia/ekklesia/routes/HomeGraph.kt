@@ -11,7 +11,7 @@ fun NavGraphBuilder.homeGraph(
     navController: NavController
 ) {
     navigation<Screen.HomeScreenGraph>(startDestination = Screen.Home) {
-        homeNavigation()
+        homeNavigation(navController = navController)
         profileNavigation(navController = navController)
     }
 }

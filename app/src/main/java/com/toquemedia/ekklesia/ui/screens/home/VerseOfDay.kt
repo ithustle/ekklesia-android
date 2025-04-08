@@ -44,7 +44,7 @@ fun VerseOfDay(
             ) {
                 Column(
                     modifier = modifier
-                        .padding(bottom = 100.dp)
+                        .padding(bottom = 80.dp)
                 ) {
                     Text(
                         text = stringResource(R.string.verse_of_the_day),
@@ -71,7 +71,7 @@ fun VerseOfDay(
                 Row(
                     horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
-                        .padding(top = 100.dp)
+                        .padding(top = 80.dp)
                         .fillMaxWidth()
                 ) {
                     ReactionButton(

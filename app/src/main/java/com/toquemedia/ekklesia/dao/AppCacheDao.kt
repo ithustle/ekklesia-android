@@ -4,7 +4,7 @@ import android.content.Context
 import com.toquemedia.ekklesia.model.interfaces.EkklesiaDataStore
 import javax.inject.Inject
 
-class AppCacheDao @Inject constructor(context: Context) : EkklesiaDataStore(context) {
+class AppCacheDao @Inject constructor(context: Context) : EkklesiaDataStore(context, "ekklesia_cache") {
     suspend fun saveCache(
         key: String,
         value: String
