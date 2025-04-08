@@ -1,18 +1,18 @@
 package com.toquemedia.ekklesia.ui.navigation
 
-import Screen
 import android.widget.Toast
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.toquemedia.ekklesia.routes.Screen
+import com.toquemedia.ekklesia.routes.navigateBetweenScreens
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.devocional.CreateDevocionalScreen
 import com.toquemedia.ekklesia.ui.screens.bible.devocional.DevocionalViewModel
@@ -21,13 +21,13 @@ import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseActionOption
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseViewModel
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VersesScreen
 import kotlinx.coroutines.launch
+import kotlin.collections.find
 
-@OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.verseNavigation(
     showDevocionalModal: (@Composable () -> Unit) -> Unit = {},
     hideDevocionalModal: () -> Unit = {}
 ) {
-    composable("${Screen.Verses.route}/{bookName}/{chapterNumber}") { backStackEntry ->
+    composable<Screen.Verses> { backStackEntry ->
         val vmTestament: TestamentViewModel = hiltViewModel()
         val vmVerses: VerseViewModel = hiltViewModel()
         val vmDevocional: DevocionalViewModel = hiltViewModel()
@@ -50,14 +50,14 @@ fun NavGraphBuilder.verseNavigation(
             VerseActionOption(
                 hasNote = versesStates.notes.find { it.verse == versesStates.selectedVerse } != null,
                 hasDevocional = devocionalStates.allDevocional.find { it.verse == versesStates.selectedVerse && !it.draft } != null,
-                onDismissRequest = { sheetState ->
+                /*onDismissRequest = { sheetState ->
                     versesStates.onSelectVerse("", -1)
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
                             versesStates.onShowVerseAction(false)
                         }
                     }
-                },
+                }*/
                 onFavoriteVerse = {
                     vmVerses.markVerse(bookName, chapterNumber, versesStates.versicle.toString(), versesStates.selectedVerse)
                 },
@@ -110,14 +110,14 @@ fun NavGraphBuilder.verseNavigation(
 
         if (versesStates.showAddNote) {
             ModalNoteScreen(
-                onDismissRequest = { sheetState ->
+                /*onDismissRequest = { sheetState ->
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
                         if (!sheetState.isVisible) {
                             versesStates.onShowAddNote(false)
                             versesStates.onSelectVerse("", -1)
                         }
                     }
-                },
+                },*/
                 verse = versesStates.selectedVerse,
                 bookName = testamentStates.book?.bookName.toString(),
                 versicle = versesStates.versicle,
@@ -183,9 +183,6 @@ fun NavGraphBuilder.verseNavigation(
     }
 }
 
-fun NavHostController.navigateToChapterVerse(bookName: String?, chapterNumber: String) {
-    this.navigate("${Screen.Verses.route}/${bookName}/${chapterNumber}") {
-        launchSingleTop = true
-        popUpTo("${Screen.Verses.route}/{bookName}/{chapterNumber}")
-    }
+fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: String) {
+    this.navigateBetweenScreens(Screen.Verses(bookName = bookName, chapterNumber = chapterNumber))
 }

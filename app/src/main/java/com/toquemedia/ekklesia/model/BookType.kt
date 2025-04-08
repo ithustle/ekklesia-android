@@ -1,5 +1,8 @@
 package com.toquemedia.ekklesia.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class BookType(
     val bookName: String,
     val numberOfChapters: Int,

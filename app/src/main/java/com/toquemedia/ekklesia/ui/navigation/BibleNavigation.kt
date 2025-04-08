@@ -1,30 +1,25 @@
 package com.toquemedia.ekklesia.ui.navigation
 
-import BottomBarItem
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
+import com.toquemedia.ekklesia.LocalAppViewModel
+import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.ui.screens.bible.TestamentScreen
-import com.toquemedia.ekklesia.ui.screens.bible.TestamentViewModel
-import com.toquemedia.ekklesia.ui.screens.navigateBetweenTabs
 
-fun NavGraphBuilder.bibleNavigation(navController: NavHostController) {
-    composable(BottomBarItem.Bible.route) {
-        val viewModel: TestamentViewModel = hiltViewModel()
-        val states by viewModel.uiState.collectAsState()
+fun NavGraphBuilder.bibleNavigation(navController: NavController) {
+    composable<Screen.Bible> {
+
+        val appViewModel = LocalAppViewModel.current
+        appViewModel.topBarTitle = stringResource(R.string.bible_all)
 
         TestamentScreen(
-            states = states,
+            books = appViewModel.books,
             onNavigateToChapter = {
                 navController.navigateToChapter(bookName = it)
             }
         )
     }
-}
-
-fun NavHostController.navigateToBible() {
-    this.navigateBetweenTabs(BottomBarItem.Bible.route)
 }

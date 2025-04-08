@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.toquemedia.ekklesia.ui.screens.bible.composables.Chapter
+import com.toquemedia.ekklesia.ui.composables.Chapter
 import com.toquemedia.ekklesia.ui.screens.bible.states.TestamentUiState
 
 @Composable

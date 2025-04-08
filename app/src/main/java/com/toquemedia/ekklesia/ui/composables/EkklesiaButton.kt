@@ -17,6 +17,7 @@ fun EkklesiaButton(
     modifier: Modifier = Modifier,
     filled: Boolean = true,
     label: String,
+    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     if (filled) {
@@ -24,7 +25,8 @@ fun EkklesiaButton(
             modifier = modifier,
             shape = RoundedCornerShape(4.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PrincipalColor),
-            onClick = onClick
+            onClick = onClick,
+            enabled = enabled
         ) {
             Text(label)
         }
@@ -34,12 +36,12 @@ fun EkklesiaButton(
             shape = RoundedCornerShape(4.dp),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = PrincipalColor),
             border = BorderStroke(width = 2.dp, color = PrincipalColor),
-            onClick = onClick
+            onClick = onClick,
+            enabled = enabled
         ) {
             Text(label)
         }
     }
-
 }
 
 @Preview(showBackground = true)
@@ -47,7 +49,7 @@ fun EkklesiaButton(
 private fun EkklesiaButtonPrev() {
     EkklesiaButton(
         label = "Salvar",
-        filled = false,
+        filled = true,
         onClick = {}
     )
 }

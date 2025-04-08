@@ -25,10 +25,12 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun EkklesiaTextField(
+    modifier: Modifier = Modifier,
     value: String,
     placeholder: String,
     height: Dp,
     singleLine: Boolean = false,
+    enabled: Boolean = true,
     onChangeValue: (TextFieldValue) -> Unit = {}
 ) {
     Box {
@@ -45,12 +47,13 @@ fun EkklesiaTextField(
                 capitalization = KeyboardCapitalization.Sentences,
                 keyboardType = KeyboardType.Text,
             ),
-            modifier = Modifier
+            modifier = modifier
                 .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                 .fillMaxWidth()
                 .height(height = height)
                 .padding(vertical = 12.dp, horizontal = 10.dp),
-            singleLine = singleLine
+            singleLine = singleLine,
+            enabled = enabled
         )
 
         if (value.isEmpty()) {
@@ -62,7 +65,6 @@ fun EkklesiaTextField(
                     .padding(vertical = 10.dp, horizontal = 10.dp)
             )
         }
-
     }
 }
 
@@ -74,6 +76,7 @@ private fun EkklesiaTextFieldPrev() {
         placeholder = "Placeholder",
         height = 41.dp,
         singleLine = true,
-        onChangeValue = {}
+        onChangeValue = {},
+        enabled = false
     )
 }
