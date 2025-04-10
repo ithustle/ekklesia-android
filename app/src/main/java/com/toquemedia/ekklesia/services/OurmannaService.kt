@@ -25,7 +25,6 @@ data class StatsVerseOfDay(
     val createdAt: Date = Date(),
     val shares: Long = 0,
     val likes: Long = 0,
-    val comments: Long = 0,
     val commentsList: List<CommentType> = emptyList(),
     val id: String = Date().convertToString()
 )

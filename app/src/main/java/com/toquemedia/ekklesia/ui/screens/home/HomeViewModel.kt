@@ -106,6 +106,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun shareVerseOfDay() {
+        viewModelScope.launch {
+            val stats = verseRepository.shareVerseOfDay()
+            _uiState.value = _uiState.value.copy(verseOfDayStats = stats)
+        }
+    }
+
     private suspend fun getVerseOfDay() {
         val result = verseRepository.getVerseOfDay()
         val books = bibleRepository.getBooks()

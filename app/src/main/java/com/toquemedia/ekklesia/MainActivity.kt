@@ -116,14 +116,21 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun checkPermission() {
-        val permissionCheck =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val permissionWriteCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                 1
+            )
+
+        if (permissionWriteCheck != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                2
             )
     }
 }

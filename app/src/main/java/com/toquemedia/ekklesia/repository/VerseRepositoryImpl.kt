@@ -62,8 +62,9 @@ class VerseRepositoryImpl @Inject constructor(
         return verseService.getVerseOfDay()
     }
 
-    override suspend fun shareVerseOfDay() {
+    override suspend fun shareVerseOfDay(): StatsVerseOfDay {
         verseService.saveSharedVerseOfDay()
+        return verseService.getVerseOfDay()
     }
 
     internal fun getId(bookName: String, chapter: Int, versicle: Int): String {

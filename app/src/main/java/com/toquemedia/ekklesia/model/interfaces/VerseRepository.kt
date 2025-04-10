@@ -10,5 +10,5 @@ interface VerseRepository {
     suspend fun getMarkedVerse()
     suspend fun getVerseOfDay(): VerseResponse?
     suspend fun handleLikeVerseOfDay(isForLike: Boolean = true): StatsVerseOfDay
-    suspend fun shareVerseOfDay()
+    suspend fun shareVerseOfDay(): StatsVerseOfDay
 }

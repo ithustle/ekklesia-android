@@ -1,5 +1,7 @@
 package com.toquemedia.ekklesia.ui.navigation
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,6 +18,7 @@ import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
 import com.toquemedia.ekklesia.ui.screens.home.HomeScreen
 import com.toquemedia.ekklesia.ui.screens.home.HomeViewModel
+import com.toquemedia.ekklesia.utils.mocks.BitmapUtil
 import java.util.Date
 
 fun NavGraphBuilder.homeNavigation(navController: NavController) {
@@ -26,6 +29,11 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
         val state by viewModel.uiState.collectAsState()
 
         val context = LocalContext.current
+
+        val shareLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                viewModel.shareVerseOfDay()
+            }
 
         LaunchedEffect(Unit) {
             appViewModel.topBarTitle = "${Date().getGreeting()}, ${appViewModel.currentUser?.displayName}"
@@ -49,7 +57,7 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             },
             onLikeVerseOfDay = viewModel::handleLikeVerseOfDay,
             onShareVerseOfDay = {
-
+                BitmapUtil.shareVerseBitmap(context, shareLauncher, state.verseOfDay)
             }
         )
     }
