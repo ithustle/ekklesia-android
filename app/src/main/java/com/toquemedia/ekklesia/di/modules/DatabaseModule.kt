@@ -18,6 +18,7 @@ import com.toquemedia.ekklesia.services.NoteService
 import com.toquemedia.ekklesia.services.OurmannaService
 import com.toquemedia.ekklesia.services.PostService
 import com.toquemedia.ekklesia.services.UserService
+import com.toquemedia.ekklesia.services.VerseOfDayService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +43,8 @@ class DatabaseModule {
     fun provideCommunityService(firestore: FirebaseFirestore): CommunityService = CommunityService(firestore)
     @Provides
     fun provideNoteService(): NoteService = NoteService()
+    @Provides
+    fun provideVerseOfDayService(firestore: FirebaseFirestore): VerseOfDayService = VerseOfDayService(firestore)
     @Provides
     fun provideOurmannaService(retrofit: Retrofit) : OurmannaService = retrofit.create(
         OurmannaService::class.java)
