@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ModeComment
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,12 +22,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.VerseType
+import com.toquemedia.ekklesia.services.StatsVerseOfDay
 import com.toquemedia.ekklesia.ui.theme.cosmicParadiseGradient
 
 @Composable
 fun VerseOfDay(
     modifier: Modifier = Modifier,
-    verse: VerseType?
+    verse: VerseType?,
+    stats: StatsVerseOfDay,
+    onLikeVerseOfDay: (Boolean) -> Unit = {},
+    onShareVerseOfDay: () -> Unit = {},
+    isUserLiked: Boolean
 ) {
     Column(
         modifier = modifier
@@ -75,13 +81,17 @@ fun VerseOfDay(
                         .fillMaxWidth()
                 ) {
                     ReactionButton(
-                        icon = Icons.Rounded.FavoriteBorder,
-                        text = "157",
+                        iconVector = if (isUserLiked) Icons.Filled.Favorite else Icons.Rounded.FavoriteBorder,
+                        text = stats.likes.toString(),
+                        onClick = {
+                            onLikeVerseOfDay(isUserLiked)
+                        }
                     )
 
                     ReactionButton(
-                        icon = Icons.Outlined.ModeComment,
-                        text = "57",
+                        iconVector = Icons.Outlined.Share,
+                        text = stats.shares.toString(),
+                        onClick = onShareVerseOfDay
                     )
                 }
             }
@@ -98,6 +108,8 @@ private fun VerseOfDayPrev() {
             chapter = 5,
             versicle = 10,
             text = "Felizes os perseguidos por causa da justiça, pois o reino dos céus lhes pertence."
-        )
+        ),
+        stats = StatsVerseOfDay(),
+        isUserLiked = true
     )
 }

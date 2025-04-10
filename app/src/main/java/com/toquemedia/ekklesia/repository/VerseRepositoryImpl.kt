@@ -2,18 +2,24 @@ package com.toquemedia.ekklesia.repository
 
 import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.extension.toPortuguese
-import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.interfaces.VerseRepository
 import com.toquemedia.ekklesia.services.OurmannaService
-import com.toquemedia.ekklesia.services.PostService
+import com.toquemedia.ekklesia.services.StatsVerseOfDay
 import com.toquemedia.ekklesia.services.UserService
+import com.toquemedia.ekklesia.services.VerseOfDayService
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
+
+data class VerseResponse(
+    val verseOfDay: Triple<String, Int, Int>,
+    val stats: StatsVerseOfDay
+)
 
 class VerseRepositoryImpl @Inject constructor(
     private val verse: VerseDao,
     private val ourmannaService: OurmannaService,
-    private val userService: UserService
+    private val userService: UserService,
+    private val verseService: VerseOfDayService,
 ): VerseRepository {
 
     val markedVerses: MutableStateFlow<List<String>> = verse.versesMarked
@@ -37,7 +43,7 @@ class VerseRepositoryImpl @Inject constructor(
         return this.verse.getVerseMarked()
     }
 
-    override suspend fun getVerseOfDay(): Triple<String, Int, Int>? {
+    override suspend fun getVerseOfDay(): VerseResponse? {
         val regex = Regex("""([\w\s]+)\s(\d+):(\d+)""")
         val response = ourmannaService.getVerseOfDay()
 
@@ -45,8 +51,19 @@ class VerseRepositoryImpl @Inject constructor(
 
         return matchResult?.let {
             val (book, cap, verse) = it.destructured
-            Triple(book.toPortuguese(), cap.toInt(), verse.toInt())
+            val verseOfDay = Triple(book.toPortuguese(), cap.toInt(), verse.toInt())
+            val stats = verseService.getVerseOfDay()
+            VerseResponse(verseOfDay, stats)
         }
+    }
+
+    override suspend fun handleLikeVerseOfDay(isForLike: Boolean): StatsVerseOfDay {
+        verseService.saveLikedVerseOfDay(isForLike)
+        return verseService.getVerseOfDay()
+    }
+
+    override suspend fun shareVerseOfDay() {
+        verseService.saveSharedVerseOfDay()
     }
 
     internal fun getId(bookName: String, chapter: Int, versicle: Int): String {
