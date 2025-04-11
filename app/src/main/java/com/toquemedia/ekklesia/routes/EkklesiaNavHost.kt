@@ -15,7 +15,6 @@ fun EkklesiaNavHost(
     showDevocionalModal: (@Composable () -> Unit) -> Unit,
     hideDevocionalModal: () -> Unit
 ) {
-    println("isLoginActive: $isLoginActive")
     NavHost(
         navController,
         startDestination = if (isLoginActive) Screen.HomeScreenGraph else Screen.AuthScreenGraph,

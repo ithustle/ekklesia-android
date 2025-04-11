@@ -70,6 +70,7 @@ class MainActivity : ComponentActivity() {
                                 Screen.Home::class.qualifiedName -> Screen.Home
                                 Screen.Bible::class.qualifiedName -> Screen.Bible
                                 Screen.Communities::class.qualifiedName -> Screen.Communities
+                                Screen.Chapters::class.qualifiedName -> Screen.Chapters(bookName = "")
                                 Screen.Profile::class.qualifiedName -> Screen.Profile
                                 Screen.CreateCommunity::class.qualifiedName -> Screen.CreateCommunity
                                 else -> Screen.CommunityFeed(communityId = "", communityName = "")
@@ -95,6 +96,7 @@ class MainActivity : ComponentActivity() {
                             onNavigateBack = {
                                 navController.popBackStack()
                             },
+                            topBarState = appViewModel.topBarState.value,
                             content = {
                                 EkklesiaNavHost(
                                     navController = navController,
@@ -105,7 +107,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     hideDevocionalModal = {
                                         scope.launch { bottomSheetState.hide() }
-                                    }
+                                    },
                                 )
                             }
                         )

@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.extension.getGreeting
+import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
@@ -29,6 +30,7 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
         val state by viewModel.uiState.collectAsState()
 
         val context = LocalContext.current
+        val currentUser = appViewModel.currentUser
 
         val shareLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -36,7 +38,12 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             }
 
         LaunchedEffect(Unit) {
-            appViewModel.topBarTitle = "${Date().getGreeting()}, ${appViewModel.currentUser?.displayName}"
+            appViewModel.updateTopBarState(
+                newState = TopBarState(
+                    title = "${Date().getGreeting()}, ${currentUser?.displayName}",
+                    useAvatar = currentUser?.photo
+                )
+            )
         }
 
         println("Communities: ${state.communities.size}")
@@ -73,7 +80,6 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             val stateFeed by sharedViewModel.uiState.collectAsState()
 
             val appViewModel = LocalAppViewModel.current
-            appViewModel.topBarTitle = args.communityName
 
             val community = stateHome.communitiesUserIn.first { it.community?.id == args.communityId }
 

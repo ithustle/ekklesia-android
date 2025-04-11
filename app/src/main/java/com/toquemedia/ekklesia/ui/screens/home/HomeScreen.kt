@@ -27,6 +27,7 @@ import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     context: Context,
     verseOfDay: VerseType? = null,
     verseOfDayStats: StatsVerseOfDay = StatsVerseOfDay(),
@@ -42,7 +43,7 @@ fun HomeScreen(
     onLikeVerseOfDay: (Boolean) -> Unit = {},
 ) {
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
     ) {
 

@@ -27,7 +27,7 @@ class TestamentViewModel @Inject constructor(
     fun getChaptersOfTheBook(bookName: String) {
         val numberOfChapters = _uiState.value.books.find { it.bookName == bookName }?.numberOfChapters
         _uiState.value = _uiState.value.copy(
-            chapters = numberOfChapters ?: 0
+            chapters = numberOfChapters
         )
     }
 

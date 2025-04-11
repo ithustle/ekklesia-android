@@ -7,5 +7,5 @@ data class TestamentUiState(
     var bible: List<BibleType> = emptyList(),
     var books: List<BookType> = emptyList(),
     var book: BookType? = null,
-    var chapters: Int = 0,
+    var chapters: Int? = null,
 )

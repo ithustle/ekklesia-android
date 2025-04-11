@@ -3,12 +3,21 @@ package com.toquemedia.ekklesia.ui.navigation
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Chat
+import androidx.compose.material.icons.outlined.SyncAlt
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -18,6 +27,7 @@ import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
+import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.routes.navigateBetweenScreens
 import com.toquemedia.ekklesia.ui.composables.ScreenAppLoading
@@ -29,6 +39,7 @@ import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedPostAddComment
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
 import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
+import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.Communities> {
@@ -38,9 +49,18 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val uiState by viewModel.uiState.collectAsState()
 
         val context = LocalContext.current
+        val currentUser = appViewModel.currentUser
 
-        appViewModel.topBarTitle = stringResource(R.string.community)
         //appViewModel.showBackgroundOverlay = uiState.openDialog
+
+        LaunchedEffect(Unit) {
+            appViewModel.updateTopBarState(
+                newState = TopBarState(
+                    title = "Minhas comunidades",
+                    useAvatar = currentUser?.photo
+                )
+            )
+        }
 
         CommunityListScreen(
             onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
@@ -63,9 +83,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val viewModel = hiltViewModel<CommunityViewModel>()
         val uiState by viewModel.uiState.collectAsState()
-        val appViewModel = LocalAppViewModel.current
 
-        appViewModel.topBarTitle = stringResource(R.string.newCommunity)
+        val appViewModel = LocalAppViewModel.current
 
         val launcherCommunityPhoto =
             rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
@@ -73,6 +92,18 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                     uiState.onImageUriChange(it.toString())
                 }
             }
+
+        LaunchedEffect(Unit) {
+            appViewModel.updateTopBarState(
+                newState = TopBarState(
+                    title = "Nova comunidade",
+                    showBackButton = true,
+                    onBackNavigation = {
+                        navController.popBackStack()
+                    }
+                )
+            )
+        }
 
         CreateCommunityScreen(
             state = uiState,
@@ -104,12 +135,37 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val state by viewModel.uiState.collectAsState()
         val args = stackEntry.toRoute<Screen.CommunityFeed>()
 
-        appViewModel.topBarTitle = args.communityName
-
         val community = sharedViewModel.getCurrentCommunity(args.communityId)
 
         LaunchedEffect(args.communityId) {
             viewModel.getAllPosts(args.communityId)
+        }
+
+        LaunchedEffect(Unit) {
+            appViewModel.updateTopBarState(
+                newState = TopBarState(
+                    title = community?.community?.communityName.toString(),
+                    showTitleAvatar = true,
+                    showBackButton = true,
+                    useAvatar = user?.photo,
+                    actions = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.Chat,
+                            contentDescription = stringResource(R.string.change_community_description),
+                            tint = PrincipalColor,
+                            modifier = Modifier
+                                .padding(horizontal = 12.dp)
+                                .size(20.dp)
+                                .clickable {
+                                    //onNavigateToChat()
+                                }
+                        )
+                    },
+                    onBackNavigation = {
+                        navController.popBackStack()
+                    }
+                )
+            )
         }
 
         community?.let {

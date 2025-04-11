@@ -17,6 +17,7 @@ fun NavGraphBuilder.bibleGraph(
         bibleNavigation(navController = navController)
         chapterNavigation(navController = navController)
         verseNavigation(
+            navController = navController,
             showDevocionalModal = showDevocionalModal,
             hideDevocionalModal = hideDevocionalModal
         )

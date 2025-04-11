@@ -2,7 +2,7 @@ package com.toquemedia.ekklesia.routes
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Screen {
+sealed class Screen() {
 
     @Serializable
     object AuthScreenGraph: Screen()
