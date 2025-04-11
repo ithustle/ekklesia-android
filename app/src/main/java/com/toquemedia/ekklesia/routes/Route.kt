@@ -41,6 +41,14 @@ sealed class Screen() {
     object CreateCommunity: Screen()
 
     @Serializable
+    data class CreateDevocional(
+        val bookName: String?,
+        val chapterNumber: String,
+        val versicle: Int,
+        val verse: String
+    ): Screen()
+
+    @Serializable
     object Profile: Screen()
 
     @Serializable
@@ -57,5 +65,13 @@ sealed class Screen() {
     data class CommunityFeed(
         val communityId: String,
         val communityName: String
+    ): Screen()
+
+    @Serializable
+    data class NoteVerse(
+        val bookName: String?,
+        val chapterNumber: String,
+        val verse: String,
+        val versicle: Int,
     ): Screen()
 }

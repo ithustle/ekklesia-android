@@ -12,8 +12,6 @@ fun EkklesiaNavHost(
     modifier: Modifier = Modifier,
     isLoginActive: Boolean,
     navController: NavHostController,
-    showDevocionalModal: (@Composable () -> Unit) -> Unit,
-    hideDevocionalModal: () -> Unit
 ) {
     NavHost(
         navController,
@@ -22,11 +20,7 @@ fun EkklesiaNavHost(
     ) {
         authGraph(navController = navController)
         homeGraph(navController = navController)
-        bibleGraph(
-            navController = navController,
-            showDevocionalModal = showDevocionalModal,
-            hideDevocionalModal = hideDevocionalModal
-        )
+        bibleGraph(navController = navController)
         communityGraph(navController = navController)
     }
 }

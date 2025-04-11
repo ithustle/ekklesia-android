@@ -7,15 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -30,7 +26,6 @@ import com.toquemedia.ekklesia.routes.navigateToHomeGraph
 import com.toquemedia.ekklesia.ui.navigation.navigateToProfile
 import com.toquemedia.ekklesia.ui.theme.EkklesiaTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -54,13 +49,6 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize(),
                     ) {
 
-                        val bottomSheetState = rememberModalBottomSheetState(
-                            initialValue = ModalBottomSheetValue.Hidden,
-                            skipHalfExpanded = true
-                        )
-                        val sheetContent = remember { mutableStateOf<@Composable () -> Unit>({ }) }
-                        val scope = rememberCoroutineScope()
-
                         val navBackStackEntry by navController.currentBackStackEntryAsState()
                         val currentDestination = navBackStackEntry?.destination
 
@@ -70,7 +58,6 @@ class MainActivity : ComponentActivity() {
                                 Screen.Home::class.qualifiedName -> Screen.Home
                                 Screen.Bible::class.qualifiedName -> Screen.Bible
                                 Screen.Communities::class.qualifiedName -> Screen.Communities
-                                Screen.Chapters::class.qualifiedName -> Screen.Chapters(bookName = "")
                                 Screen.Profile::class.qualifiedName -> Screen.Profile
                                 Screen.CreateCommunity::class.qualifiedName -> Screen.CreateCommunity
                                 else -> Screen.CommunityFeed(communityId = "", communityName = "")
@@ -79,8 +66,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         EkklesiaApp(
-                            sheetState = bottomSheetState,
-                            sheetContent = sheetContent.value,
                             tabSelected = selectedItem,
                             onTabItemChange = {
                                 when(it) {
@@ -100,14 +85,7 @@ class MainActivity : ComponentActivity() {
                             content = {
                                 EkklesiaNavHost(
                                     navController = navController,
-                                    isLoginActive = appViewModel.currentUser != null,
-                                    showDevocionalModal = { content ->
-                                        sheetContent.value = content
-                                        scope.launch { bottomSheetState.show() }
-                                    },
-                                    hideDevocionalModal = {
-                                        scope.launch { bottomSheetState.hide() }
-                                    },
+                                    isLoginActive = appViewModel.currentUser != null
                                 )
                             }
                         )
@@ -119,20 +97,12 @@ class MainActivity : ComponentActivity() {
 
     private fun checkPermission() {
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-        val permissionWriteCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
                 1
-            )
-
-        if (permissionWriteCheck != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                2
             )
     }
 }

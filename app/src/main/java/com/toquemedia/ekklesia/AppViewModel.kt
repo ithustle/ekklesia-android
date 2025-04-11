@@ -1,10 +1,10 @@
 package com.toquemedia.ekklesia
 
 import android.app.Activity
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import com.toquemedia.ekklesia.extension.getGreeting
 import com.toquemedia.ekklesia.model.BibleType
@@ -13,7 +13,6 @@ import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.model.interfaces.AuthRepository
 import com.toquemedia.ekklesia.model.interfaces.BibleRepository
-import com.toquemedia.ekklesia.routes.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Date
 import javax.inject.Inject
