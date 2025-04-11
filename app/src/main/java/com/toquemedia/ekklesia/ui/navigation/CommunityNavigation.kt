@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.navigation
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -127,6 +128,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val sharedViewModel = hiltViewModel<CommunityViewModel>(parentEntry)
 
+        val context = LocalContext.current
         val appViewModel = LocalAppViewModel.current
         val user = appViewModel.currentUser
 
@@ -156,7 +158,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                                 .padding(horizontal = 12.dp)
                                 .size(20.dp)
                                 .clickable {
-                                    //onNavigateToChat()
+                                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show()
                                 }
                         )
                     },
@@ -180,10 +182,11 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 },
                 onRemoveLikePost = {
                     viewModel.likeAPost(post = it, isRemoving = true)
+                },
+                onAddStory = {
+                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show()
+                    //navController.navigateToChatScreen(community = community)
                 }
-                /*onNavigateToChat = {
-                    navController.navigateToChatScreen(community = community)
-                } */
             )
         } ?: run {
             ScreenAppLoading(

@@ -35,7 +35,8 @@ fun FeedScreen(
     state: FeedCommunityUiState,
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
-    onRemoveLikePost: (PostType) -> Unit = {}
+    onRemoveLikePost: (PostType) -> Unit = {},
+    onAddStory: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -69,7 +70,8 @@ fun FeedScreen(
                     FeedStories(
                         modifier = Modifier
                             .padding(16.dp),
-                        user = user
+                        user = user,
+                        onAddStory = onAddStory
                     )
                 }
             }
