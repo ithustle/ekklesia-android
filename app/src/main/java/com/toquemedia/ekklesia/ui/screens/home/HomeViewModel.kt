@@ -3,21 +3,13 @@ package com.toquemedia.ekklesia.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.dao.LikeDao
-import com.toquemedia.ekklesia.extension.communitiesToJoin
 import com.toquemedia.ekklesia.extension.convertToString
 import com.toquemedia.ekklesia.extension.toPortuguese
-import com.toquemedia.ekklesia.model.CommunityMemberType
-import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.VerseType
-import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
-import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,9 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val verseRepository: VerseRepositoryImpl,
-    private val communityRepository: CommunityRepositoryImpl,
     private val bibleRepository: BibleRepositoryImpl,
-    private val authRepository: AuthRepositoryImpl,
     private val likeDao: LikeDao
 ) : ViewModel() {
 
@@ -41,11 +31,7 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             try {
-                val (verseOfDay, communities) = coroutineScope {
-                    val verseDeferred = async { getVerseOfDay() }
-                    val communitiesDeferred = async { getAllCommunities() }
-                    verseDeferred.await() to communitiesDeferred.await()
-                }
+                getVerseOfDay()
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -54,34 +40,6 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             likeDao.getLikes().collect {
                 _uiState.value = _uiState.value.copy(likedVerseOfDay = it.contains(Date().convertToString()))
-            }
-        }
-
-        viewModelScope.launch {
-            getAllCommunitiesUserIn()
-        }
-    }
-
-    fun joinToCommunity(communityId: String) {
-        viewModelScope.launch {
-            val user = authRepository.getCurrentUser()
-
-            _uiState.value = _uiState.value.copy(joiningToCommunity = true)
-
-            user?.let { user ->
-                val member = CommunityMemberType(
-                    id = user.id,
-                    user = user,
-                    isAdmin = false
-                )
-                communityRepository.addMember(
-                    communityId = communityId,
-                    member = member
-                )
-                _uiState.value = _uiState.value.copy(
-                    joiningToCommunity = false,
-                    communities = _uiState.value.communities.filter { it.community?.id != communityId }
-                )
             }
         }
     }
@@ -129,43 +87,6 @@ class HomeViewModel @Inject constructor(
                 ),
                 verseOfDayStats = res.stats
             )
-        }
-    }
-
-    private fun getAllCommunities() {
-        viewModelScope.launch {
-            try {
-                val user = authRepository.getCurrentUser()
-                user?.email?.let {
-                    val communities = communityRepository.getAll(it)
-
-                    withContext(Dispatchers.IO) {
-                        val all = communities.map { community ->
-                            async {
-                                val members = communityRepository.getAllMembers(community.id)
-                                CommunityWithMembers(community, members)
-                            }
-                        }.awaitAll()
-
-                        _uiState.value = _uiState.value.copy(
-                            communities = all.communitiesToJoin(user.id),
-                            loadCommunities = false
-                        )
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                throw e
-            }
-        }
-    }
-
-    private fun getAllCommunitiesUserIn() {
-        viewModelScope.launch {
-            communityRepository.getCommunitiesUserInIds().collect {
-                val communities = communityRepository.getCommunitiesUserIn(it)
-                _uiState.value = _uiState.value.copy(communitiesUserIn = communities, loadingCommunitiesUserIn = false)
-            }
         }
     }
 }

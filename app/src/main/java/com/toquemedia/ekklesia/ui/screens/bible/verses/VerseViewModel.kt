@@ -61,6 +61,9 @@ class VerseViewModel @Inject constructor(
                 onEntryNoteChange = {
                     _uiState.value = _uiState.value.copy(entryNote = it)
                 },
+                onChangeChapter = {
+                    _uiState.value = _uiState.value.copy(chapter = it)
+                },
                 markedVerses = verseRepository.markedVerses
             )
         }
@@ -77,6 +80,11 @@ class VerseViewModel @Inject constructor(
                 e.printStackTrace()
             }
         }
+    }
+
+    fun changeChapter(chapter: Int) {
+        println("chapter: $chapter")
+        _uiState.value = _uiState.value.copy(chapter = chapter)
     }
 
     fun markVerse(bookName: String?, chapter: String?, versicle: String, verse: String) {

@@ -10,13 +10,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.extension.getGreeting
 import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.routes.Screen
-import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
-import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
+import com.toquemedia.ekklesia.ui.screens.community.CommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.home.HomeScreen
 import com.toquemedia.ekklesia.ui.screens.home.HomeViewModel
 import com.toquemedia.ekklesia.utils.mocks.BitmapUtil
@@ -26,7 +24,11 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
     composable<Screen.Home> {
 
         val appViewModel = LocalAppViewModel.current
+
+        val communityViewModel = hiltViewModel<CommunityViewModel>()
         val viewModel = hiltViewModel<HomeViewModel>()
+
+        val communityState by communityViewModel.uiState.collectAsState()
         val state by viewModel.uiState.collectAsState()
 
         val context = LocalContext.current
@@ -46,19 +48,19 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             )
         }
 
-        println("Communities: ${state.communities.size}")
+        println("Communities: ${communityState.communities.size}")
 
         HomeScreen(
-            communitiesUserIn = state.communitiesUserIn,
-            loadingCommunitiesUserIn = state.loadingCommunitiesUserIn,
-            communities = state.communities,
-            loadCommunities = state.loadCommunities,
-            joiningToCommunity = state.joiningToCommunity,
+            communitiesUserIn = communityState.communitiesUserIn,
+            loadingCommunitiesUserIn = communityState.loadingCommunitiesUserIn,
+            communities = communityState.communities,
+            loadCommunities = communityState.loadCommunities,
+            joiningToCommunity = communityState.joiningToCommunity,
             verseOfDay = state.verseOfDay,
             verseOfDayStats = state.verseOfDayStats,
             likedVerseOfDay = state.likedVerseOfDay,
             context = context,
-            onJoinToCommunity = viewModel::joinToCommunity,
+            onJoinToCommunity = communityViewModel::joinToCommunity,
             onNavigateToCommunity = {
                 navController.navigateToCommunityFeed(it)
             },
@@ -69,7 +71,7 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
         )
     }
 
-    composable<Screen.CommunityFeed> {stackEntry ->
+    /*composable<Screen.CommunityFeed> {stackEntry ->
         navController.previousBackStackEntry?.let {
             val args = stackEntry.toRoute<Screen.CommunityFeed>()
 
@@ -80,11 +82,40 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             val stateFeed by sharedViewModel.uiState.collectAsState()
 
             val appViewModel = LocalAppViewModel.current
+            val context = LocalContext.current
+            val user = appViewModel.currentUser
 
             val community = stateHome.communitiesUserIn.first { it.community?.id == args.communityId }
 
             LaunchedEffect(args.communityId) {
                 sharedViewModel.getAllPosts(args.communityId)
+            }
+
+            LaunchedEffect(Unit) {
+                appViewModel.updateTopBarState(
+                    newState = TopBarState(
+                        title = community.community?.communityName.toString(),
+                        showTitleAvatar = true,
+                        showBackButton = true,
+                        useAvatar = user?.photo,
+                        actions = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Outlined.Chat,
+                                contentDescription = stringResource(R.string.change_community_description),
+                                tint = PrincipalColor,
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp)
+                                    .size(20.dp)
+                                    .clickable {
+                                        Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show()
+                                    }
+                            )
+                        },
+                        onBackNavigation = {
+                            navController.popBackStack()
+                        }
+                    )
+                )
             }
 
             FeedScreen(
@@ -99,11 +130,12 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
                 },
                 onRemoveLikePost = {
                     sharedViewModel.likeAPost(post = it, isRemoving = true)
+                },
+                onAddStory = {
+                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show()
+                    //navController.navigateToChatScreen(community = community)
                 }
-                /*onNavigateToChat = {
-                    navController.navigateToChatScreen(community = community)
-                } */
             )
         }
-    }
+    }*/
 }

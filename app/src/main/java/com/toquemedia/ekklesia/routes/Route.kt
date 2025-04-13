@@ -34,7 +34,7 @@ sealed class Screen() {
     @Serializable
     data class Verses(
         val bookName: String?,
-        val chapterNumber: String
+        val chapterNumber: Int
     ): Screen()
 
     @Serializable

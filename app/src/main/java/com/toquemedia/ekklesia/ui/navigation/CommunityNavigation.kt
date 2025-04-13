@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -44,39 +45,44 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.Communities> {
 
-        val appViewModel = LocalAppViewModel.current
-        val viewModel = hiltViewModel<CommunityViewModel>()
-        val uiState by viewModel.uiState.collectAsState()
+        navController.previousBackStackEntry?.let { stackEntry ->
 
-        val context = LocalContext.current
-        val currentUser = appViewModel.currentUser
+            val appViewModel = LocalAppViewModel.current
+            val viewModel = hiltViewModel<CommunityViewModel>(stackEntry)
+            val uiState by viewModel.uiState.collectAsState()
 
-        //appViewModel.showBackgroundOverlay = uiState.openDialog
+            val context = LocalContext.current
+            val currentUser = appViewModel.currentUser
 
-        LaunchedEffect(Unit) {
-            appViewModel.updateTopBarState(
-                newState = TopBarState(
-                    title = "Minhas comunidades",
-                    useAvatar = currentUser?.photo
+            //appViewModel.showBackgroundOverlay = uiState.openDialog
+
+            LaunchedEffect(Unit) {
+                appViewModel.updateTopBarState(
+                    newState = TopBarState(
+                        title = "Minhas comunidades",
+                        useAvatar = currentUser?.photo
+                    )
                 )
+            }
+
+            CommunityListScreen(
+                onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
+                onNavigateToCommunity = {
+                    it.community?.toCommunity(context)?.let {
+                        navController.navigateToCommunityFeed(community = it)
+                    }
+                },
+                //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
+                onDismissDialog = { appViewModel.showBackgroundOverlay = false },
+                onDeleteCommunity = {
+                    viewModel.deleteCommunity(it)
+                    appViewModel.showBackgroundOverlay = false
+                },
+                communities = uiState.communities.filter { it.community?.email == currentUser?.email },
+                openDialog = uiState.openDialog,
+                onOpenDialogChange = uiState.onOpenDialogChange
             )
         }
-
-        CommunityListScreen(
-            onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
-            onNavigateToCommunity = {
-                it.community?.toCommunity(context)?.let {
-                    navController.navigateToCommunityFeed(community = it)
-                }
-            },
-            //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
-            onDismissDialog = { appViewModel.showBackgroundOverlay = false },
-            onDeleteCommunity = {
-                viewModel.deleteCommunity(it)
-                appViewModel.showBackgroundOverlay = false
-            },
-            state = uiState
-        )
     }
 
     composable<Screen.CreateCommunity> {
@@ -122,11 +128,24 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
     composable<Screen.CommunityFeed> { stackEntry ->
 
-        val parentEntry = remember(navController.currentBackStackEntry) {
-            navController.getBackStackEntry(Screen.Communities)
+        val currentBackStackEntry = navController.currentBackStackEntry
+        val currentRoute = currentBackStackEntry?.destination?.route
+        val previousRoute = navController.previousBackStackEntry?.destination?.route
+
+        val isCommunityInStack = currentRoute == Screen.Communities::class.qualifiedName ||
+                previousRoute == Screen.Communities::class.qualifiedName
+
+        var parentEntry: NavBackStackEntry? = null
+
+        if (isCommunityInStack) {
+            parentEntry = remember(navController.currentBackStackEntry) {
+                navController.getBackStackEntry(Screen.Communities)
+            }
+        } else {
+            parentEntry = navController.previousBackStackEntry
         }
 
-        val sharedViewModel = hiltViewModel<CommunityViewModel>(parentEntry)
+        val sharedViewModel = hiltViewModel<CommunityViewModel>(parentEntry ?: stackEntry)
 
         val context = LocalContext.current
         val appViewModel = LocalAppViewModel.current
@@ -136,7 +155,10 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val state by viewModel.uiState.collectAsState()
         val args = stackEntry.toRoute<Screen.CommunityFeed>()
 
-        val community = sharedViewModel.getCurrentCommunity(args.communityId)
+        val community = remember(args.communityId) {
+            println("args.communityId: ${args.communityId}")
+            sharedViewModel.getCurrentCommunity(args.communityId)
+        }
 
         LaunchedEffect(args.communityId) {
             viewModel.getAllPosts(args.communityId)
@@ -171,7 +193,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         community?.let {
             FeedScreen(
-                community = community,
+                community = it,
                 state = state,
                 user = user,
                 onNavigateToComments = {

@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.ui.composables.EkklesiaDialog
-import com.toquemedia.ekklesia.ui.screens.community.CommunityUiState
 import com.toquemedia.ekklesia.ui.theme.backgroundLightColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
@@ -38,20 +37,22 @@ fun CommunityListScreen(
     onNavigateToCommunity: (CommunityWithMembers) -> Unit = {},
     onDismissDialog: () -> Unit = {},
     onDeleteCommunity: (String) -> Unit = {},
-    state: CommunityUiState
+    onOpenDialogChange: (Boolean) -> Unit = {},
+    communities: List<CommunityWithMembers>,
+    openDialog: Boolean
 ) {
 
     val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
     var communityIdSelected by remember { mutableStateOf<String?>(null) }
 
-    if (state.openDialog) {
+    if (openDialog) {
         EkklesiaDialog(
             onDismissRequest = {
-                state.onOpenDialogChange(false)
+                onOpenDialogChange(false)
                 onDismissDialog()
            },
             onConfirmation = {
-                state.onOpenDialogChange(false)
+                onOpenDialogChange(false)
                 onDeleteCommunity(communityIdSelected.toString())
             },
             dialogTitle = stringResource(R.string.dialog_community_title),
@@ -73,7 +74,7 @@ fun CommunityListScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         LazyColumn {
-            items(state.communities) { data ->
+            items(communities) { data ->
                 val expanded = expandedStates[data.community?.id] == true
                 CommunityCard(
                     community = data,
@@ -101,7 +102,7 @@ fun CommunityListScreen(
                                 )
                             },
                             onClick = {
-                                state.onOpenDialogChange(true)
+                                onOpenDialogChange(true)
                                 communityIdSelected = data.community?.id
                                 expandedStates[data.community?.id.toString()] = false
                             }
@@ -117,6 +118,7 @@ fun CommunityListScreen(
 @Composable
 private fun CommunityListScreenPrev() {
     CommunityListScreen(
-        state = CommunityUiState(communities = CommunityMock.getAllCommunityWithMembers())
+        communities = CommunityMock.getAllCommunityWithMembers(),
+        openDialog = false,
     )
 }

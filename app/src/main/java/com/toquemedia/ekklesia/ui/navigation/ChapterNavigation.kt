@@ -41,7 +41,7 @@ fun NavGraphBuilder.chapterNavigation(navController: NavController) {
             ChapterScreen(
                 chapters = it,
                 onNavigateToVerses = {
-                    navController.navigateToChapterVerse(arg.bookName, chapterNumber = it.toString())
+                    navController.navigateToChapterVerse(arg.bookName, chapterNumber = it)
                 }
             )
         } ?: run {

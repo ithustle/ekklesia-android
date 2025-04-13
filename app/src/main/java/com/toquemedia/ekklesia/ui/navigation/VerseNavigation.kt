@@ -38,7 +38,6 @@ fun NavGraphBuilder.verseNavigation(
 
         val args = backStackEntry.toRoute<Screen.Verses>()
 
-        val chapterNumber = args.chapterNumber
         val bookName = args.bookName
 
         val scope = rememberCoroutineScope()
@@ -48,16 +47,20 @@ fun NavGraphBuilder.verseNavigation(
 
         val book = appViewModel.books.find { it.bookName == bookName }
 
-        LaunchedEffect(Unit) {
+        LaunchedEffect(versesStates.chapter) {
             appViewModel.updateTopBarState(
                 newState = TopBarState(
-                    title = "Capítulo $chapterNumber",
+                    title = "Capítulo ${versesStates.chapter}",
                     showBackButton = true,
                     onBackNavigation = {
                         navController.popBackStack()
                     }
                 )
             )
+        }
+
+        LaunchedEffect(Unit) {
+            versesStates.onChangeChapter(args.chapterNumber)
         }
 
         if (versesStates.showVerseActionOption) {
@@ -75,7 +78,7 @@ fun NavGraphBuilder.verseNavigation(
                 onFavoriteVerse = {
                     vmVerses.markVerse(
                         bookName,
-                        chapterNumber,
+                        versesStates.chapter.toString(),
                         versesStates.versicle.toString(),
                         versesStates.selectedVerse
                     )
@@ -83,7 +86,7 @@ fun NavGraphBuilder.verseNavigation(
                 onAddNoteToVerse = {
                     navController.navigateToNoteVerse(
                         bookName,
-                        chapterNumber,
+                        versesStates.chapter.toString(),
                         versesStates.selectedVerse,
                         versesStates.versicle
                     )
@@ -95,7 +98,7 @@ fun NavGraphBuilder.verseNavigation(
                 onSelectVerseForDevocional = {
                     navController.navigateToCreateDevocional(
                         bookName,
-                        chapterNumber,
+                        versesStates.chapter.toString(),
                         versesStates.versicle,
                         versesStates.selectedVerse
                     )
@@ -109,7 +112,7 @@ fun NavGraphBuilder.verseNavigation(
 
         VersesScreen(
             book = book,
-            chapterNumber = chapterNumber,
+            chapterNumber = versesStates.chapter,
             scrollState = scrollState,
             versesStates = versesStates,
             devocionalState = devocionalStates,
@@ -119,14 +122,15 @@ fun NavGraphBuilder.verseNavigation(
             onUnMarkVerse = { verse, versicle ->
                 vmVerses.unMarkVerse(
                     bookName = bookName,
-                    chapter = chapterNumber,
+                    chapter = versesStates.chapter.toString(),
                     versicle = versicle.toString(),
                     verse = verse
                 )
             },
             onNextVerse = { versicle ->
-                if (versicle < chapterNumber.toInt()) {
-                    //chapter += 1
+                println("$versicle ${versesStates.chapter}")
+                if (versicle <= versesStates.chapter) {
+                    vmVerses.changeChapter(versicle + 1)
                     scope.launch {
                         scrollState.scrollTo(0)
                     }
@@ -134,7 +138,7 @@ fun NavGraphBuilder.verseNavigation(
             },
             onPreviousVerse = { versicle ->
                 if (versicle > 1) {
-                    //chapter -= 1
+                    vmVerses.changeChapter(versicle - 1)
                     scope.launch {
                         scrollState.scrollTo(0)
                     }
@@ -259,6 +263,6 @@ fun NavGraphBuilder.verseNavigation(
     }
 }
 
-fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: String) = this.navigateBetweenScreens(Screen.Verses(bookName = bookName, chapterNumber = chapterNumber) )
+fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: Int) = this.navigateBetweenScreens(Screen.Verses(bookName = bookName, chapterNumber = chapterNumber) )
 fun NavController.navigateToNoteVerse(bookName: String?, chapterNumber: String, verse: String, versicle: Int) = this.navigateBetweenScreens(Screen.NoteVerse(bookName = bookName, chapterNumber = chapterNumber, verse = verse, versicle = versicle))
 fun NavController.navigateToCreateDevocional(bookName: String?, chapterNumber: String, versicle: Int, verse: String) = this.navigateBetweenScreens(Screen.CreateDevocional(bookName = bookName, chapterNumber = chapterNumber, versicle = versicle, verse = verse))
