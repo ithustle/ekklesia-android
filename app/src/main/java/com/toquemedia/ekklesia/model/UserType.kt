@@ -8,5 +8,6 @@ data class UserType(
     val displayName: String? = null,
     val email: String? = null,
     val photo: String? = null,
-    val communitiesIn: List<String> = emptyList()
+    val communitiesIn: List<String> = emptyList(),
+    val postsLiked: List<String> = emptyList()
 )

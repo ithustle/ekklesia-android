@@ -38,7 +38,7 @@ fun CommunityListScreen(
     onDismissDialog: () -> Unit = {},
     onDeleteCommunity: (String) -> Unit = {},
     onOpenDialogChange: (Boolean) -> Unit = {},
-    communities: List<CommunityWithMembers>,
+    myCommunities: List<CommunityWithMembers>,
     openDialog: Boolean
 ) {
 
@@ -74,7 +74,7 @@ fun CommunityListScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         LazyColumn {
-            items(communities) { data ->
+            items(myCommunities) { data ->
                 val expanded = expandedStates[data.community.id] == true
                 CommunityCard(
                     community = data,
@@ -118,7 +118,7 @@ fun CommunityListScreen(
 @Composable
 private fun CommunityListScreenPrev() {
     CommunityListScreen(
-        communities = CommunityMock.getAllCommunityWithMembers(),
+        myCommunities = CommunityMock.getAllCommunityWithMembers(),
         openDialog = false,
     )
 }

@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.ValidationResult
@@ -34,15 +36,15 @@ fun CreateCommunityScreen(
     modifier: Modifier = Modifier,
     onTapToLoadImageOnLibrary: () -> Unit = {},
     onCreateCommunity: () -> Unit = {},
-    onCreateSuccessfulCommunity: (Boolean) -> Unit,
+    onCreateSuccessfulCommunity: (Boolean) -> Unit = {},
     state: CommunityUiState = CommunityUiState(),
-    validation: SharedFlow<ValidationResult>
+    validation: SharedFlow<ValidationResult>? = null
 ) {
     var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        validation.collect { result ->
+        validation?.collect { result ->
             when(result) {
                 is ValidationResult.Success -> {
                     isLoading = false
@@ -81,7 +83,8 @@ fun CreateCommunityScreen(
             onChangeValue = {
                 state.onCommunityNameChange(it.text)
             },
-            enabled = !isLoading
+            enabled = !isLoading,
+            imeAction = ImeAction.Next
         )
 
         Spacer(Modifier.height(10.dp))
@@ -93,7 +96,8 @@ fun CreateCommunityScreen(
             onChangeValue = {
                 state.onCommunityDescriptionChange(it.text)
             },
-            enabled = !isLoading
+            enabled = !isLoading,
+            imeAction = ImeAction.Done
         )
 
         Spacer(Modifier.weight(1f))
@@ -116,4 +120,10 @@ fun CreateCommunityScreen(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CreateCommunityScreenPrev() {
+    CreateCommunityScreen()
 }

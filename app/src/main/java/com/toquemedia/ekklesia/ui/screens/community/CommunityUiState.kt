@@ -21,7 +21,7 @@ data class CommunityUiState(
     val onUserPhotoChange: (Uri?) -> Unit = {},
     val onOpenDialogChange: (Boolean) -> Unit = {},
     val communitiesUserIn: List<CommunityWithMembers> = emptyList(),
-    val loadingCommunitiesUserIn: Boolean = false,
-    val loadCommunities: Boolean = false,
+    val loadingCommunitiesUserIn: Boolean = true,
+    val loadCommunities: Boolean = true,
     val joiningToCommunity: Boolean = false,
 )

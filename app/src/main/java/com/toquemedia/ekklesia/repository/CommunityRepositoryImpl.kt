@@ -23,7 +23,7 @@ class CommunityRepositoryImpl @Inject constructor(
 ) : CommunityRepository {
 
     override suspend fun createCommunity(name: String, description: String, image: Uri?, user: UserType?): CommunityWithMembers? {
-        withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             user?.email?.let {
                 val communityId = UUID.randomUUID().toString()
                 val imageUrl = async {
@@ -38,26 +38,33 @@ class CommunityRepositoryImpl @Inject constructor(
                     email = it
                 )
 
+                val member = CommunityMemberType(
+                    id = user.id,
+                    user = user,
+                    isAdmin = true
+                )
+
                 try {
-                    val member = CommunityMemberType(
-                        id = user.id,
-                        user = user,
-                        isAdmin = true
-                    )
                     val communityWithMembers = CommunityWithMembers(
                         community = community,
                         allMembers = listOf(member)
                     )
 
-                    service.createCommunity(communityWithMembers)
+                    async {
+                        service.createCommunity(communityWithMembers)
+                    }.await()
+
+                    async {
+                        service.addMember(communityId = community.id, member = member)
+                    }.await()
+
                     communityWithMembers
                 } catch (firestoreException: Exception) {
                     throw firestoreException
-                    return@withContext null
+                    null
                 }
             }
         }
-        return null
     }
 
     override suspend fun addMember(

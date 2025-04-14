@@ -11,7 +11,7 @@ data class CommunityType(
     val communityImage: String = "",
     val email: String = "",
     val createdAt: Date = Date(),
-    val isActive: Boolean = true
+    val active: Boolean = true
 )
 
 @Immutable

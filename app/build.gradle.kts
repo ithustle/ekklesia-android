@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.toquemedia.ekklesia"
-        minSdk = 24
+        minSdk = 27
         targetSdk = 34
         versionCode = 3
         versionName = "0.0.3"

@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -99,6 +100,7 @@ class CommunityViewModel @Inject constructor(
                                 image = it.imageUri,
                                 user = user
                             )
+
                             newCommunity?.let {
                                 _uiState.value =
                                     _uiState.value.copy(myCommunities = _uiState.value.myCommunities + newCommunity)
@@ -162,16 +164,27 @@ class CommunityViewModel @Inject constructor(
                 repository.getAll()
                     .flowOn(Dispatchers.IO)
                     .collect { communities ->
-                        val all = communities.map { community ->
-                            async {
-                                val members = repository.getAllMembers(community.id)
-                                CommunityWithMembers(community, members)
-                            }
-                        }.awaitAll()
+                        val communityWithMembers = coroutineScope {
+                            communities.map { community ->
+                                async {
+                                    val members = repository.getAllMembers(community.id)
 
+                                    val finalMembers = if (members.isEmpty() &&
+                                        community.email == user?.email) {
+                                        delay(500)
+                                        val retryMembers = repository.getAllMembers(community.id)
+                                        retryMembers
+                                    } else {
+                                        members
+                                    }
+
+                                    CommunityWithMembers(community, finalMembers)
+                                }
+                            }.awaitAll()
+                        }
                         _uiState.value = _uiState.value.copy(
-                            communities = all.communitiesToJoin(user?.id.toString()),
-                            myCommunities = all,
+                            communities = communityWithMembers.communitiesToJoin(user?.id.toString()),
+                            myCommunities = communityWithMembers,
                             loadCommunities = false
                         )
                     }

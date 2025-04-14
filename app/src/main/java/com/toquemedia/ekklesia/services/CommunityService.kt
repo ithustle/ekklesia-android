@@ -24,11 +24,7 @@ class CommunityService @Inject constructor(
 
     suspend fun createCommunity(data: CommunityWithMembers) {
         val community = data.community
-        val member = data.allMembers.first()
-
         db.collection(collection).document(community.id).set(community).await()
-        this.addMember(communityId = community.id, member = member)
-        auth.saveCommunityIn(community.id)
     }
 
     suspend fun addMember(communityId: String, member: CommunityMemberType) {
@@ -41,12 +37,19 @@ class CommunityService @Inject constructor(
     }
 
     suspend fun getAllMembers(communityId: String): List<CommunityMemberType> {
-        return db.collection(collection)
-            .document(communityId)
-            .collection(subCollection)
-            .get()
-            .await()
-            .toObjects(CommunityMemberType::class.java)
+        return try {
+            withContext(Dispatchers.IO) {
+                db.collection(collection)
+                    .document(communityId)
+                    .collection(subCollection)
+                    .get()
+                    .await()
+                    .toObjects(CommunityMemberType::class.java)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
     }
 
     fun getCommunitiesOnFeed(): Flow<List<CommunityType>> {
@@ -91,14 +94,20 @@ class CommunityService @Inject constructor(
             val docRefs = ids.map { db.collection(collection).document(it) }
 
             db.runTransaction { transaction ->
-                docRefs.map { docRef -> transaction.get(docRef) }
+                docRefs.map { docRef ->
+                    transaction.get(docRef)
+                }
             }.await()
         }
 
         val validCommunities = communityDocs
             .filter { it.exists() }
             .mapNotNull { doc ->
-                doc.toObject(CommunityType::class.java)?.let { it to doc.reference }
+                doc.toObject(CommunityType::class.java)?.let { community ->
+                    if (community.active == true) {
+                        community to doc.reference
+                    } else null
+                }
             }
 
         return coroutineScope {

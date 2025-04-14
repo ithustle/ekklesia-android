@@ -74,7 +74,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                     viewModel.deleteCommunity(it)
                     appViewModel.showBackgroundOverlay = false
                 },
-                communities = uiState.myCommunities.filter { it.community.email == currentUser?.email },
+                myCommunities = uiState.myCommunities.filter { it.community.email == currentUser?.email },
                 openDialog = uiState.openDialog,
                 onOpenDialogChange = uiState.onOpenDialogChange
             )
@@ -91,7 +91,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val launcherCommunityPhoto =
             rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
                 it?.let {
-                    println(it)
                     uiState.onImageUriChange(it)
                 }
             }
@@ -114,9 +113,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             onTapToLoadImageOnLibrary = {
                 launcherCommunityPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             },
-            onCreateCommunity = {
-                viewModel.createCommunity()
-            },
+            onCreateCommunity = viewModel::createCommunity,
             onCreateSuccessfulCommunity = {
                 navController.popBackStack()
             }
