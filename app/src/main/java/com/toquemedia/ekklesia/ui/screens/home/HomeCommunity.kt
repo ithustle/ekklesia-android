@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,11 +13,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -27,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityMemberType
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaButton
@@ -39,15 +39,19 @@ import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 fun HomeCommunity(
     modifier: Modifier = Modifier,
     community: CommunityType,
-    loading: Boolean = false,
     members: List<CommunityMemberType>,
     onJoinToCommunity: (String) -> Unit = {}
 ) {
+    println("CommunityItem recomposed: ${community.communityName}")
+
     Column(
         modifier = modifier
             .background(color = Color.White)
             .padding(vertical = 20.dp, horizontal = 12.dp)
             .fillMaxWidth()
+            .drawBehind {
+                Log.d("DrawCheck", "Redrawing item: ${community.communityName}")
+            }
 
     ) {
         Row(
@@ -139,7 +143,7 @@ fun HomeCommunity(
 @Composable
 private fun HomeCommunityPrev() {
     HomeCommunity(
-        community = CommunityMock.getAllCommunityWithMembers().first().community!!.toCommunity(LocalContext.current),
-        members = CommunityMock.getAllCommunityWithMembers().first().allMembers!!
+        community = CommunityMock.getAllCommunityWithMembers().first().community,
+        members = CommunityMock.getAllCommunityWithMembers().first().allMembers
     )
 }

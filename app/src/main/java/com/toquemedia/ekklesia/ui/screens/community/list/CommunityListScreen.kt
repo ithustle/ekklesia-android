@@ -75,19 +75,19 @@ fun CommunityListScreen(
 
         LazyColumn {
             items(communities) { data ->
-                val expanded = expandedStates[data.community?.id] == true
+                val expanded = expandedStates[data.community.id] == true
                 CommunityCard(
                     community = data,
                     onNavigateToCommunity = {
                         onNavigateToCommunity(data)
                     },
-                    onOpenMoreMenu = { expandedStates[data.community?.id.toString()] = !expanded },
+                    onOpenMoreMenu = { expandedStates[data.community.id.toString()] = !expanded },
                     modifier = modifier
                         .padding(bottom = 10.dp)
                 ) {
                     DropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expandedStates[data.community?.id.toString()] = false }
+                        onDismissRequest = { expandedStates[data.community.id.toString()] = false }
                     ) {
                         DropdownMenuItem(
                             text = {
@@ -103,8 +103,8 @@ fun CommunityListScreen(
                             },
                             onClick = {
                                 onOpenDialogChange(true)
-                                communityIdSelected = data.community?.id
-                                expandedStates[data.community?.id.toString()] = false
+                                communityIdSelected = data.community.id
+                                expandedStates[data.community.id.toString()] = false
                             }
                         )
                     }

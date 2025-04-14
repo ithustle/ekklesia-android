@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.screens.community.create
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -9,9 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddAPhoto
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,13 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import androidx.core.net.toUri
+import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @Composable
 fun CommunityImageProfile(
     onChangeImage: () -> Unit,
-    imageUri: String
+    imageUri: Uri? = null
 ) {
     Row {
         Spacer(Modifier.weight(1f))
@@ -39,7 +41,7 @@ fun CommunityImageProfile(
                     onChangeImage()
                 }
         ) {
-            if (imageUri == "") {
+            if (imageUri == null) {
                 Icon(
                     imageVector = Icons.Outlined.AddAPhoto,
                     contentDescription = null,
@@ -49,7 +51,7 @@ fun CommunityImageProfile(
                         .align(alignment = Alignment.Center)
                 )
             } else {
-                AsyncImage(
+                EkklesiaImage(
                     model = imageUri,
                     contentDescription = null,
                     modifier = Modifier
@@ -67,5 +69,5 @@ fun CommunityImageProfile(
 @Preview
 @Composable
 private fun CommunityImageProfilePrev() {
-    CommunityImageProfile({}, "")
+    CommunityImageProfile({}, "".toUri())
 }

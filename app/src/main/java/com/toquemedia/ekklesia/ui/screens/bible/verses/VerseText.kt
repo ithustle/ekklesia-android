@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Diversity3
 import androidx.compose.material.icons.filled.EditNote
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,7 +32,11 @@ fun VerseText(
     hasNote: Boolean,
     hasDevocional: Boolean
 ) {
-    val paragraphs = verse.splitTextByLineWidth(maxCharsPerLine = 39)
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
+
+    val paragraphs = verse.splitTextByLineWidth(screenWidth = screenWidthPx.toInt(), percentOfScreen = 0.9f)
 
     Column {
         paragraphs.forEachIndexed { index, paragraph ->

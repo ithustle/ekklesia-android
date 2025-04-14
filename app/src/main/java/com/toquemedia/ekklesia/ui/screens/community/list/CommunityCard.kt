@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.ui.screens.community.list
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,16 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.extension.base64ToBitmap
 import com.toquemedia.ekklesia.model.CommunityWithMembers
+import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
@@ -49,27 +48,25 @@ fun CommunityCard(
                 onNavigateToCommunity()
             }
     ) {
-        community.community?.let {
-            Image(
-                bitmap = it.communityImage.base64ToBitmap().asImageBitmap(),
-                contentDescription = stringResource(R.string.community_title),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding(end = 12.dp)
-                    .size(54.dp)
-                    .clip(shape = RoundedCornerShape(4.dp)),
-            )
-        }
+        EkklesiaImage(
+            model = community.community.communityImage.toUri(),
+            contentDescription = stringResource(R.string.community_title),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .padding(end = 12.dp)
+                .size(54.dp)
+                .clip(shape = RoundedCornerShape(4.dp)),
+        )
 
         Column {
             Text(
-                text = community.community?.communityName ?: "",
+                text = community.community.communityName,
                 fontSize = 20.sp,
                 color = PrincipalColor,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
-                text = "${stringResource(R.string.members)}: ${community.allMembers?.size}",
+                text = "${stringResource(R.string.members)}: ${community.allMembers.size}",
                 fontSize = 13.sp,
                 color = Color.DarkGray,
             )

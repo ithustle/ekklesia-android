@@ -5,6 +5,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -48,6 +49,15 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             )
         }
 
+        produceState(false, communityState.newCommunity) {
+            if (value) {
+                communityState.newCommunity?.let {
+                    navController.navigateToCommunityFeed(it.community)
+                }
+            }
+            value = true
+        }
+
         println("Communities: ${communityState.communities.size}")
 
         HomeScreen(
@@ -70,72 +80,4 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             }
         )
     }
-
-    /*composable<Screen.CommunityFeed> {stackEntry ->
-        navController.previousBackStackEntry?.let {
-            val args = stackEntry.toRoute<Screen.CommunityFeed>()
-
-            val communitySharedViewModel = hiltViewModel<HomeViewModel>(it)
-            val stateHome by communitySharedViewModel.uiState.collectAsState()
-
-            val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(it)
-            val stateFeed by sharedViewModel.uiState.collectAsState()
-
-            val appViewModel = LocalAppViewModel.current
-            val context = LocalContext.current
-            val user = appViewModel.currentUser
-
-            val community = stateHome.communitiesUserIn.first { it.community?.id == args.communityId }
-
-            LaunchedEffect(args.communityId) {
-                sharedViewModel.getAllPosts(args.communityId)
-            }
-
-            LaunchedEffect(Unit) {
-                appViewModel.updateTopBarState(
-                    newState = TopBarState(
-                        title = community.community?.communityName.toString(),
-                        showTitleAvatar = true,
-                        showBackButton = true,
-                        useAvatar = user?.photo,
-                        actions = {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.Chat,
-                                contentDescription = stringResource(R.string.change_community_description),
-                                tint = PrincipalColor,
-                                modifier = Modifier
-                                    .padding(horizontal = 12.dp)
-                                    .size(20.dp)
-                                    .clickable {
-                                        Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show()
-                                    }
-                            )
-                        },
-                        onBackNavigation = {
-                            navController.popBackStack()
-                        }
-                    )
-                )
-            }
-
-            FeedScreen(
-                community = community,
-                state = stateFeed,
-                user = appViewModel.currentUser,
-                onNavigateToComments = {
-                    navController.navigateToAddCommentOnPost(postId = it)
-                },
-                onLikePost = {
-                    sharedViewModel.likeAPost(post = it)
-                },
-                onRemoveLikePost = {
-                    sharedViewModel.likeAPost(post = it, isRemoving = true)
-                },
-                onAddStory = {
-                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show()
-                    //navController.navigateToChatScreen(community = community)
-                }
-            )
-        }
-    }*/
 }

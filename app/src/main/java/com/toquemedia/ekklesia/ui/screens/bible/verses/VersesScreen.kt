@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -71,8 +70,6 @@ fun VersesScreen(
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-            println("chapterNumber: $chapterNumber")
-
             book?.verses?.get(((chapterNumber ?: 0).minus(1)))?.forEachIndexed { versicle, verse ->
                 Row(
                     modifier = Modifier
@@ -100,10 +97,8 @@ fun VersesScreen(
                             .clickable {
                                 if (markedVerses.contains(verse)) {
                                     onUnMarkVerse(verse, versicle + 1)
-                                    //selectedVersicle = -1
                                 } else {
                                     versesStates.onShowVerseAction(true)
-                                    //selectedVersicle = versicle + 1
                                     onSelectedVerse(verse, versicle + 1)
                                 }
                             }

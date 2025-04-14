@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.model.NoteEntity
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
-import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
 import com.toquemedia.ekklesia.repository.PostRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
@@ -14,11 +13,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.text.toInt
 
 @HiltViewModel
 class VerseViewModel @Inject constructor(
@@ -26,7 +23,6 @@ class VerseViewModel @Inject constructor(
     private val noteRepository: NoteRepositoryImpl,
     private val postRepository: PostRepositoryImpl,
     private val userRepository: AuthRepositoryImpl,
-    private val communityRepository: CommunityRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<VerseUiState> = MutableStateFlow(VerseUiState())
@@ -101,7 +97,7 @@ class VerseViewModel @Inject constructor(
                     verse = verse,
                     user = userRepository.getCurrentUser(),
                     verseId = verseId,
-                    communityId = communityRepository.getCommunitiesUserInIds().first()
+                    communityId = listOf()
                 )
                 postRepository.addPost(post)
             }

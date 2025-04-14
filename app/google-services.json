@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "91789490626",
     "project_id": "ekklesia-6aa62",
-    "storage_bucket": "ekklesia-6aa62.appspot.com"
+    "storage_bucket": "ekklesia-6aa62.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +12,36 @@
           "package_name": "com.toquemedia.ekklesia"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "91789490626-607k2tcgd89armm42hmo0faja2ecsje3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.toquemedia.ekklesia",
+            "certificate_hash": "428bbcb544be531d7f765014ecd56c192e618c7c"
+          }
+        },
+        {
+          "client_id": "91789490626-ebh7dsq7nb32fa35v6ouv8lju97bgd9p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.toquemedia.ekklesia",
+            "certificate_hash": "5b987729d764af48006d1ed97bb47f1c95ba60b9"
+          }
+        },
+        {
+          "client_id": "91789490626-k67a6ca2luvgt7ucfode8mk7d5ij04r3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.toquemedia.ekklesia",
+            "certificate_hash": "e0d1b03eecc4297474a37fc445e7bf00b6b96d3a"
+          }
+        },
+        {
+          "client_id": "91789490626-5sgtajltqmvuasg148f2u3402km1hd9p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAoJ38ZaK88CC-Kj_oaOUheNOY4DIE5ie4"
@@ -20,7 +49,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "91789490626-5sgtajltqmvuasg148f2u3402km1hd9p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

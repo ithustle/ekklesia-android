@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
@@ -71,5 +70,5 @@ fun CommunityInside(
 @Composable
 private fun CommunityInsidePrev() {
     val context = LocalContext.current
-    CommunityInside(community = CommunityMock.getAll().first().toCommunity(context))
+    CommunityInside(community = CommunityMock.getAll().first())
 }

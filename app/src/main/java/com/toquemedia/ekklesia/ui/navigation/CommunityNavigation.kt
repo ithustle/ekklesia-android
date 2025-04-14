@@ -26,7 +26,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.routes.Screen
@@ -51,7 +50,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             val viewModel = hiltViewModel<CommunityViewModel>(stackEntry)
             val uiState by viewModel.uiState.collectAsState()
 
-            val context = LocalContext.current
             val currentUser = appViewModel.currentUser
 
             //appViewModel.showBackgroundOverlay = uiState.openDialog
@@ -68,9 +66,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             CommunityListScreen(
                 onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
                 onNavigateToCommunity = {
-                    it.community?.toCommunity(context)?.let {
-                        navController.navigateToCommunityFeed(community = it)
-                    }
+                    navController.navigateToCommunityFeed(community = it.community)
                 },
                 //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
                 onDismissDialog = { appViewModel.showBackgroundOverlay = false },
@@ -78,7 +74,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                     viewModel.deleteCommunity(it)
                     appViewModel.showBackgroundOverlay = false
                 },
-                communities = uiState.communities.filter { it.community?.email == currentUser?.email },
+                communities = uiState.myCommunities.filter { it.community.email == currentUser?.email },
                 openDialog = uiState.openDialog,
                 onOpenDialogChange = uiState.onOpenDialogChange
             )
@@ -95,7 +91,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val launcherCommunityPhoto =
             rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
                 it?.let {
-                    uiState.onImageUriChange(it.toString())
+                    println(it)
+                    uiState.onImageUriChange(it)
                 }
             }
 

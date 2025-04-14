@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.extension.toCommunity
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.VerseType
@@ -42,6 +41,10 @@ fun HomeScreen(
     onShareVerseOfDay: () -> Unit = {},
     onLikeVerseOfDay: (Boolean) -> Unit = {},
 ) {
+
+    println("RebuildCheck communities hash: ${communities.hashCode()}")
+
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -77,11 +80,10 @@ fun HomeScreen(
                 SectionTitle(stringResource(R.string.other_communities))
             }
 
-            items(items = communities) { community ->
+            items(items = communities, key = { it.community.id }) { community ->
                 HomeCommunity(
-                    community = community.community!!.toCommunity(context),
-                    members = community.allMembers!!,
-                    loading = joiningToCommunity,
+                    community = community.community,
+                    members = community.allMembers,
                     onJoinToCommunity = onJoinToCommunity,
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
