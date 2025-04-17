@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
@@ -25,14 +27,15 @@ import com.toquemedia.ekklesia.ui.composables.EmptyScreen
 import com.toquemedia.ekklesia.ui.composables.ScreenAppLoading
 import com.toquemedia.ekklesia.ui.screens.community.feed.story.FeedStories
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
-import com.toquemedia.ekklesia.utils.mocks.PostsMock
 
 @Composable
 fun FeedScreen(
     modifier: Modifier = Modifier,
     community: CommunityWithMembers,
+    loadingPosts: Boolean = false,
     user: UserType? = null,
-    state: FeedCommunityUiState,
+    posts: List<PostType> = emptyList(),
+    likedPosts: List<String> = emptyList(),
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
     onRemoveLikePost: (PostType) -> Unit = {},
@@ -43,13 +46,17 @@ fun FeedScreen(
             .fillMaxSize()
     ) {
 
-        if (state.loadingPosts) {
+        val loading = remember(loadingPosts) { loadingPosts }
+
+        println("loading: $loading")
+
+        if (loading) {
             ScreenAppLoading(
                 screenText = stringResource(R.string.loading_community)
             )
         }
 
-        if (state.posts.isEmpty()) {
+        if (posts.isEmpty()) {
             EmptyScreen(
                 icon = painterResource(R.drawable.comment),
                 emptyText = stringResource(R.string.no_posts),
@@ -80,7 +87,7 @@ fun FeedScreen(
                 Spacer(Modifier.height(8.dp))
             }
 
-            items(items = state.posts) {
+            items(items = posts) {
                 Box(
                     modifier = modifier
                         .background(color = Color.White)
@@ -89,7 +96,7 @@ fun FeedScreen(
                     FeedPost(
                         showLastComment = it.comments.isNotEmpty(),
                         showLikes = it.likes > 0,
-                        liked = state.likedPosts.contains(it.verseId),
+                        liked = likedPosts.contains(it.verseId),
                         post = it,
                         onNavigateToComments = onNavigateToComments,
                         onLikePost = onLikePost,
@@ -107,9 +114,5 @@ fun FeedScreen(
 private fun FeedScreenPrev() {
     FeedScreen(
         community = CommunityMock.getAllCommunityWithMembers().first(),
-        state = FeedCommunityUiState(
-            posts = emptyList(),
-            likedPosts = listOf(PostsMock.getPosts().first().verseId)
-        ),
     )
 }

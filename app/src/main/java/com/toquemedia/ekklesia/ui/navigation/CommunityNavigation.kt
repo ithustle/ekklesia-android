@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -44,118 +44,113 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.Communities> {
 
-        navController.previousBackStackEntry?.let { stackEntry ->
-
-            val appViewModel = LocalAppViewModel.current
-            val viewModel = hiltViewModel<CommunityViewModel>(stackEntry)
-            val uiState by viewModel.uiState.collectAsState()
-
-            val currentUser = appViewModel.currentUser
-
-            //appViewModel.showBackgroundOverlay = uiState.openDialog
-
-            LaunchedEffect(Unit) {
-                appViewModel.updateTopBarState(
-                    newState = TopBarState(
-                        title = "Minhas comunidades",
-                        useAvatar = currentUser?.photo
-                    )
-                )
-            }
-
-            CommunityListScreen(
-                onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
-                onNavigateToCommunity = {
-                    navController.navigateToCommunityFeed(community = it.community)
-                },
-                //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
-                onDismissDialog = { appViewModel.showBackgroundOverlay = false },
-                onDeleteCommunity = {
-                    viewModel.deleteCommunity(it)
-                    appViewModel.showBackgroundOverlay = false
-                },
-                myCommunities = uiState.myCommunities.filter { it.community.email == currentUser?.email },
-                openDialog = uiState.openDialog,
-                onOpenDialogChange = uiState.onOpenDialogChange
-            )
+        val stackEntry = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.Home)
         }
-    }
-
-    composable<Screen.CreateCommunity> {
-
-        val viewModel = hiltViewModel<CommunityViewModel>()
-        val uiState by viewModel.uiState.collectAsState()
 
         val appViewModel = LocalAppViewModel.current
+        val viewModel = hiltViewModel<CommunityViewModel>(stackEntry)
+        val uiState by viewModel.uiState.collectAsState()
 
-        val launcherCommunityPhoto =
-            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
-                it?.let {
-                    uiState.onImageUriChange(it)
-                }
-            }
+        val currentUser = appViewModel.currentUser
+
+        //appViewModel.showBackgroundOverlay = uiState.openDialog
 
         LaunchedEffect(Unit) {
             appViewModel.updateTopBarState(
                 newState = TopBarState(
-                    title = "Nova comunidade",
-                    showBackButton = true,
-                    onBackNavigation = {
-                        navController.popBackStack()
-                    }
+                    title = "Minhas comunidades",
+                    useAvatar = currentUser?.photo
                 )
             )
         }
 
-        CreateCommunityScreen(
-            state = uiState,
-            validation = viewModel.validationEvent,
-            onTapToLoadImageOnLibrary = {
-                launcherCommunityPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        CommunityListScreen(
+            onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
+            onNavigateToCommunity = {
+                navController.navigateToCommunityFeed(community = it.community)
             },
-            onCreateCommunity = viewModel::createCommunity,
-            onCreateSuccessfulCommunity = {
-                navController.popBackStack()
-            }
+            //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
+            onDismissDialog = { appViewModel.showBackgroundOverlay = false },
+            onDeleteCommunity = {
+                viewModel.deleteCommunity(it)
+                appViewModel.showBackgroundOverlay = false
+            },
+            myCommunities = uiState.myCommunities.filter { it.community.email == currentUser?.email },
+            openDialog = uiState.openDialog,
+            onOpenDialogChange = uiState.onOpenDialogChange
         )
+    }
+
+    composable<Screen.CreateCommunity> {
+        navController.previousBackStackEntry?.let { stackEntry ->
+            val viewModel = hiltViewModel<CommunityViewModel>(stackEntry)
+            val uiState by viewModel.uiState.collectAsState()
+
+            val appViewModel = LocalAppViewModel.current
+
+            val launcherCommunityPhoto =
+                rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) {
+                    it?.let {
+                        uiState.onImageUriChange(it)
+                    }
+                }
+
+            LaunchedEffect(Unit) {
+                appViewModel.updateTopBarState(
+                    newState = TopBarState(
+                        title = "Nova comunidade",
+                        showBackButton = true,
+                        onBackNavigation = {
+                            navController.popBackStack()
+                        }
+                    )
+                )
+            }
+
+            CreateCommunityScreen(
+                state = uiState,
+                validation = viewModel.validationEvent,
+                onTapToLoadImageOnLibrary = {
+                    launcherCommunityPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                },
+                onCreateCommunity = viewModel::createCommunity,
+                onCreateSuccessfulCommunity = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 
     composable<Screen.CommunityFeed> { stackEntry ->
 
-        val currentBackStackEntry = navController.currentBackStackEntry
-        val currentRoute = currentBackStackEntry?.destination?.route
-        val previousRoute = navController.previousBackStackEntry?.destination?.route
-
-        val isCommunityInStack = currentRoute == Screen.Communities::class.qualifiedName ||
-                previousRoute == Screen.Communities::class.qualifiedName
-
-        var parentEntry: NavBackStackEntry? = null
-
-        if (isCommunityInStack) {
-            parentEntry = remember(navController.currentBackStackEntry) {
-                navController.getBackStackEntry(Screen.Communities)
-            }
-        } else {
-            parentEntry = navController.previousBackStackEntry
+        val parentEntry = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.Home)
         }
-
-        val sharedViewModel = hiltViewModel<CommunityViewModel>(parentEntry ?: stackEntry)
+        println("Rola aqui")
+        println("parentEntry: $parentEntry")
 
         val context = LocalContext.current
         val appViewModel = LocalAppViewModel.current
         val user = appViewModel.currentUser
 
         val viewModel = hiltViewModel<FeedCommunityViewModel>()
-        val state by viewModel.uiState.collectAsState()
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
         val args = stackEntry.toRoute<Screen.CommunityFeed>()
 
+        val sharedViewModel = hiltViewModel<CommunityViewModel>(parentEntry)
+
         val community = remember(args.communityId) {
-            println("args.communityId: ${args.communityId}")
-            sharedViewModel.getCurrentCommunity(args.communityId)
+            sharedViewModel.getCurrentCommunity(
+                args.communityId,
+            )
         }
 
-        LaunchedEffect(args.communityId) {
-            viewModel.getAllPosts(args.communityId)
+        LaunchedEffect(args.communityId, state.posts) {
+            if (community != null && state.posts.isEmpty()) {
+                println("LaunchedEffect: Carregando posts para communityId: ${args.communityId}")
+                viewModel.getAllPosts(args.communityId)
+            }
         }
 
         LaunchedEffect(Unit) {
@@ -174,7 +169,11 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                                 .padding(horizontal = 12.dp)
                                 .size(20.dp)
                                 .clickable {
-                                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Funcionalidade em desenvolvimento",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                         )
                     },
@@ -188,7 +187,9 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         community?.let {
             FeedScreen(
                 community = it,
-                state = state,
+                posts = state.posts,
+                likedPosts = state.likedPosts,
+                loadingPosts = state.loadingPosts,
                 user = user,
                 onNavigateToComments = {
                     navController.navigateToAddCommentOnPost(postId = it)
@@ -200,13 +201,10 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                     viewModel.likeAPost(post = it, isRemoving = true)
                 },
                 onAddStory = {
-                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT)
+                        .show()
                     //navController.navigateToChatScreen(community = community)
                 }
-            )
-        } ?: run {
-            ScreenAppLoading(
-                screenText = stringResource(R.string.loading_community)
             )
         }
     }
@@ -244,7 +242,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val state by viewModel.uiState.collectAsState()
         val arg = stackEntry.toRoute<Screen.Chat>()
 
-        val community = sharedViewModel.getCurrentCommunity(arg.communityId)
+        val community =
+            sharedViewModel.getCurrentCommunity(arg.communityId)
 
         community?.let {
             ChatScreen(
@@ -261,10 +260,16 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
 fun NavController.navigateToCommunityFeed(community: CommunityType) {
-    this.navigateBetweenScreens(Screen.CommunityFeed(
-        communityId = community.id,
-        communityName = community.communityName
-    ))
+    this.navigateBetweenScreens(
+        Screen.CommunityFeed(
+            communityId = community.id,
+            communityName = community.communityName
+        )
+    )
 }
-fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
-fun NavController.navigateToAddCommentOnPost(postId: String) = this.navigateBetweenScreens(Screen.CommentPost(postId))
+
+fun NavController.navigateToChatScreen(community: CommunityType) =
+    this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
+
+fun NavController.navigateToAddCommentOnPost(postId: String) =
+    this.navigateBetweenScreens(Screen.CommentPost(postId))

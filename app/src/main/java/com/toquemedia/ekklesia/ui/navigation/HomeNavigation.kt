@@ -58,8 +58,6 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             value = true
         }
 
-        println("Communities: ${communityState.communities.size}")
-
         HomeScreen(
             communitiesUserIn = communityState.communitiesUserIn,
             loadingCommunitiesUserIn = communityState.loadingCommunitiesUserIn,

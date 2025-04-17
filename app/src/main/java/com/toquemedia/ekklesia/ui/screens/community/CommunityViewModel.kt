@@ -146,7 +146,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     fun getCurrentCommunity(communityId: String): CommunityWithMembers? {
-        return _uiState.value.communitiesUserIn.find {
+        println("_uiState.value.myCommunities: ${_uiState.value.myCommunities}")
+        return _uiState.value.myCommunities.find {
             it.community.id == communityId
         }
     }
@@ -182,6 +183,7 @@ class CommunityViewModel @Inject constructor(
                                 }
                             }.awaitAll()
                         }
+                        println("communityWithMembers: ${communityWithMembers.size}")
                         _uiState.value = _uiState.value.copy(
                             communities = communityWithMembers.communitiesToJoin(user?.id.toString()),
                             myCommunities = communityWithMembers,

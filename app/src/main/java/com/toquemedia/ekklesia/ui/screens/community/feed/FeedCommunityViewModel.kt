@@ -68,7 +68,7 @@ class FeedCommunityViewModel @Inject constructor(
 
     fun selectPost(postId: String) {
         _uiState.value =
-            _uiState.value.copy(selectedPost = _uiState.value.posts?.first { it.verseId == postId })
+            _uiState.value.copy(selectedPost = _uiState.value.posts.first { it.verseId == postId })
     }
 
     fun likeAPost(post: PostType, isRemoving: Boolean = false) {
