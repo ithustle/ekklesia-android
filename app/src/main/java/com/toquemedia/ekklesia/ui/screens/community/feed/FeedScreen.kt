@@ -48,8 +48,6 @@ fun FeedScreen(
 
         val loading = remember(loadingPosts) { loadingPosts }
 
-        println("loading: $loading")
-
         if (loading) {
             ScreenAppLoading(
                 screenText = stringResource(R.string.loading_community)
@@ -96,7 +94,7 @@ fun FeedScreen(
                     FeedPost(
                         showLastComment = it.comments.isNotEmpty(),
                         showLikes = it.likes > 0,
-                        liked = likedPosts.contains(it.verseId),
+                        liked = likedPosts.contains("${it.verseId}_${community.community.id}"),
                         post = it,
                         onNavigateToComments = onNavigateToComments,
                         onLikePost = onLikePost,

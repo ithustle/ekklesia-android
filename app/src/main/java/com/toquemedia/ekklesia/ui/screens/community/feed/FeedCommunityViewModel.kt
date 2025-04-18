@@ -36,12 +36,13 @@ class FeedCommunityViewModel @Inject constructor(
         getUserLiked()
     }
 
-    fun addCommentOnPost() {
+    fun addCommentOnPost(communityId: String) {
         viewModelScope.launch {
 
             val comment = CommentType(
                 user = user.getCurrentUser(),
-                comment = _uiState.value.textComment
+                comment = _uiState.value.textComment,
+                communityId = communityId
             )
 
             val selectedPost = _uiState.value.selectedPost ?: return@launch
@@ -53,7 +54,7 @@ class FeedCommunityViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(selectedPost = updatePost, sendingComment = true)
 
             try {
-                repository.addComment(postId = selectedPost.verseId, comment = comment)
+                repository.addComment(postId = selectedPost.verseId, communityId = communityId, comment = comment)
             } catch (e: Exception) {
                 e.printStackTrace()
                 _uiState.value = _uiState.value.copy(
@@ -71,13 +72,13 @@ class FeedCommunityViewModel @Inject constructor(
             _uiState.value.copy(selectedPost = _uiState.value.posts.first { it.verseId == postId })
     }
 
-    fun likeAPost(post: PostType, isRemoving: Boolean = false) {
+    fun likeAPost(post: PostType, communityId: String, isRemoving: Boolean = false) {
         viewModelScope.launch {
             user.getCurrentUser()?.let {
                 if (isRemoving) {
-                    repository.removeLikeOnPost(post.verseId, it.id)
+                    repository.removeLikeOnPost(post.verseId, communityId, it.id)
                 } else {
-                    repository.addLikeOnPost(post.verseId, it)
+                    repository.addLikeOnPost(post.verseId, communityId, it)
                 }
             }
         }
@@ -91,7 +92,7 @@ class FeedCommunityViewModel @Inject constructor(
 
             val all = posts.map {
                 async {
-                    val comments = repository.getComments(it.verseId, limit = 15)
+                    val comments = repository.getComments(postId = it.verseId, communityId = communityId, limit = 15)
                     val likes = repository.getLikesOnPost(it.verseId)
                     it.copy(comments = comments, firstUsersLiked = likes)
                 }

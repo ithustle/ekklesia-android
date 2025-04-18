@@ -20,13 +20,14 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun addComment(
         postId: String,
-        comment: CommentType
+        comment: CommentType,
+        communityId: String
     ) {
-        postService.addComment(postId, comment)
+        postService.addComment(postId, communityId, comment)
     }
 
-    override suspend fun getComments(postId: String, limit: Long): MutableList<CommentType> {
-        return postService.getComments(postId, limit)
+    override suspend fun getComments(postId: String,  communityId: String, limit: Long): MutableList<CommentType> {
+        return postService.getComments(postId, communityId, limit)
     }
 
     override suspend fun getLikesOnPost(postId: String): List<UserType> {
@@ -39,25 +40,26 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun addLikeOnPost(
         postId: String,
+        communityId: String,
         user: UserType
     ) {
         try {
-            dao.saveLikeRegister(postId)
-            postService.addLikeOnPost(postId, user)
+            dao.saveLikeRegister(postId, communityId)
+            postService.addLikeOnPost(postId, communityId, user)
         } catch (e: Exception) {
             e.printStackTrace()
-            dao.removeLikeRegister(postId)
+            dao.removeLikeRegister(postId, communityId)
             throw e
         }
     }
 
-    override suspend fun removeLikeOnPost(postId: String, userId: String) {
+    override suspend fun removeLikeOnPost(postId: String, communityId: String, userId: String) {
         try {
-            dao.removeLikeRegister(postId)
-            postService.removeLikeOnPost(postId, userId)
+            dao.removeLikeRegister(postId, communityId)
+            postService.removeLikeOnPost(postId, communityId, userId)
         } catch (e: Exception) {
             e.printStackTrace()
-            dao.saveLikeRegister(postId)
+            dao.saveLikeRegister(postId, communityId)
         }
     }
 }

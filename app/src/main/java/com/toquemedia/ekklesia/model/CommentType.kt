@@ -10,5 +10,6 @@ data class CommentType(
     val comment: String = "",
     val likes: Long = 0,
     val createdAt: Date = Date(),
+    val communityId: String = "",
     val id: String = UUID.randomUUID().toString()
 )

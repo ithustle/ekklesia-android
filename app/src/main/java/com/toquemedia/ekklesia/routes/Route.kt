@@ -58,7 +58,8 @@ sealed class Screen() {
 
     @Serializable
     data class CommentPost(
-        val postId: String
+        val postId: String,
+        val communityId: String
     ): Screen()
 
     @Serializable

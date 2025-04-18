@@ -11,6 +11,10 @@ class LikeDao @Inject constructor(
     @ApplicationContext context: Context
 ) : EkklesiaDataStore(context, "ekklesia_likes") {
 
+    suspend fun saveLikeRegister(postId: String, communityId: String) {
+        super.savePreference(key = "${postId}_$communityId", value = "${postId}_$communityId")
+    }
+
     suspend fun saveLikeRegister(postId: String) {
         super.savePreference(key = postId, value = postId)
     }
@@ -22,6 +26,10 @@ class LikeDao @Inject constructor(
                 .filterIsInstance<String>()
                 .toList()
         }
+    }
+
+    suspend fun removeLikeRegister(postId: String, communityId: String) {
+        super.clearPreference(key = "${postId}_$communityId")
     }
 
     suspend fun removeLikeRegister(postId: String) {

@@ -34,18 +34,19 @@ class PostService @Inject constructor(
         return snapshot.toObjects(PostType::class.java)
     }
 
-    suspend fun addComment(postId: String, comment: CommentType) {
+    suspend fun addComment(postId: String, communityId: String, comment: CommentType) {
         db.collection(collection)
             .document(postId)
             .collection(subCollectionComments)
-            .document(comment.id)
+            .document("${comment.id}_$communityId")
             .set(comment)
             .await()
     }
 
-    suspend fun getComments(postId: String, limit: Long): MutableList<CommentType> {
+    suspend fun getComments(postId: String, communityId: String, limit: Long): MutableList<CommentType> {
         val snapshot = db.collection(collection).document(postId)
             .collection(subCollectionComments)
+            .whereEqualTo("communityId", communityId)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .limit(limit)
             .get()
@@ -54,10 +55,10 @@ class PostService @Inject constructor(
         return snapshot.toObjects(CommentType::class.java)
     }
 
-    suspend fun addLikeOnPost(postId: String, user: UserType) {
+    suspend fun addLikeOnPost(postId: String, communityId: String, user: UserType) {
         try {
             val ref = db.collection(collection).document(postId)
-            val likeRef = ref.collection(subCollectionLikes).document(user.id)
+            val likeRef = ref.collection(subCollectionLikes).document("${user.id}_$communityId")
 
             db.runTransaction { transaction ->
                 transaction.update(ref, "likes", FieldValue.increment(1))
@@ -79,11 +80,11 @@ class PostService @Inject constructor(
         return snapshot.toObjects(UserType::class.java)
     }
 
-    suspend fun removeLikeOnPost(postId: String, userId: String) {
+    suspend fun removeLikeOnPost(postId: String, communityId: String, userId: String) {
 
         try {
             val ref = db.collection(collection).document(postId)
-            val likeRef = ref.collection(subCollectionLikes).document(userId)
+            val likeRef = ref.collection(subCollectionLikes).document("${userId}_$communityId")
 
             db.runTransaction { transaction ->
                 transaction.update(ref, "likes", FieldValue.increment(-1))

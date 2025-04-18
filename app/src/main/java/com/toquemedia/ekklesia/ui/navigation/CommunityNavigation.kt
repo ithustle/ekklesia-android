@@ -184,21 +184,21 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             )
         }
 
-        community?.let {
+        community?.let { community ->
             FeedScreen(
-                community = it,
+                community = community,
                 posts = state.posts,
                 likedPosts = state.likedPosts,
                 loadingPosts = state.loadingPosts,
                 user = user,
                 onNavigateToComments = {
-                    navController.navigateToAddCommentOnPost(postId = it)
+                    navController.navigateToAddCommentOnPost(postId = it, communityId = community.community.id)
                 },
                 onLikePost = {
-                    viewModel.likeAPost(post = it)
+                    viewModel.likeAPost(post = it, communityId = community.community.id)
                 },
                 onRemoveLikePost = {
-                    viewModel.likeAPost(post = it, isRemoving = true)
+                    viewModel.likeAPost(post = it, communityId = community.community.id, isRemoving = true)
                 },
                 onAddStory = {
                     Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT)
@@ -224,7 +224,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             FeedPostAddComment(
                 state = state,
                 onSendComment = {
-                    sharedViewModel.addCommentOnPost()
+                    sharedViewModel.addCommentOnPost(communityId = arg.communityId)
                 }
             )
         }
@@ -271,5 +271,5 @@ fun NavController.navigateToCommunityFeed(community: CommunityType) {
 fun NavController.navigateToChatScreen(community: CommunityType) =
     this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
 
-fun NavController.navigateToAddCommentOnPost(postId: String) =
-    this.navigateBetweenScreens(Screen.CommentPost(postId))
+fun NavController.navigateToAddCommentOnPost(postId: String, communityId: String) =
+    this.navigateBetweenScreens(Screen.CommentPost(postId, communityId))
