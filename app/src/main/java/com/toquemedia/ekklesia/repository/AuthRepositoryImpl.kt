@@ -31,4 +31,5 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun googleSignIn(activityContext: Activity): UserType? = service.googleSignIn(activityContext)
     override fun getCurrentUser(): UserType? = service.getCurrentUser()
     override suspend fun signOut() = service.signOut()
+    override suspend fun getCommunitiesId(): List<String> = service.getCommunitiesIn()
 }

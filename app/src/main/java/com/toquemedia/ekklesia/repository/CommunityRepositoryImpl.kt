@@ -99,7 +99,7 @@ class CommunityRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCommunitiesUserIn(email: String): List<CommunityWithMembers> {
-        return service.getCommunitiesUserIn(email)
+    override suspend fun getCommunitiesUserIn(): List<CommunityWithMembers> {
+        return service.getCommunitiesUserIn()
     }
 }

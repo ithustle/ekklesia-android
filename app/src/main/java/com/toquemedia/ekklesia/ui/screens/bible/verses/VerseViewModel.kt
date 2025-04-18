@@ -93,11 +93,12 @@ class VerseViewModel @Inject constructor(
 
             launch {
                 val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
+                val communityId = userRepository.getCommunitiesId()
                 val post = PostType(
                     verse = verse,
                     user = userRepository.getCurrentUser(),
                     verseId = verseId,
-                    communityId = listOf()
+                    communityId = communityId
                 )
                 postRepository.addPost(post)
             }

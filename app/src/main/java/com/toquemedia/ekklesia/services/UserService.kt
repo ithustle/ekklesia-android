@@ -18,7 +18,6 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
@@ -44,8 +43,9 @@ class UserService @Inject constructor(
         }
     }
 
-    suspend fun getCommunitiesIn(email: String): List<String> {
-        val snapshot = db.collection(collection).document(email).get().await()
+    suspend fun getCommunitiesIn(): List<String> {
+        val user = this.getCurrentUser()
+        val snapshot = db.collection(collection).document(user?.email.toString()).get().await()
         return snapshot.toObject(UserType::class.java)?.communitiesIn ?: emptyList()
     }
 

@@ -84,9 +84,9 @@ class CommunityService @Inject constructor(
         db.collection(collection).document(id).update("active", false).await()
     }
 
-    suspend fun getCommunitiesUserIn(email: String): List<CommunityWithMembers> {
+    suspend fun getCommunitiesUserIn(): List<CommunityWithMembers> {
 
-        val ids = auth.getCommunitiesIn(email)
+        val ids = auth.getCommunitiesIn()
 
         if (ids.isEmpty()) return emptyList()
 

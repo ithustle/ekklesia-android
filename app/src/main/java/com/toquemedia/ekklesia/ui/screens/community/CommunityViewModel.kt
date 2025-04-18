@@ -199,8 +199,7 @@ class CommunityViewModel @Inject constructor(
 
     private fun getAllCommunitiesUserIn() {
         viewModelScope.launch {
-            val user = authRepository.getCurrentUser()
-            val communities = repository.getCommunitiesUserIn(user?.email.toString())
+            val communities = repository.getCommunitiesUserIn()
             _uiState.value = _uiState.value.copy(
                 communitiesUserIn = communities,
                 loadingCommunitiesUserIn = false
