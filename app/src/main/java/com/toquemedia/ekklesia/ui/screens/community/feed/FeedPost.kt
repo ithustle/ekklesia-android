@@ -33,11 +33,13 @@ import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.getBookWithChapterAndVersicle
 import com.toquemedia.ekklesia.extension.timeAgo
+import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.composables.VerseToAnnotation
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.PostsMock
+import java.util.Date
 
 @Composable
 fun FeedPost(
@@ -46,6 +48,7 @@ fun FeedPost(
     showLikes: Boolean = false,
     liked: Boolean = false,
     post: PostType,
+    comments: List<CommentType>,
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
     onRemoveLikePost: (PostType) -> Unit = {}
@@ -166,7 +169,7 @@ fun FeedPost(
 
         if (showLastComment) {
             Spacer(Modifier.height(20.dp))
-            FeedPostComment(commentary = post.comments.first())
+            FeedPostComment(commentary = comments.maxByOrNull { it.createdAt })
         }
     }
 }
@@ -178,6 +181,7 @@ private fun FeedPostPrev() {
         showLastComment = false,
         showLikes = false,
         liked = true,
-        post = PostsMock.getPosts().first()
+        post = PostsMock.getPosts().first(),
+        comments = PostsMock.getPosts().first().comments
     )
 }

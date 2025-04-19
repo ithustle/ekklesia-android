@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.toquemedia.ekklesia.extension.getGreeting
 import com.toquemedia.ekklesia.model.BibleType
 import com.toquemedia.ekklesia.model.BookType
+import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.model.interfaces.AuthRepository
@@ -26,7 +27,8 @@ class AppViewModel @Inject constructor(
     var currentUser by mutableStateOf<UserType?>(authRepository.getCurrentUser())
         internal set
 
-    private val _topBarState = mutableStateOf(TopBarState(title = "${Date().getGreeting()}, ${currentUser?.displayName}"))
+    private val _topBarState =
+        mutableStateOf(TopBarState(title = "${Date().getGreeting()}, ${currentUser?.displayName}"))
     val topBarState: State<TopBarState> = _topBarState
 
     var bible by mutableStateOf<List<BibleType>>(bibleRepository.loadBible())
@@ -34,6 +36,8 @@ class AppViewModel @Inject constructor(
 
     var books by mutableStateOf<List<BookType>>(bibleRepository.getBooks())
         private set
+
+    var selectedCommunity by mutableStateOf<CommunityWithMembers?>(null)
 
     var showBackgroundOverlay by mutableStateOf(false)
 

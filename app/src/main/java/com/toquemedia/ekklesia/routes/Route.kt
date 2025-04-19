@@ -63,10 +63,7 @@ sealed class Screen() {
     ): Screen()
 
     @Serializable
-    data class CommunityFeed(
-        val communityId: String,
-        val communityName: String
-    ): Screen()
+    object CommunityFeed: Screen()
 
     @Serializable
     data class NoteVerse(

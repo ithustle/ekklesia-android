@@ -52,7 +52,8 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
         produceState(false, communityState.newCommunity) {
             if (value) {
                 communityState.newCommunity?.let {
-                    navController.navigateToCommunityFeed(it.community)
+                    appViewModel.selectedCommunity = it
+                    navController.navigateToCommunityFeed()
                 }
             }
             value = true
@@ -70,7 +71,8 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             context = context,
             onJoinToCommunity = communityViewModel::joinToCommunity,
             onNavigateToCommunity = {
-                navController.navigateToCommunityFeed(it)
+                appViewModel.selectedCommunity = it
+                navController.navigateToCommunityFeed()
             },
             onLikeVerseOfDay = viewModel::handleLikeVerseOfDay,
             onShareVerseOfDay = {

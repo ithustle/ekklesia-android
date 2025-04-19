@@ -33,13 +33,15 @@ fun NavController.navigateBetweenTabs(destination: Screen) = this.navigate(desti
     restoreState = true
 }
 
-fun NavController.navigateToFirstScreen(route: Screen) =
+fun NavController.navigateToFirstScreen(route: Screen) = {
     this.navigate(route) {
-        popUpTo(this@navigateToFirstScreen.graph.id)
+        popBackStack(route = route, inclusive = false)
     }
+}
+
 
 fun NavController.navigateBetweenScreens(route: Screen) =
     this.navigate(route) {
         launchSingleTop = true
-        popUpTo(route) { inclusive = false }
+        popUpTo(route) { inclusive = true }
     }

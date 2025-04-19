@@ -34,7 +34,7 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 @Composable
 fun FeedPostComment(
     modifier: Modifier = Modifier,
-    commentary: CommentType
+    commentary: CommentType?
 ) {
     Column(
         modifier = Modifier
@@ -50,7 +50,7 @@ fun FeedPostComment(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 EkklesiaImage(
-                    model = commentary.user?.photo?.toUri(),
+                    model = commentary?.user?.photo?.toUri(),
                     contentDescription = stringResource(R.string.profileTitleScreen),
                     modifier = Modifier
                         .padding(end = 8.dp)
@@ -59,7 +59,7 @@ fun FeedPostComment(
                 )
 
                 Text(
-                    text = commentary.user?.displayName ?: "",
+                    text = commentary?.user?.displayName ?: "",
                     fontWeight = FontWeight.Normal,
                     fontSize = 11.sp,
                     color = PrincipalColor
@@ -67,7 +67,7 @@ fun FeedPostComment(
             }
 
             Text(
-                text = commentary.createdAt.timeAgo(),
+                text = commentary?.createdAt?.timeAgo().toString(),
                 fontSize = 10.sp,
                 color = Color.DarkGray
             )
@@ -77,7 +77,7 @@ fun FeedPostComment(
             Modifier.padding(start = 32.dp, end = 12.dp)
         ) {
             Text(
-                text = commentary.comment,
+                text = commentary?.comment ?: "",
                 fontSize = 13.sp,
                 maxLines = 3,
                 color = PrincipalColor,
@@ -96,7 +96,7 @@ fun FeedPostComment(
                 )
 
                 Text(
-                    text = commentary.likes.toString(),
+                    text = commentary?.likes.toString(),
                     fontSize = 12.sp,
                     color = PrincipalColor
                 )

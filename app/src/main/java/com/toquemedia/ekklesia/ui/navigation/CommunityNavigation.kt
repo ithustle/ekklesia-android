@@ -68,7 +68,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         CommunityListScreen(
             onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
             onNavigateToCommunity = {
-                navController.navigateToCommunityFeed(community = it.community)
+                navController.navigateToCommunityFeed()
             },
             //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
             onDismissDialog = { appViewModel.showBackgroundOverlay = false },
@@ -124,39 +124,25 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
     composable<Screen.CommunityFeed> { stackEntry ->
 
-        val parentEntry = remember(navController.currentBackStackEntry) {
-            navController.getBackStackEntry(Screen.Home)
-        }
-        println("Rola aqui")
-        println("parentEntry: $parentEntry")
+        val viewModel = hiltViewModel<FeedCommunityViewModel>(stackEntry)
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
 
         val context = LocalContext.current
         val appViewModel = LocalAppViewModel.current
         val user = appViewModel.currentUser
 
-        val viewModel = hiltViewModel<FeedCommunityViewModel>()
-        val state by viewModel.uiState.collectAsStateWithLifecycle()
-        val args = stackEntry.toRoute<Screen.CommunityFeed>()
+        val selectedCommunity = remember(appViewModel.selectedCommunity) { appViewModel.selectedCommunity }
 
-        val sharedViewModel = hiltViewModel<CommunityViewModel>(parentEntry)
-
-        val community = remember(args.communityId) {
-            sharedViewModel.getCurrentCommunity(
-                args.communityId,
-            )
-        }
-
-        LaunchedEffect(args.communityId, state.posts) {
-            if (community != null && state.posts.isEmpty()) {
-                println("LaunchedEffect: Carregando posts para communityId: ${args.communityId}")
-                viewModel.getAllPosts(args.communityId)
+        LaunchedEffect(state.posts) {
+            if (selectedCommunity != null && state.posts.isEmpty()) {
+                viewModel.getAllPosts(selectedCommunity.community.id)
             }
         }
 
         LaunchedEffect(Unit) {
             appViewModel.updateTopBarState(
                 newState = TopBarState(
-                    title = community?.community?.communityName.toString(),
+                    title = selectedCommunity?.community?.communityName.toString(),
                     showTitleAvatar = true,
                     showBackButton = true,
                     useAvatar = user?.photo,
@@ -184,12 +170,13 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             )
         }
 
-        community?.let { community ->
+        selectedCommunity?.let { community ->
             FeedScreen(
                 community = community,
                 posts = state.posts,
                 likedPosts = state.likedPosts,
                 loadingPosts = state.loadingPosts,
+                selectedPost = state.selectedPost,
                 user = user,
                 onNavigateToComments = {
                     navController.navigateToAddCommentOnPost(postId = it, communityId = community.community.id)
@@ -211,23 +198,26 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
     composable<Screen.CommentPost> { stackEntry ->
 
-        navController.previousBackStackEntry?.let {
-            val arg = stackEntry.toRoute<Screen.CommentPost>()
+        val arg = stackEntry.toRoute<Screen.CommentPost>()
+        val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
 
-            val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(it)
-            val state by sharedViewModel.uiState.collectAsState()
+        val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(parentEntry)
+        val state by sharedViewModel.uiState.collectAsStateWithLifecycle()
 
-            LaunchedEffect(arg.postId) {
+        LaunchedEffect(key1 = arg.postId, key2 = state.posts) {
+            if (state.posts.isNotEmpty()) {
                 sharedViewModel.selectPost(arg.postId)
             }
-
-            FeedPostAddComment(
-                state = state,
-                onSendComment = {
-                    sharedViewModel.addCommentOnPost(communityId = arg.communityId)
-                }
-            )
         }
+
+        FeedPostAddComment(
+            textComment = state.textComment,
+            selectedPost = state.selectedPost,
+            onChangeTextComment = state.onChangeTextComment,
+            onSendComment = {
+                sharedViewModel.addCommentOnPost(communityId = arg.communityId)
+            }
+        )
     }
 
     composable<Screen.Chat> { stackEntry ->
@@ -259,13 +249,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 }
 
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
-fun NavController.navigateToCommunityFeed(community: CommunityType) {
-    this.navigateBetweenScreens(
-        Screen.CommunityFeed(
-            communityId = community.id,
-            communityName = community.communityName
-        )
-    )
+fun NavController.navigateToCommunityFeed() {
+    this.navigateBetweenScreens(Screen.CommunityFeed)
 }
 
 fun NavController.navigateToChatScreen(community: CommunityType) =

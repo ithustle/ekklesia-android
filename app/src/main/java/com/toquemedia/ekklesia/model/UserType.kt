@@ -1,8 +1,10 @@
 package com.toquemedia.ekklesia.model
 
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
 
 @Immutable
+@Serializable
 data class UserType(
     val id: String = "",
     val displayName: String? = null,

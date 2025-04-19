@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.ui.composables.LoadingItem
 import com.toquemedia.ekklesia.ui.composables.SectionTitle
@@ -24,7 +23,7 @@ fun MyCommunitiesSection(
     context: Context,
     loadingCommunitiesUserIn: Boolean = true,
     communitiesUserIn: List<CommunityWithMembers> = emptyList(),
-    onNavigateToCommunity: (CommunityType) -> Unit = {}
+    onNavigateToCommunity: (CommunityWithMembers) -> Unit = {}
 ) {
     if (loadingCommunitiesUserIn) {
         LoadingItem()
@@ -36,7 +35,7 @@ fun MyCommunitiesSection(
                     Spacer(Modifier.width(16.dp))
                     Row {
                         CommunityInside(
-                            community = it.community,
+                            community = it,
                             onNavigateToCommunity = onNavigateToCommunity
                         )
                     }

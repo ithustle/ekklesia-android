@@ -6,11 +6,13 @@ import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.model.interfaces.PostRepository
 import com.toquemedia.ekklesia.services.PostService
+import com.toquemedia.ekklesia.services.UserService
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
     private val postService: PostService,
+    private val auth: UserService,
     private val dao: LikeDao
 ) : PostRepository {
 
@@ -45,6 +47,7 @@ class PostRepositoryImpl @Inject constructor(
     ) {
         try {
             dao.saveLikeRegister(postId, communityId)
+            auth.saveLikes("${postId}_$communityId")
             postService.addLikeOnPost(postId, communityId, user)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -53,10 +56,10 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun removeLikeOnPost(postId: String, communityId: String, userId: String) {
+    override suspend fun removeLikeOnPost(postId: String, communityId: String) {
         try {
             dao.removeLikeRegister(postId, communityId)
-            postService.removeLikeOnPost(postId, communityId, userId)
+            postService.removeLikeOnPost(postId, communityId)
         } catch (e: Exception) {
             e.printStackTrace()
             dao.saveLikeRegister(postId, communityId)

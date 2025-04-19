@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
@@ -27,14 +26,16 @@ import com.toquemedia.ekklesia.ui.composables.EmptyScreen
 import com.toquemedia.ekklesia.ui.composables.ScreenAppLoading
 import com.toquemedia.ekklesia.ui.screens.community.feed.story.FeedStories
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
+import com.toquemedia.ekklesia.utils.mocks.PostsMock
 
 @Composable
 fun FeedScreen(
     modifier: Modifier = Modifier,
     community: CommunityWithMembers,
-    loadingPosts: Boolean = false,
     user: UserType? = null,
+    loadingPosts: Boolean = false,
     posts: List<PostType> = emptyList(),
+    selectedPost: PostType? = null,
     likedPosts: List<String> = emptyList(),
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
@@ -93,9 +94,10 @@ fun FeedScreen(
                 ) {
                     FeedPost(
                         showLastComment = it.comments.isNotEmpty(),
-                        showLikes = it.likes > 0,
+                        showLikes = false, //it.likes > 0,
                         liked = likedPosts.contains("${it.verseId}_${community.community.id}"),
                         post = it,
+                        comments = it.comments,
                         onNavigateToComments = onNavigateToComments,
                         onLikePost = onLikePost,
                         onRemoveLikePost = onRemoveLikePost,
@@ -112,5 +114,6 @@ fun FeedScreen(
 private fun FeedScreenPrev() {
     FeedScreen(
         community = CommunityMock.getAllCommunityWithMembers().first(),
+        posts = PostsMock.getPosts()
     )
 }

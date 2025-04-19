@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
+import com.toquemedia.ekklesia.repository.PostRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val repository: AuthRepositoryImpl
+    private val repository: AuthRepositoryImpl,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())

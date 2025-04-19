@@ -7,6 +7,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
 import com.toquemedia.ekklesia.dao.DevocionalDao
+import com.toquemedia.ekklesia.dao.LikeDao
 import com.toquemedia.ekklesia.dao.MessageDao
 import com.toquemedia.ekklesia.dao.NoteDao
 import com.toquemedia.ekklesia.services.CommunityService
@@ -48,5 +49,5 @@ class DatabaseModule {
     @Provides
     fun providePostService(firestore: FirebaseFirestore): PostService = PostService(firestore)
     @Provides
-    fun provideUserService(@ApplicationContext context: Context, firestore: FirebaseFirestore, auth: FirebaseAuth): UserService = UserService(context, firestore, auth)
+    fun provideUserService(@ApplicationContext context: Context, firestore: FirebaseFirestore, auth: FirebaseAuth, dao: LikeDao): UserService = UserService(context, firestore, auth, dao)
 }

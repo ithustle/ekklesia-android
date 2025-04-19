@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                                 Screen.Communities::class.qualifiedName -> Screen.Communities
                                 Screen.Profile::class.qualifiedName -> Screen.Profile
                                 Screen.CreateCommunity::class.qualifiedName -> Screen.CreateCommunity
-                                else -> Screen.CommunityFeed(communityId = "", communityName = "")
+                                else -> Screen.CommunityFeed
                             }
                             mutableStateOf(item)
                         }

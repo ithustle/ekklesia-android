@@ -58,7 +58,7 @@ class PostService @Inject constructor(
     suspend fun addLikeOnPost(postId: String, communityId: String, user: UserType) {
         try {
             val ref = db.collection(collection).document(postId)
-            val likeRef = ref.collection(subCollectionLikes).document("${user.id}_$communityId")
+            val likeRef = ref.collection(subCollectionLikes).document("${postId}_$communityId")
 
             db.runTransaction { transaction ->
                 transaction.update(ref, "likes", FieldValue.increment(1))
@@ -80,11 +80,11 @@ class PostService @Inject constructor(
         return snapshot.toObjects(UserType::class.java)
     }
 
-    suspend fun removeLikeOnPost(postId: String, communityId: String, userId: String) {
+    suspend fun removeLikeOnPost(postId: String, communityId: String) {
 
         try {
             val ref = db.collection(collection).document(postId)
-            val likeRef = ref.collection(subCollectionLikes).document("${userId}_$communityId")
+            val likeRef = ref.collection(subCollectionLikes).document("${postId}_$communityId")
 
             db.runTransaction { transaction ->
                 transaction.update(ref, "likes", FieldValue.increment(-1))

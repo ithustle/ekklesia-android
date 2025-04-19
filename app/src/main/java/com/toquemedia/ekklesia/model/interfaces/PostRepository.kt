@@ -14,5 +14,5 @@ interface PostRepository {
     suspend fun getLikesOnPost(postId: String): List<UserType>
     suspend fun getUserLikesOnPost(): Flow<List<String>>
     suspend fun addLikeOnPost(postId: String, communityId: String, user: UserType)
-    suspend fun removeLikeOnPost(postId: String, communityId: String, userId: String)
+    suspend fun removeLikeOnPost(postId: String, communityId: String)
 }

@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedCommunityViewModel @Inject constructor(
     private val repository: PostRepositoryImpl,
-    private val user: AuthRepositoryImpl
+    private val user: AuthRepositoryImpl,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<FeedCommunityUiState>(FeedCommunityUiState())
@@ -32,51 +32,70 @@ class FeedCommunityViewModel @Inject constructor(
                 }
             )
         }
-
+        println("VIEW MODEL")
         getUserLiked()
     }
 
     fun addCommentOnPost(communityId: String) {
         viewModelScope.launch {
 
+            val selectedPost = _uiState.value.selectedPost ?: return@launch
+
             val comment = CommentType(
                 user = user.getCurrentUser(),
                 comment = _uiState.value.textComment,
-                communityId = communityId
+                communityId = communityId,
+                postId = selectedPost.verseId
             )
 
-            val selectedPost = _uiState.value.selectedPost ?: return@launch
-
-            val updatePost = selectedPost.copy(
+            val updatedPost = selectedPost.copy(
                 comments = selectedPost.comments + comment
             )
 
-            _uiState.value = _uiState.value.copy(selectedPost = updatePost, sendingComment = true)
+            _uiState.update { state ->
+                state.copy(
+                    selectedPost = updatedPost,
+                    sendingComment = true,
+                    textComment = "",
+                    posts = state.posts.map {
+                        if (it.verseId == updatedPost.verseId) updatedPost else it
+                    }
+                )
+            }
 
             try {
                 repository.addComment(postId = selectedPost.verseId, communityId = communityId, comment = comment)
             } catch (e: Exception) {
                 e.printStackTrace()
-                _uiState.value = _uiState.value.copy(
-                    selectedPost = selectedPost.copy(comments = selectedPost.comments),
-                    sendingComment = false
-                )
+                _uiState.update { state ->
+                    state.copy(
+                        selectedPost = selectedPost,
+                        sendingComment = false,
+                        posts = state.posts.map {
+                            if (it.verseId == selectedPost.verseId) selectedPost else it
+                        }
+                    )
+                }
             } finally {
-                _uiState.value = _uiState.value.copy(sendingComment = false, textComment = "")
+                _uiState.update { state ->
+                    state.copy(sendingComment = false)
+                }
             }
         }
     }
 
     fun selectPost(postId: String) {
-        _uiState.value =
-            _uiState.value.copy(selectedPost = _uiState.value.posts.first { it.verseId == postId })
+        val post = _uiState.value.posts.firstOrNull { it.verseId == postId }
+        _uiState.update {
+            it.copy(selectedPost = post)
+        }
     }
 
     fun likeAPost(post: PostType, communityId: String, isRemoving: Boolean = false) {
         viewModelScope.launch {
             user.getCurrentUser()?.let {
                 if (isRemoving) {
-                    repository.removeLikeOnPost(post.verseId, communityId, it.id)
+                    repository.removeLikeOnPost(post.verseId, communityId)
                 } else {
                     repository.addLikeOnPost(post.verseId, communityId, it)
                 }
@@ -86,7 +105,7 @@ class FeedCommunityViewModel @Inject constructor(
 
     fun getAllPosts(communityId: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(loadingPosts = true)
+            _uiState.update { it.copy(loadingPosts = true) }
 
             val posts = repository.getPosts(communityId)
 
@@ -98,14 +117,16 @@ class FeedCommunityViewModel @Inject constructor(
                 }
             }.awaitAll()
 
-            _uiState.value = _uiState.value.copy(posts = all, loadingPosts = false)
+            _uiState.update { it.copy(posts = all, loadingPosts = false) }
         }
     }
 
     private fun getUserLiked() {
         viewModelScope.launch {
             repository.getUserLikesOnPost().collect {
-                _uiState.value = _uiState.value.copy(likedPosts = it)
+                _uiState.update { state ->
+                    state.copy(likedPosts = it)
+                }
             }
         }
     }

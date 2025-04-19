@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.ui.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,17 +39,11 @@ fun HomeCommunity(
     members: List<CommunityMemberType>,
     onJoinToCommunity: (String) -> Unit = {}
 ) {
-    println("CommunityItem recomposed: ${community.communityName}")
-
     Column(
         modifier = modifier
             .background(color = Color.White)
             .padding(vertical = 20.dp, horizontal = 12.dp)
             .fillMaxWidth()
-            .drawBehind {
-                Log.d("DrawCheck", "Redrawing item: ${community.communityName}")
-            }
-
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(18.dp)

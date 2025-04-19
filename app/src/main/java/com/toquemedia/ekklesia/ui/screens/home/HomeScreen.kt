@@ -16,7 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.VerseType
 import com.toquemedia.ekklesia.services.StatsVerseOfDay
@@ -37,14 +36,10 @@ fun HomeScreen(
     communities: List<CommunityWithMembers> = emptyList(),
     loadingCommunitiesUserIn: Boolean = true,
     onJoinToCommunity: (String) -> Unit = {},
-    onNavigateToCommunity: (CommunityType) -> Unit = {},
+    onNavigateToCommunity: (CommunityWithMembers) -> Unit = {},
     onShareVerseOfDay: () -> Unit = {},
     onLikeVerseOfDay: (Boolean) -> Unit = {},
 ) {
-
-    println("RebuildCheck communities hash: ${communities.hashCode()}")
-
-
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
