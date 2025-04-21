@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.community.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.ui.composables.EkklesiaDialog
-import com.toquemedia.ekklesia.ui.screens.community.CommunityUiState
 import com.toquemedia.ekklesia.ui.theme.backgroundLightColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
@@ -38,20 +38,22 @@ fun CommunityListScreen(
     onNavigateToCommunity: (CommunityWithMembers) -> Unit = {},
     onDismissDialog: () -> Unit = {},
     onDeleteCommunity: (String) -> Unit = {},
-    state: CommunityUiState
+    onOpenDialogChange: (Boolean) -> Unit = {},
+    myCommunities: List<CommunityWithMembers>,
+    openDialog: Boolean
 ) {
 
     val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
     var communityIdSelected by remember { mutableStateOf<String?>(null) }
 
-    if (state.openDialog) {
+    if (openDialog) {
         EkklesiaDialog(
             onDismissRequest = {
-                state.onOpenDialogChange(false)
+                onOpenDialogChange(false)
                 onDismissDialog()
            },
             onConfirmation = {
-                state.onOpenDialogChange(false)
+                onOpenDialogChange(false)
                 onDeleteCommunity(communityIdSelected.toString())
             },
             dialogTitle = stringResource(R.string.dialog_community_title),
@@ -59,53 +61,54 @@ fun CommunityListScreen(
         )
     }
 
-    Column(
-        modifier = modifier
-            .background(color = backgroundLightColor)
-            .padding(horizontal = 16.dp, vertical = 30.dp)
-            .fillMaxSize()
-    ) {
+    Box {
+        Column(
+            modifier = modifier
+                .background(color = backgroundLightColor)
+                .padding(horizontal = 16.dp, vertical = 30.dp)
+                .fillMaxSize()
+        ) {
+            CommunityButtonAdd(
+                onTapAction = onOpenToCreateCommunity
+            )
 
-        CommunityButtonAdd(
-            onTapAction = onOpenToCreateCommunity
-        )
+            Spacer(modifier = Modifier.height(10.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        LazyColumn {
-            items(state.communities) { data ->
-                val expanded = expandedStates[data.community?.id] == true
-                CommunityCard(
-                    community = data,
-                    onNavigateToCommunity = {
-                        onNavigateToCommunity(data)
-                    },
-                    onOpenMoreMenu = { expandedStates[data.community?.id.toString()] = !expanded },
-                    modifier = modifier
-                        .padding(bottom = 10.dp)
-                ) {
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expandedStates[data.community?.id.toString()] = false }
+            LazyColumn {
+                items(myCommunities) { data ->
+                    val expanded = expandedStates[data.community.id] == true
+                    CommunityCard(
+                        community = data,
+                        onNavigateToCommunity = {
+                            onNavigateToCommunity(data)
+                        },
+                        onOpenMoreMenu = { expandedStates[data.community.id.toString()] = !expanded },
+                        modifier = modifier
+                            .padding(bottom = 10.dp)
                     ) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = stringResource(R.string.delete_community)
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Outlined.Delete,
-                                    contentDescription = stringResource(R.string.description_delete_community)
-                                )
-                            },
-                            onClick = {
-                                state.onOpenDialogChange(true)
-                                communityIdSelected = data.community?.id
-                                expandedStates[data.community?.id.toString()] = false
-                            }
-                        )
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expandedStates[data.community.id.toString()] = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(R.string.delete_community)
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Delete,
+                                        contentDescription = stringResource(R.string.description_delete_community)
+                                    )
+                                },
+                                onClick = {
+                                    onOpenDialogChange(true)
+                                    communityIdSelected = data.community.id
+                                    expandedStates[data.community.id.toString()] = false
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -117,6 +120,7 @@ fun CommunityListScreen(
 @Composable
 private fun CommunityListScreenPrev() {
     CommunityListScreen(
-        state = CommunityUiState(communities = CommunityMock.getAllCommunityWithMembers())
+        myCommunities = CommunityMock.getAllCommunityWithMembers(),
+        openDialog = false,
     )
 }

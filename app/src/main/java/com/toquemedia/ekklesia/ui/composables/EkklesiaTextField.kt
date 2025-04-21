@@ -10,11 +10,13 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -22,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.util.Locale
 
 @Composable
 fun EkklesiaTextField(
@@ -31,13 +34,48 @@ fun EkklesiaTextField(
     height: Dp,
     singleLine: Boolean = false,
     enabled: Boolean = true,
+    imeAction: ImeAction,
     onChangeValue: (TextFieldValue) -> Unit = {}
 ) {
-    Box {
+    val textFieldValue = remember(value) {
+        TextFieldValue(value, TextRange(value.length))
+    }
+
+    Box(modifier = modifier) {
         BasicTextField(
-            value = value,
-            onValueChange = {
-                onChangeValue(TextFieldValue(it, TextRange(it.length)))
+            value = textFieldValue,
+            onValueChange = { newValue ->
+                val processedText = if (newValue.text.isNotEmpty() && value.isEmpty()) {
+                    TextFieldValue(
+                        newValue.text.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                        },
+                        TextRange(newValue.text.length)
+                    )
+                } else {
+                    val textEndsWithPeriodSpace = value.endsWith(". ") &&
+                            newValue.text.length > value.length
+
+                    if (textEndsWithPeriodSpace) {
+                        val lastPeriodPos = newValue.text.lastIndexOf(". ") + 2
+                        if (lastPeriodPos < newValue.text.length && newValue.text[lastPeriodPos].isLowerCase()) {
+                            val before = newValue.text.substring(0, lastPeriodPos)
+                            val after = newValue.text.substring(lastPeriodPos)
+
+                            TextFieldValue(
+                                before + after.replaceFirstChar {
+                                    it.titlecase(Locale.getDefault())
+                                },
+                                TextRange(newValue.text.length)
+                            )
+                        } else {
+                            newValue
+                        }
+                    } else {
+                        newValue
+                    }
+                }
+                onChangeValue(processedText)
             },
             textStyle = TextStyle(
                 color = Color.Black,
@@ -46,8 +84,9 @@ fun EkklesiaTextField(
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
                 keyboardType = KeyboardType.Text,
+                imeAction = imeAction
             ),
-            modifier = modifier
+            modifier = Modifier
                 .background(color = Color.White, shape = RoundedCornerShape(4.dp))
                 .fillMaxWidth()
                 .height(height = height)
@@ -59,10 +98,11 @@ fun EkklesiaTextField(
         if (value.isEmpty()) {
             Text(
                 text = placeholder,
-                fontStyle = FontStyle.Italic,
                 color = Color.Gray,
+                fontSize = 15.sp,
                 modifier = Modifier
-                    .padding(vertical = 10.dp, horizontal = 10.dp)
+                    .padding(vertical = 12.dp, horizontal = 10.dp)
+                    .align(Alignment.CenterStart)
             )
         }
     }
@@ -77,6 +117,7 @@ private fun EkklesiaTextFieldPrev() {
         height = 41.dp,
         singleLine = true,
         onChangeValue = {},
-        enabled = false
+        enabled = false,
+        imeAction = ImeAction.Next
     )
 }

@@ -63,4 +63,5 @@
     <string name="other_communities">Outras comunidades</string>
     <string name="no_posts">Sem publicação no momento.</string>
     <string name="post_description">Ao reagires sobre um versículo bíblico aparecerá aqui como publicação</string>
+    <string name="loading_chapters">A carregar os capítulos</string>
 </resources>

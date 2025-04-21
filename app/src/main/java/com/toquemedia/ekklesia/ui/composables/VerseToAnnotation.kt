@@ -15,9 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,8 +35,10 @@ fun VerseToAnnotation(
     verse: String,
     bookNameAsTitle: Boolean = true
 ) {
-
-    val paragraphs = verse.splitTextByLineWidth(maxCharsPerLine = 2)
+    val density = LocalDensity.current
+    val configuration = LocalConfiguration.current
+    val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
+    val paragraphs = verse.splitTextByLineWidth(screenWidth = screenWidthPx.toInt(), percentOfScreen = 0.9f)
 
     Column(
         modifier = modifier
@@ -70,7 +73,7 @@ fun VerseToAnnotation(
                 modifier = Modifier
                     .border(width = 3.dp, color = PrincipalColor, shape = RectangleShape)
                     .width(3.dp)
-                    .height(paragraphs.size * 3.dp)
+                    .height(paragraphs.size * 50.dp)
             )
             Spacer(modifier = Modifier.size(10.dp))
 

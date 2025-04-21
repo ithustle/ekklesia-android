@@ -12,10 +12,7 @@ fun EkklesiaNavHost(
     modifier: Modifier = Modifier,
     isLoginActive: Boolean,
     navController: NavHostController,
-    showDevocionalModal: (@Composable () -> Unit) -> Unit,
-    hideDevocionalModal: () -> Unit
 ) {
-    println("isLoginActive: $isLoginActive")
     NavHost(
         navController,
         startDestination = if (isLoginActive) Screen.HomeScreenGraph else Screen.AuthScreenGraph,
@@ -23,11 +20,7 @@ fun EkklesiaNavHost(
     ) {
         authGraph(navController = navController)
         homeGraph(navController = navController)
-        bibleGraph(
-            navController = navController,
-            showDevocionalModal = showDevocionalModal,
-            hideDevocionalModal = hideDevocionalModal
-        )
+        bibleGraph(navController = navController)
         communityGraph(navController = navController)
     }
 }
@@ -40,10 +33,13 @@ fun NavController.navigateBetweenTabs(destination: Screen) = this.navigate(desti
     restoreState = true
 }
 
-fun NavController.navigateToFirstScreen(route: Screen) =
+fun NavController.navigateToFirstScreen(route: Screen = Screen.AuthScreenGraph) {
     this.navigate(route) {
-        popUpTo(this@navigateToFirstScreen.graph.id)
+        popUpTo(0) { inclusive = true }
+        launchSingleTop = true
     }
+}
+
 
 fun NavController.navigateBetweenScreens(route: Screen) =
     this.navigate(route) {

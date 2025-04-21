@@ -37,6 +37,7 @@ fun LoginScreen(
 ) {
 
     LaunchedEffect(state.user) {
+        println("Está a correr aqui ${state.user}")
         if (state.user != null) {
             onUserAuthenticated(state.user)
         }

@@ -11,21 +11,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.ui.screens.community.chat.ChatInputMessage
 import com.toquemedia.ekklesia.utils.mocks.PostsMock
 
 @Composable
 fun FeedPostAddComment(
     modifier: Modifier = Modifier,
-    state: FeedCommunityUiState,
-    onSendComment: () -> Unit = {}
+    onSendComment: () -> Unit = {},
+    onChangeTextComment: (String) -> Unit = {},
+    selectedPost: PostType? = null,
+    textComment: String
 ) {
+
     Scaffold(
         bottomBar = {
             ChatInputMessage(
-                value = state.textComment,
+                value = textComment,
                 inputFor = ChatInputMessage.COMMENT,
-                onChangeValue = state.onChangeTextComment,
+                onChangeValue = onChangeTextComment,
                 onSendComment = onSendComment
             )
         },
@@ -37,10 +41,12 @@ fun FeedPostAddComment(
                 .padding(it)
 
         ) {
-            state.selectedPost?.let { post ->
+            selectedPost?.let { post ->
+                println("comments: ${post.comments.size}")
                 item {
                     FeedPost(
                         post = post,
+                        comments = post.comments,
                         showLikes = post.likes > 0
                     )
 
@@ -60,6 +66,7 @@ fun FeedPostAddComment(
 @Composable
 private fun FeedPostAddCommentPrev() {
     FeedPostAddComment(
-        state = FeedCommunityUiState(selectedPost = PostsMock.getPosts().first())
+        selectedPost = PostsMock.getPosts().first(),
+        textComment = "",
     )
 }

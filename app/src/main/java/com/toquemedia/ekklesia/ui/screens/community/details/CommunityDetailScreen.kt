@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
-import com.toquemedia.ekklesia.extension.toCommunity
+import com.toquemedia.ekklesia.model.CommunityMemberType
 import com.toquemedia.ekklesia.model.CommunityType
 import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.composables.EkklesiaTopBar
@@ -33,7 +32,8 @@ import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 @Composable
 fun CommunityDetailScreen(
     modifier: Modifier = Modifier,
-    community: CommunityType
+    community: CommunityType,
+    members: List<CommunityMemberType> = emptyList()
 ) {
     Scaffold(
         topBar = {
@@ -68,7 +68,7 @@ fun CommunityDetailScreen(
             )
 
             Text(
-                text = "Comunidade - ${community.members} membros"
+                text = "Comunidade - ${members.size} membros"
             )
 
             Spacer(modifier = modifier.height(20.dp))
@@ -91,6 +91,7 @@ fun CommunityDetailScreen(
 @Composable
 private fun CommunityDetailScreenPrev() {
     CommunityDetailScreen(
-        community = CommunityMock.getAll().first().toCommunity(LocalContext.current)
+        community = CommunityMock.getAll().first(),
+        members = CommunityMock.getAllCommunityWithMembers().first().allMembers
     )
 }

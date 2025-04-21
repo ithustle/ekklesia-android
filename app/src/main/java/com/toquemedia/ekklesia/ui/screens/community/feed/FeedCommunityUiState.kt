@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.screens.community.feed
 
+import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.PostType
 
 data class FeedCommunityUiState(

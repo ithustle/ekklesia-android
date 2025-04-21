@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.model.NoteEntity
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
-import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
 import com.toquemedia.ekklesia.repository.PostRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
@@ -14,11 +13,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.text.toInt
 
 @HiltViewModel
 class VerseViewModel @Inject constructor(
@@ -26,7 +23,6 @@ class VerseViewModel @Inject constructor(
     private val noteRepository: NoteRepositoryImpl,
     private val postRepository: PostRepositoryImpl,
     private val userRepository: AuthRepositoryImpl,
-    private val communityRepository: CommunityRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<VerseUiState> = MutableStateFlow(VerseUiState())
@@ -61,6 +57,9 @@ class VerseViewModel @Inject constructor(
                 onEntryNoteChange = {
                     _uiState.value = _uiState.value.copy(entryNote = it)
                 },
+                onChangeChapter = {
+                    _uiState.value = _uiState.value.copy(chapter = it)
+                },
                 markedVerses = verseRepository.markedVerses
             )
         }
@@ -79,6 +78,11 @@ class VerseViewModel @Inject constructor(
         }
     }
 
+    fun changeChapter(chapter: Int) {
+        println("chapter: $chapter")
+        _uiState.value = _uiState.value.copy(chapter = chapter)
+    }
+
     fun markVerse(bookName: String?, chapter: String?, versicle: String, verse: String) {
         viewModelScope.launch {
             if (bookName == null || chapter == null) return@launch
@@ -89,11 +93,12 @@ class VerseViewModel @Inject constructor(
 
             launch {
                 val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
+                val communityId = userRepository.getCommunitiesId()
                 val post = PostType(
                     verse = verse,
                     user = userRepository.getCurrentUser(),
                     verseId = verseId,
-                    communityId = communityRepository.getCommunitiesUserInIds().first()
+                    communityId = communityId
                 )
                 postRepository.addPost(post)
             }
@@ -137,11 +142,13 @@ class VerseViewModel @Inject constructor(
 
             launch {
                 val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
+                val communityId = userRepository.getCommunitiesId()
                 val post = PostType(
                     note = note,
                     verse = verse,
                     user = userRepository.getCurrentUser(),
-                    verseId = "${verseId}_note"
+                    verseId = "${verseId}_note",
+                    communityId = communityId
                 )
                 postRepository.addPost(post)
             }

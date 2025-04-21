@@ -1,21 +1,22 @@
 package com.toquemedia.ekklesia.ui.navigation
 
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.extension.getGreeting
+import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.routes.Screen
-import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
-import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
+import com.toquemedia.ekklesia.ui.screens.community.CommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.home.HomeScreen
 import com.toquemedia.ekklesia.ui.screens.home.HomeViewModel
 import com.toquemedia.ekklesia.utils.mocks.BitmapUtil
@@ -25,10 +26,16 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
     composable<Screen.Home> {
 
         val appViewModel = LocalAppViewModel.current
+        val activity = appViewModel.activityContext as ComponentActivity
+
+        val communityViewModel = hiltViewModel<CommunityViewModel>(activity)
         val viewModel = hiltViewModel<HomeViewModel>()
-        val state by viewModel.uiState.collectAsState()
+
+        val communityState by communityViewModel.uiState.collectAsStateWithLifecycle()
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
 
         val context = LocalContext.current
+        val currentUser = appViewModel.currentUser.value
 
         val shareLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -36,68 +43,43 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             }
 
         LaunchedEffect(Unit) {
-            appViewModel.topBarTitle = "${Date().getGreeting()}, ${appViewModel.currentUser?.displayName}"
+            appViewModel.updateTopBarState(
+                newState = TopBarState(
+                    title = "${Date().getGreeting()}, ${currentUser?.displayName}",
+                    useAvatar = currentUser?.photo
+                )
+            )
         }
 
-        println("Communities: ${state.communities.size}")
+        produceState(false, communityState.newCommunity) {
+            if (value) {
+                communityState.newCommunity?.let {
+                    appViewModel.selectedCommunity = it
+                    navController.navigateToCommunityFeed()
+                }
+            }
+            value = true
+        }
 
         HomeScreen(
-            communitiesUserIn = state.communitiesUserIn,
-            loadingCommunitiesUserIn = state.loadingCommunitiesUserIn,
-            communities = state.communities,
-            loadCommunities = state.loadCommunities,
-            joiningToCommunity = state.joiningToCommunity,
+            communitiesUserIn = communityState.communitiesUserIn,
+            loadingCommunitiesUserIn = communityState.loadingCommunitiesUserIn,
+            communities = communityState.communities,
+            loadCommunities = communityState.loadCommunities,
+            joiningToCommunity = communityState.joiningToCommunity,
             verseOfDay = state.verseOfDay,
             verseOfDayStats = state.verseOfDayStats,
             likedVerseOfDay = state.likedVerseOfDay,
             context = context,
-            onJoinToCommunity = viewModel::joinToCommunity,
+            onJoinToCommunity = communityViewModel::joinToCommunity,
             onNavigateToCommunity = {
-                navController.navigateToCommunityFeed(it)
+                appViewModel.selectedCommunity = it
+                navController.navigateToCommunityFeed()
             },
             onLikeVerseOfDay = viewModel::handleLikeVerseOfDay,
             onShareVerseOfDay = {
                 BitmapUtil.shareVerseBitmap(context, shareLauncher, state.verseOfDay)
             }
         )
-    }
-
-    composable<Screen.CommunityFeed> {stackEntry ->
-        navController.previousBackStackEntry?.let {
-            val args = stackEntry.toRoute<Screen.CommunityFeed>()
-
-            val communitySharedViewModel = hiltViewModel<HomeViewModel>(it)
-            val stateHome by communitySharedViewModel.uiState.collectAsState()
-
-            val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(it)
-            val stateFeed by sharedViewModel.uiState.collectAsState()
-
-            val appViewModel = LocalAppViewModel.current
-            appViewModel.topBarTitle = args.communityName
-
-            val community = stateHome.communitiesUserIn.first { it.community?.id == args.communityId }
-
-            LaunchedEffect(args.communityId) {
-                sharedViewModel.getAllPosts(args.communityId)
-            }
-
-            FeedScreen(
-                community = community,
-                state = stateFeed,
-                user = appViewModel.currentUser,
-                onNavigateToComments = {
-                    navController.navigateToAddCommentOnPost(postId = it)
-                },
-                onLikePost = {
-                    sharedViewModel.likeAPost(post = it)
-                },
-                onRemoveLikePost = {
-                    sharedViewModel.likeAPost(post = it, isRemoving = true)
-                }
-                /*onNavigateToChat = {
-                    navController.navigateToChatScreen(community = community)
-                } */
-            )
-        }
     }
 }

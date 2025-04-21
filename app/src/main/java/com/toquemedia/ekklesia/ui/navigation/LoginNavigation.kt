@@ -9,7 +9,6 @@ import androidx.navigation.compose.composable
 import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.routes.navigateToFirstScreen
-import com.toquemedia.ekklesia.routes.navigateToHomeGraph
 import com.toquemedia.ekklesia.ui.screens.login.AuthViewModel
 import com.toquemedia.ekklesia.ui.screens.login.LoginScreen
 
@@ -27,13 +26,12 @@ fun NavGraphBuilder.loginNavigation(navController: NavController) {
                 viewModel.signIn(appViewModel.activityContext)
             },
             onUserAuthenticated = {
-                appViewModel.currentUser = it
-                navController.navigateToHomeGraph()
+                appViewModel.setCurrentUser(it)
             }
         )
     }
 }
 
 fun NavController.navigateToLogin() {
-    this.navigateToFirstScreen(Screen.Login)
+    this.navigateToFirstScreen()
 }

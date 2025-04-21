@@ -3,20 +3,18 @@ package com.toquemedia.ekklesia.di.modules
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.toquemedia.ekklesia.dao.AppCacheDao
+import com.google.firebase.storage.FirebaseStorage
 import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
-import com.toquemedia.ekklesia.dao.CommunityDao
-import com.toquemedia.ekklesia.dao.CommunityInsiderDao
 import com.toquemedia.ekklesia.dao.DevocionalDao
 import com.toquemedia.ekklesia.dao.LikeDao
 import com.toquemedia.ekklesia.dao.MessageDao
 import com.toquemedia.ekklesia.dao.NoteDao
-import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.services.CommunityService
 import com.toquemedia.ekklesia.services.NoteService
 import com.toquemedia.ekklesia.services.OurmannaService
 import com.toquemedia.ekklesia.services.PostService
+import com.toquemedia.ekklesia.services.StorageService
 import com.toquemedia.ekklesia.services.UserService
 import com.toquemedia.ekklesia.services.VerseOfDayService
 import dagger.Module
@@ -36,13 +34,13 @@ class DatabaseModule {
     @Provides
     fun provideDevocionalDao(appDatabase: AppDatabase) : DevocionalDao = appDatabase.DevocionalDao()
     @Provides
-    fun provideCommunityDao(appDatabase: AppDatabase): CommunityDao = appDatabase.CommunityDao()
-    @Provides
     fun provideMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.MessageDao()
     @Provides
-    fun provideCommunityService(firestore: FirebaseFirestore): CommunityService = CommunityService(firestore)
+    fun provideCommunityService(userService: UserService, firestore: FirebaseFirestore): CommunityService = CommunityService(auth = userService, db = firestore)
     @Provides
     fun provideNoteService(): NoteService = NoteService()
+    @Provides
+    fun provideStorageService(@ApplicationContext context: Context, storage: FirebaseStorage): StorageService = StorageService(context, storage)
     @Provides
     fun provideVerseOfDayService(firestore: FirebaseFirestore): VerseOfDayService = VerseOfDayService(firestore)
     @Provides
@@ -51,5 +49,5 @@ class DatabaseModule {
     @Provides
     fun providePostService(firestore: FirebaseFirestore): PostService = PostService(firestore)
     @Provides
-    fun provideUserService(@ApplicationContext context: Context, auth: FirebaseAuth): UserService = UserService(context, auth)
+    fun provideUserService(@ApplicationContext context: Context, firestore: FirebaseFirestore, auth: FirebaseAuth, dao: LikeDao): UserService = UserService(context, firestore, auth, dao)
 }

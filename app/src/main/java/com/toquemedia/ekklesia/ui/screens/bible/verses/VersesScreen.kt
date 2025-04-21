@@ -7,10 +7,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,7 +36,7 @@ fun VersesScreen(
     versesStates: VerseUiState,
     devocionalState: DevocionalUiState,
     scrollState: ScrollState,
-    chapterNumber: String?,
+    chapterNumber: Int?,
     onSelectedVerse: (verse: String, versicle: Int) -> Unit = { _, _ -> },
     onNextVerse: (Int) -> Unit = {},
     onPreviousVerse: (Int) -> Unit = {},
@@ -69,7 +70,7 @@ fun VersesScreen(
 
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
-            book?.verses?.get(((chapterNumber?.toInt() ?: 0).minus(1)))?.forEachIndexed { versicle, verse ->
+            book?.verses?.get(((chapterNumber ?: 0).minus(1)))?.forEachIndexed { versicle, verse ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -96,10 +97,8 @@ fun VersesScreen(
                             .clickable {
                                 if (markedVerses.contains(verse)) {
                                     onUnMarkVerse(verse, versicle + 1)
-                                    //selectedVersicle = -1
                                 } else {
                                     versesStates.onShowVerseAction(true)
-                                    //selectedVersicle = versicle + 1
                                     onSelectedVerse(verse, versicle + 1)
                                 }
                             }
@@ -109,11 +108,11 @@ fun VersesScreen(
         }
 
         Spacer(modifier = Modifier.weight(weight = 1f))
+        Spacer(modifier = Modifier.height(20.dp))
 
         VersesNavigation(
-            modifier = Modifier
-                .padding(top = 20.dp),
-            currentVerse = chapterNumber?.toInt() ?: 0,
+            modifier = Modifier,
+            currentVerse = chapterNumber ?: 0,
             bookName = book?.bookName.toString(),
             onNextVerse = onNextVerse,
             onPreviousVerse = onPreviousVerse
@@ -127,7 +126,7 @@ fun VersesScreen(
 private fun VersesScreenPrev() {
     VersesScreen(
         book = BookMock.get(),
-        chapterNumber = "1",
+        chapterNumber = 1,
         versesStates = VerseUiState(),
         scrollState = rememberScrollState(),
         devocionalState = DevocionalUiState()

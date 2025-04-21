@@ -9,7 +9,9 @@ import androidx.core.net.toUri
 import java.io.ByteArrayOutputStream
 import kotlin.math.sqrt
 
-fun String.splitTextByLineWidth(maxCharsPerLine: Int): List<String> {
+fun String.splitTextByLineWidth(screenWidth: Int, percentOfScreen: Float): List<String> {
+    val maxCharsPerLine = (screenWidth * percentOfScreen / 10).toInt()
+
     val words = this.split(" ")
     val result = mutableListOf<String>()
     var currentLine = ""

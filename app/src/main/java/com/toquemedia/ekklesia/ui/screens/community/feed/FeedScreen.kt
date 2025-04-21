@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -32,23 +33,29 @@ fun FeedScreen(
     modifier: Modifier = Modifier,
     community: CommunityWithMembers,
     user: UserType? = null,
-    state: FeedCommunityUiState,
+    loadingPosts: Boolean = false,
+    posts: List<PostType> = emptyList(),
+    selectedPost: PostType? = null,
+    likedPosts: List<String> = emptyList(),
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
-    onRemoveLikePost: (PostType) -> Unit = {}
+    onRemoveLikePost: (PostType) -> Unit = {},
+    onAddStory: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
 
-        if (state.loadingPosts) {
+        val loading = remember(loadingPosts) { loadingPosts }
+
+        if (loading) {
             ScreenAppLoading(
                 screenText = stringResource(R.string.loading_community)
             )
         }
 
-        if (state.posts.isEmpty()) {
+        if (posts.isEmpty()) {
             EmptyScreen(
                 icon = painterResource(R.drawable.comment),
                 emptyText = stringResource(R.string.no_posts),
@@ -69,7 +76,8 @@ fun FeedScreen(
                     FeedStories(
                         modifier = Modifier
                             .padding(16.dp),
-                        user = user
+                        user = user,
+                        onAddStory = onAddStory
                     )
                 }
             }
@@ -78,7 +86,7 @@ fun FeedScreen(
                 Spacer(Modifier.height(8.dp))
             }
 
-            items(items = state.posts) {
+            items(items = posts) {
                 Box(
                     modifier = modifier
                         .background(color = Color.White)
@@ -86,9 +94,10 @@ fun FeedScreen(
                 ) {
                     FeedPost(
                         showLastComment = it.comments.isNotEmpty(),
-                        showLikes = it.likes > 0,
-                        liked = state.likedPosts.contains(it.verseId),
+                        showLikes = false, //it.likes > 0,
+                        liked = likedPosts.contains("${it.verseId}_${community.community.id}"),
                         post = it,
+                        comments = it.comments,
                         onNavigateToComments = onNavigateToComments,
                         onLikePost = onLikePost,
                         onRemoveLikePost = onRemoveLikePost,
@@ -105,9 +114,6 @@ fun FeedScreen(
 private fun FeedScreenPrev() {
     FeedScreen(
         community = CommunityMock.getAllCommunityWithMembers().first(),
-        state = FeedCommunityUiState(
-            posts = emptyList(),
-            likedPosts = listOf(PostsMock.getPosts().first().verseId)
-        ),
+        posts = PostsMock.getPosts()
     )
 }

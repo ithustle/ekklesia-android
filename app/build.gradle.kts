@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.plugin.serialization)
     alias(libs.plugins.kotlin.parcelize)
-    //alias(libs.plugins.androidx.room)
 }
 
 android {
@@ -18,8 +17,8 @@ android {
         applicationId = "com.toquemedia.ekklesia"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 4
+        versionName = "0.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -73,6 +72,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.analytics)
     implementation(libs.credentials.play.service.auth)
@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.retrofit.http)
     implementation(libs.converter.gson)
+    implementation(libs.core.splashscreen)
 
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.compiler)

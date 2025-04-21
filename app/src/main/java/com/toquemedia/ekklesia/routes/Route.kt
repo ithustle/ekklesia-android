@@ -2,13 +2,13 @@ package com.toquemedia.ekklesia.routes
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Screen {
+sealed class Screen() {
 
     @Serializable
     object AuthScreenGraph: Screen()
 
     @Serializable
-    object HomeScreenGraph: Screen()
+    object HomeScreenGraph: Screen() 
 
     @Serializable
     object BibleScreenGraph: Screen()
@@ -34,11 +34,19 @@ sealed class Screen {
     @Serializable
     data class Verses(
         val bookName: String?,
-        val chapterNumber: String
+        val chapterNumber: Int
     ): Screen()
 
     @Serializable
     object CreateCommunity: Screen()
+
+    @Serializable
+    data class CreateDevocional(
+        val bookName: String?,
+        val chapterNumber: String,
+        val versicle: Int,
+        val verse: String
+    ): Screen()
 
     @Serializable
     object Profile: Screen()
@@ -50,12 +58,18 @@ sealed class Screen {
 
     @Serializable
     data class CommentPost(
-        val postId: String
+        val postId: String,
+        val communityId: String
     ): Screen()
 
     @Serializable
-    data class CommunityFeed(
-        val communityId: String,
-        val communityName: String
+    object CommunityFeed: Screen()
+
+    @Serializable
+    data class NoteVerse(
+        val bookName: String?,
+        val chapterNumber: String,
+        val verse: String,
+        val versicle: Int,
     ): Screen()
 }

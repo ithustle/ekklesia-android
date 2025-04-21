@@ -13,7 +13,8 @@ import com.toquemedia.ekklesia.model.UserType
 @Composable
 fun FeedStories(
     modifier: Modifier = Modifier,
-    user: UserType? = null
+    user: UserType? = null,
+    onAddStory: () -> Unit = {}
 ) {
     Row(
         modifier = modifier
@@ -23,6 +24,7 @@ fun FeedStories(
             Modifier
                 .padding(end = 12.dp),
             userPhoto = user?.photo.toString().toUri(),
+            onAddStory = onAddStory
         )
 
         List(0) {

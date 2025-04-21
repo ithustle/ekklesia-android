@@ -7,4 +7,5 @@ interface AuthRepository {
     suspend fun googleSignIn(activityContext: Activity): UserType?
     fun getCurrentUser(): UserType?
     suspend fun signOut()
+    suspend fun getCommunitiesId(): List<String>
 }
