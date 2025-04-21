@@ -8,7 +8,7 @@ sealed class Screen() {
     object AuthScreenGraph: Screen()
 
     @Serializable
-    object HomeScreenGraph: Screen()
+    object HomeScreenGraph: Screen() 
 
     @Serializable
     object BibleScreenGraph: Screen()
