@@ -35,5 +35,5 @@ fun NavGraphBuilder.loginNavigation(navController: NavController) {
 }
 
 fun NavController.navigateToLogin() {
-    this.navigateToFirstScreen(Screen.Login)
+    this.navigateToFirstScreen()
 }
