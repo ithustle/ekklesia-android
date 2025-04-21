@@ -18,7 +18,7 @@ fun NavGraphBuilder.chapterNavigation(navController: NavController) {
     composable<Screen.Chapters> { backStackEntry ->
 
         val appViewModel = LocalAppViewModel.current
-        val currentUser = appViewModel.currentUser
+        val currentUser = appViewModel.currentUser.value
 
         val arg = backStackEntry.toRoute<Screen.Chapters>()
 

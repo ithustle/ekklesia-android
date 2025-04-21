@@ -79,7 +79,6 @@ class UserService @Inject constructor(
 
             userInfo?.let {
                 it.postsLiked.forEach { postId ->
-                    println("postId: $postId")
                     dao.saveLikeRegister(postId)
                 }
             }

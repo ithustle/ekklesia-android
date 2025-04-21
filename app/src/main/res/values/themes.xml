@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Ekklesia" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_color</item>
+
+        <item name="windowSplashScreenAnimatedIcon">@drawable/devotion_social_network_logo_white</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+
+        <item name="postSplashScreenTheme">@style/Theme.Ekklesia</item>
+    </style>
 </resources>

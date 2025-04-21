@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.navigation
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -44,17 +45,12 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.Communities> {
 
-        val stackEntry = remember(navController.currentBackStackEntry) {
-            navController.getBackStackEntry(Screen.Home)
-        }
-
         val appViewModel = LocalAppViewModel.current
-        val viewModel = hiltViewModel<CommunityViewModel>(stackEntry)
-        val uiState by viewModel.uiState.collectAsState()
+        val activity = appViewModel.activityContext as ComponentActivity
+        val viewModel = hiltViewModel<CommunityViewModel>(activity)
+        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-        val currentUser = appViewModel.currentUser
-
-        //appViewModel.showBackgroundOverlay = uiState.openDialog
+        val currentUser = appViewModel.currentUser.value
 
         LaunchedEffect(Unit) {
             appViewModel.updateTopBarState(
@@ -132,7 +128,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val context = LocalContext.current
         val appViewModel = LocalAppViewModel.current
-        val user = appViewModel.currentUser
+        val user = appViewModel.currentUser.value
 
         val selectedCommunity = remember(appViewModel.selectedCommunity) { appViewModel.selectedCommunity }
 

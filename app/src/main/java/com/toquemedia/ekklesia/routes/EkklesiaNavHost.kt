@@ -33,9 +33,9 @@ fun NavController.navigateBetweenTabs(destination: Screen) = this.navigate(desti
     restoreState = true
 }
 
-fun NavController.navigateToFirstScreen(route: Screen = Screen.AuthScreenGraph) = {
+fun NavController.navigateToFirstScreen(route: Screen = Screen.AuthScreenGraph) {
     this.navigate(route) {
-        popUpTo(route) { inclusive = true }
+        popUpTo(0) { inclusive = true }
         launchSingleTop = true
     }
 }

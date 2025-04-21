@@ -13,7 +13,7 @@ fun NavGraphBuilder.bibleNavigation(navController: NavController) {
     composable<Screen.Bible> {
 
         val appViewModel = LocalAppViewModel.current
-        val currentUser = appViewModel.currentUser
+        val currentUser = appViewModel.currentUser.value
 
         LaunchedEffect(Unit) {
             appViewModel.updateTopBarState(

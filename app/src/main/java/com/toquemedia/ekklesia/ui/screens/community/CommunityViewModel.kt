@@ -57,6 +57,8 @@ class CommunityViewModel @Inject constructor(
             )
         }
 
+        println("HOME VIEW MODEL")
+
         viewModelScope.launch {
             try {
                 val (verseOfDay, communities) = coroutineScope {

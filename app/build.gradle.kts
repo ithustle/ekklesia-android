@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.plugin.serialization)
     alias(libs.plugins.kotlin.parcelize)
-    //alias(libs.plugins.androidx.room)
 }
 
 android {
@@ -83,6 +82,7 @@ dependencies {
     implementation(libs.coil.network.okhttp)
     implementation(libs.retrofit.http)
     implementation(libs.converter.gson)
+    implementation(libs.core.splashscreen)
 
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.compiler)

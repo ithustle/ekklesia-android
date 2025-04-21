@@ -39,9 +39,7 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
             ProfileScreen(
                 user = it,
                 onSignOut = {
-                    viewModel.signOut()
-                    appViewModel.currentUser = null
-                    navController.navigateToLogin()
+                    appViewModel.logout()
                 }
             )
         }

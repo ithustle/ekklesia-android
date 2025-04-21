@@ -1,13 +1,14 @@
 package com.toquemedia.ekklesia.ui.navigation
 
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -25,15 +26,16 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
     composable<Screen.Home> {
 
         val appViewModel = LocalAppViewModel.current
+        val activity = appViewModel.activityContext as ComponentActivity
 
-        val communityViewModel = hiltViewModel<CommunityViewModel>()
+        val communityViewModel = hiltViewModel<CommunityViewModel>(activity)
         val viewModel = hiltViewModel<HomeViewModel>()
 
-        val communityState by communityViewModel.uiState.collectAsState()
-        val state by viewModel.uiState.collectAsState()
+        val communityState by communityViewModel.uiState.collectAsStateWithLifecycle()
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
 
         val context = LocalContext.current
-        val currentUser = appViewModel.currentUser
+        val currentUser = appViewModel.currentUser.value
 
         val shareLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
