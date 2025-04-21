@@ -39,7 +39,6 @@ import com.toquemedia.ekklesia.ui.composables.EkklesiaImage
 import com.toquemedia.ekklesia.ui.composables.VerseToAnnotation
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.PostsMock
-import java.util.Date
 
 @Composable
 fun FeedPost(
