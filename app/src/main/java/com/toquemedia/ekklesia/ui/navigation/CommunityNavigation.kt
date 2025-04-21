@@ -68,6 +68,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         CommunityListScreen(
             onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
             onNavigateToCommunity = {
+                appViewModel.selectedCommunity = it
                 navController.navigateToCommunityFeed()
             },
             //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
