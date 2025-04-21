@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.community.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,53 +61,54 @@ fun CommunityListScreen(
         )
     }
 
-    Column(
-        modifier = modifier
-            .background(color = backgroundLightColor)
-            .padding(horizontal = 16.dp, vertical = 30.dp)
-            .fillMaxSize()
-    ) {
+    Box {
+        Column(
+            modifier = modifier
+                .background(color = backgroundLightColor)
+                .padding(horizontal = 16.dp, vertical = 30.dp)
+                .fillMaxSize()
+        ) {
+            CommunityButtonAdd(
+                onTapAction = onOpenToCreateCommunity
+            )
 
-        CommunityButtonAdd(
-            onTapAction = onOpenToCreateCommunity
-        )
+            Spacer(modifier = Modifier.height(10.dp))
 
-        Spacer(modifier = Modifier.height(10.dp))
-
-        LazyColumn {
-            items(myCommunities) { data ->
-                val expanded = expandedStates[data.community.id] == true
-                CommunityCard(
-                    community = data,
-                    onNavigateToCommunity = {
-                        onNavigateToCommunity(data)
-                    },
-                    onOpenMoreMenu = { expandedStates[data.community.id.toString()] = !expanded },
-                    modifier = modifier
-                        .padding(bottom = 10.dp)
-                ) {
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expandedStates[data.community.id.toString()] = false }
+            LazyColumn {
+                items(myCommunities) { data ->
+                    val expanded = expandedStates[data.community.id] == true
+                    CommunityCard(
+                        community = data,
+                        onNavigateToCommunity = {
+                            onNavigateToCommunity(data)
+                        },
+                        onOpenMoreMenu = { expandedStates[data.community.id.toString()] = !expanded },
+                        modifier = modifier
+                            .padding(bottom = 10.dp)
                     ) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = stringResource(R.string.delete_community)
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Outlined.Delete,
-                                    contentDescription = stringResource(R.string.description_delete_community)
-                                )
-                            },
-                            onClick = {
-                                onOpenDialogChange(true)
-                                communityIdSelected = data.community.id
-                                expandedStates[data.community.id.toString()] = false
-                            }
-                        )
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expandedStates[data.community.id.toString()] = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = stringResource(R.string.delete_community)
+                                    )
+                                },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Delete,
+                                        contentDescription = stringResource(R.string.description_delete_community)
+                                    )
+                                },
+                                onClick = {
+                                    onOpenDialogChange(true)
+                                    communityIdSelected = data.community.id
+                                    expandedStates[data.community.id.toString()] = false
+                                }
+                            )
+                        }
                     }
                 }
             }

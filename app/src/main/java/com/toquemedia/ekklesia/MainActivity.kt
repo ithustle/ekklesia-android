@@ -74,6 +74,7 @@ class MainActivity : ComponentActivity() {
                                     else -> navController.navigateToCommunityGraph()
                                 }
                             },
+                            showOverlay = appViewModel.showBackgroundOverlay,
                             currentUser = appViewModel.currentUser,
                             onNavigateToProfile = {
                                 navController.navigateToProfile()

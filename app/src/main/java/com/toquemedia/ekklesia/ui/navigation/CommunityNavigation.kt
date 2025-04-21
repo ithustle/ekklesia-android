@@ -71,7 +71,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 appViewModel.selectedCommunity = it
                 navController.navigateToCommunityFeed()
             },
-            //onOpenDialog = { appViewModel.showBackgroundOverlay = true },
             onDismissDialog = { appViewModel.showBackgroundOverlay = false },
             onDeleteCommunity = {
                 viewModel.deleteCommunity(it)
@@ -79,7 +78,10 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             },
             myCommunities = uiState.myCommunities.filter { it.community.email == currentUser?.email },
             openDialog = uiState.openDialog,
-            onOpenDialogChange = uiState.onOpenDialogChange
+            onOpenDialogChange = {
+                appViewModel.showBackgroundOverlay = it
+                uiState.onOpenDialogChange(it)
+            }
         )
     }
 
