@@ -68,7 +68,6 @@ class MainActivity : ComponentActivity() {
             appViewModel.activityContext = this
 
             LaunchedEffect(currentUser) {
-                println("AQUI.... $currentUser")
                 if (currentUser == null) {
                     navController.navigateToFirstScreen(Screen.AuthScreenGraph)
                 } else {
@@ -117,6 +116,7 @@ class MainActivity : ComponentActivity() {
                                 navController.popBackStack()
                             },
                             topBarState = appViewModel.topBarState.value,
+                            showTopBar = appViewModel.showTopBar,
                             content = {
                                 EkklesiaNavHost(
                                     navController = navController,

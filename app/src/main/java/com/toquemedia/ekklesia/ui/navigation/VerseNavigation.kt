@@ -6,9 +6,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -19,6 +21,7 @@ import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.routes.navigateBetweenScreens
 import com.toquemedia.ekklesia.ui.screens.bible.devocional.CreateDevocionalScreen
 import com.toquemedia.ekklesia.ui.screens.bible.devocional.DevocionalViewModel
+import com.toquemedia.ekklesia.ui.screens.bible.devocional.VideoCreator
 import com.toquemedia.ekklesia.ui.screens.bible.notes.NoteScreen
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseActionOption
 import com.toquemedia.ekklesia.ui.screens.bible.verses.VerseViewModel
@@ -29,9 +32,15 @@ import kotlinx.coroutines.launch
 fun NavGraphBuilder.verseNavigation(
     navController: NavController
 ) {
+
     composable<Screen.Verses> { backStackEntry ->
+
+        val bibleGraphEntry = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.BibleScreenGraph)
+        }
+
         val vmVerses: VerseViewModel = hiltViewModel()
-        val vmDevocional: DevocionalViewModel = hiltViewModel()
+        val vmDevocional: DevocionalViewModel = hiltViewModel(bibleGraphEntry)
 
         val versesStates by vmVerses.uiState.collectAsState()
         val devocionalStates by vmDevocional.uiState.collectAsState()
@@ -66,7 +75,7 @@ fun NavGraphBuilder.verseNavigation(
         if (versesStates.showVerseActionOption) {
             VerseActionOption(
                 hasNote = versesStates.notes.find { it.verse == versesStates.selectedVerse } != null,
-                hasDevocional = devocionalStates.allDevocional.find { it.verse == versesStates.selectedVerse && !it.draft } != null,
+                hasDevocional = devocionalStates.allDevocional.find { it.verse == versesStates.selectedVerse } != null,
                 onDismissRequest = { sheetState ->
                     versesStates.onSelectVerse("", -1)
                     scope.launch { sheetState.hide() }.invokeOnCompletion {
@@ -209,7 +218,11 @@ fun NavGraphBuilder.verseNavigation(
 
     composable<Screen.CreateDevocional> { backStackEntry ->
 
-        val vmDevocional: DevocionalViewModel = hiltViewModel()
+        val bibleGraphEntry = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.BibleScreenGraph)
+        }
+
+        val vmDevocional: DevocionalViewModel = hiltViewModel(bibleGraphEntry)
         val devocionalStates by vmDevocional.uiState.collectAsState()
 
         val args = backStackEntry.toRoute<Screen.CreateDevocional>()
@@ -222,6 +235,7 @@ fun NavGraphBuilder.verseNavigation(
         val appViewModel = LocalAppViewModel.current
 
         LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = "Criar devocional",
@@ -244,20 +258,49 @@ fun NavGraphBuilder.verseNavigation(
                     bookName.toString(),
                     chapterNumber.toInt(),
                     versicle,
-                    selectedVerse
-                )
-            },
-            onSaveAsDraftDevocional = {
-                vmDevocional.saveDevocional(
-                    bookName.toString(),
-                    chapterNumber.toInt(),
-                    versicle,
                     selectedVerse,
-                    isDraft = true
+                    video = devocionalStates.videoUri
                 )
+                navController.popBackStack()
+            },
+            onCreateVideoForDevocional = {
+                navController.navigateToCreateVideoForDevocional()
             },
             onAddVerseToDevocional = {
                 vmDevocional.addVerseToDevocional(it)
+            }
+        )
+    }
+
+    composable<Screen.CreateVideo> {
+
+        val bibleGraphEntry = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.BibleScreenGraph)
+        }
+
+        val viewModel: DevocionalViewModel = hiltViewModel(bibleGraphEntry)
+        val state by viewModel.uiState.collectAsState()
+
+        val appViewModel = LocalAppViewModel.current
+        val context = LocalContext.current
+        val lifecycleOwner = LocalLifecycleOwner.current
+
+        LaunchedEffect(Unit) {
+            appViewModel.showTopBar = false
+        }
+
+        VideoCreator(
+            context = context,
+            lifecycleOwner = lifecycleOwner,
+            onSaveRecording = {
+                navController.popBackStack()
+                viewModel.uploadRecordedVideo(it)
+            },
+            onCancelRecording = {
+                navController.popBackStack()
+            },
+            onDeleteRecord = {
+                viewModel.deleteRecordedVideo(it)
             }
         )
     }
@@ -266,3 +309,4 @@ fun NavGraphBuilder.verseNavigation(
 fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: Int) = this.navigateBetweenScreens(Screen.Verses(bookName = bookName, chapterNumber = chapterNumber) )
 fun NavController.navigateToNoteVerse(bookName: String?, chapterNumber: String, verse: String, versicle: Int) = this.navigateBetweenScreens(Screen.NoteVerse(bookName = bookName, chapterNumber = chapterNumber, verse = verse, versicle = versicle))
 fun NavController.navigateToCreateDevocional(bookName: String?, chapterNumber: String, versicle: Int, verse: String) = this.navigateBetweenScreens(Screen.CreateDevocional(bookName = bookName, chapterNumber = chapterNumber, versicle = versicle, verse = verse))
+fun NavController.navigateToCreateVideoForDevocional() = this.navigateBetweenScreens(Screen.CreateVideo)

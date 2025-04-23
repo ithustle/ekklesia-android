@@ -83,6 +83,12 @@ dependencies {
     implementation(libs.retrofit.http)
     implementation(libs.converter.gson)
     implementation(libs.core.splashscreen)
+    implementation(libs.camera.camera)
+    implementation(libs.camera.core)
+    implementation(libs.lifecycle.camera)
+    implementation(libs.camera.video)
+    implementation(libs.camera.view)
+    implementation(libs.accompanist.permissions)
 
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.compiler)

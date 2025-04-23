@@ -13,5 +13,5 @@ data class DevocionalEntity(
     @ColumnInfo(name = "verse") val verse: String,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "devocional") val devocional: String,
-    @ColumnInfo(name = "draft") val draft: Boolean
+    @ColumnInfo(name = "video") val video: String
 )

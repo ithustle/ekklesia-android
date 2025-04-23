@@ -1,11 +1,14 @@
 package com.toquemedia.ekklesia.ui.screens.bible.devocional
 
+import android.net.Uri
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.model.DevocionalEntity
+import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.DevocionalRepositoryImpl
+import com.toquemedia.ekklesia.services.StorageService
 import com.toquemedia.ekklesia.ui.screens.bible.states.DevocionalUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,18 +16,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class DevocionalViewModel @Inject constructor(
-    private val repository: DevocionalRepositoryImpl
+    private val repository: DevocionalRepositoryImpl,
+    private val serviceUpload: StorageService,
+    private val auth: AuthRepositoryImpl
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<DevocionalUiState> = MutableStateFlow(DevocionalUiState())
+    private val _uiState: MutableStateFlow<DevocionalUiState> =
+        MutableStateFlow(DevocionalUiState())
     val uiState: StateFlow<DevocionalUiState> = _uiState.asStateFlow()
 
     init {
-
         _uiState.update { currentState ->
             currentState.copy(
                 onDevocionalTitleChange = {
@@ -45,19 +51,33 @@ class DevocionalViewModel @Inject constructor(
         }
     }
 
-    fun saveDevocional(bookName: String, chapter: Int?, versicle: Int, verse: String, isDraft: Boolean = false) {
+    fun saveDevocional(
+        bookName: String,
+        chapter: Int?,
+        versicle: Int,
+        verse: String,
+        video: Uri?
+    ) {
         viewModelScope.launch {
-            val devocional = DevocionalEntity(
-                id = "${bookName}_${chapter}_$versicle",
-                bookName = bookName,
-                versicle = versicle,
-                chapter = chapter ?: 0,
-                verse = verse,
-                title = _uiState.value.devocionalTitle.text.trimEnd(),
-                devocional = _uiState.value.devocionalContent.text,
-                draft = isDraft
-            )
-            repository.saveDevocional(devocional)
+            _uiState.update { it.copy(savingDevocional = true) }
+
+            try {
+                val devocional = DevocionalEntity(
+                    id = "${bookName}_${chapter}_$versicle",
+                    bookName = bookName,
+                    versicle = versicle,
+                    chapter = chapter ?: 0,
+                    verse = verse,
+                    title = _uiState.value.devocionalTitle.text.trimEnd(),
+                    devocional = _uiState.value.devocionalContent.text,
+                    video = video.toString()
+                )
+                repository.saveDevocional(devocional)
+                _uiState.update { it.copy(savingDevocional = false, videoUri = null, progressUploadVideo = 0f) }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _uiState.update { it.copy(savingDevocional = false) }
+            }
         }
     }
 
@@ -70,5 +90,37 @@ class DevocionalViewModel @Inject constructor(
             )
             state.copy(devocionalContent = newTextFieldValue)
         }
+    }
+
+    fun uploadRecordedVideo(videoUri: Uri) {
+        viewModelScope.launch {
+            val currentUser = auth.getCurrentUser()
+            serviceUpload.uploadVideo(
+                userEmail = currentUser?.email.toString(),
+                videoPath = videoUri
+            ).collect { progress ->
+                _uiState.update {
+                    it.copy(
+                        progressUploadVideo = progress.first,
+                        videoUri = progress.second
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteRecordedVideo(videoPath: String) {
+        val file = File(videoPath)
+        if (file.exists()) {
+            file.delete()
+        }
+    }
+
+    fun startingRecordingVideo() {
+
+    }
+
+    fun stopRecordingVideo() {
+
     }
 }

@@ -90,7 +90,7 @@ fun VersesScreen(
                         selectedVerse = versesStates.selectedVerse,
                         markedVerse = markedVerses,
                         hasNote = versesStates.notes.find { it.verse == verse } != null,
-                        hasDevocional = devocionalState.allDevocional.find { it.verse == verse && !it.draft } != null,
+                        hasDevocional = devocionalState.allDevocional.find { it.verse == verse } != null,
                         modifier = Modifier
                             .padding(bottom = 4.dp)
                             .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)

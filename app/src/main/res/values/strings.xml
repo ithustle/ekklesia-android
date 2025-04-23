@@ -64,4 +64,11 @@
     <string name="no_posts">Sem publicação no momento.</string>
     <string name="post_description">Ao reagires sobre um versículo bíblico aparecerá aqui como publicação</string>
     <string name="loading_chapters">A carregar os capítulos</string>
+    <string name="add_video">Criar um video</string>
+    <string name="save_record">Salvar a gravação e usar no devocional</string>
+    <string name="recording">Botão para gravar, parar ou eliminar</string>
+    <string name="switch_camera">Trocar a câmera</string>
+    <string name="close_camera">Fechar e cancelar a gravação</string>
+    <string name="delete_created_video">Eliminar video criado\n</string>
+    <string name="video_upload_message">Video carregado</string>
 </resources>

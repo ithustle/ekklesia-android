@@ -28,6 +28,8 @@ googleId = "1.1.1"
 serialization = "2.0.21"
 retrofit = "2.9.0"
 splashscreen = "1.0.1"
+camera = "1.4.2"
+permission = "0.36.0"
 
 
 [libraries]
@@ -73,6 +75,12 @@ coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp"
 retrofit-http = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camera" }
+camera-camera = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera" }
+lifecycle-camera = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera" }
+camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "camera" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera" }
+accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "permission" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

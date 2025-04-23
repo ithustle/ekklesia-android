@@ -49,6 +49,9 @@ sealed class Screen() {
     ): Screen()
 
     @Serializable
+    object CreateVideo: Screen()
+
+    @Serializable
     object Profile: Screen()
 
     @Serializable

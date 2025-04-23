@@ -46,6 +46,8 @@ class AppViewModel @Inject constructor(
 
     var showBackgroundOverlay by mutableStateOf(false)
 
+    var showTopBar by mutableStateOf(true)
+
     var activityContext: Activity? = null
         get() = field
         set(value) {

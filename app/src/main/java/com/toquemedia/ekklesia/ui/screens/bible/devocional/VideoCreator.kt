@@ -1,0 +1,52 @@
+package com.toquemedia.ekklesia.ui.screens.bible.devocional
+
+import android.Manifest
+import android.content.Context
+import android.net.Uri
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.LifecycleOwner
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun VideoCreator(
+    context: Context,
+    lifecycleOwner: LifecycleOwner,
+    onCancelRecording: () -> Unit = {},
+    onSaveRecording: (Uri) -> Unit = {},
+    onDeleteRecord: (String) -> Unit
+) {
+    val permissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+        )
+    )
+
+    if (permissionsState.allPermissionsGranted) {
+        CameraPreviewScreen(
+            context = context,
+            lifecycleOwner = lifecycleOwner,
+            onSaveRecording = onSaveRecording,
+            onCancelRecording = onCancelRecording,
+            onDeleteRecord = onDeleteRecord
+        )
+    } else {
+        LaunchedEffect(Unit) {
+            permissionsState.launchMultiplePermissionRequest()
+        }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Câmera e áudio requerem a tua permissão para serem usadas.")
+        }
+    }
+}

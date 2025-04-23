@@ -32,6 +32,7 @@ fun EkklesiaApp(
     onNavigateBack: () -> Unit = {},
     currentUser: UserType?,
     topBarState: TopBarState,
+    showTopBar: Boolean = true,
     content: @Composable () -> Unit = {}
 ) {
     if (showOverlay) {
@@ -45,7 +46,7 @@ fun EkklesiaApp(
 
     Scaffold(
         topBar = {
-            if (currentUser != null) {
+            if (currentUser != null && showTopBar) {
                 EkklesiaTopBar(
                     title = topBarState.title,
                     isBackgroundTransparent = topBarState.isBackgroundTransparent,
@@ -100,6 +101,7 @@ private fun EkklesiaAppPrev() {
     )
     EkklesiaApp(
         currentUser = currentUser,
+        showTopBar = true,
         topBarState = TopBarState(title = "Aplicação Ekklesia")
     )
 }

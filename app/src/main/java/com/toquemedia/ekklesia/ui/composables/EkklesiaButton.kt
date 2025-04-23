@@ -1,12 +1,16 @@
 package com.toquemedia.ekklesia.ui.composables
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,28 +22,43 @@ fun EkklesiaButton(
     filled: Boolean = true,
     label: String,
     enabled: Boolean = true,
+    loading: Boolean = false,
     onClick: () -> Unit
 ) {
-    if (filled) {
-        Button(
+    
+    if (loading) {
+        Column(
             modifier = modifier,
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = PrincipalColor),
-            onClick = onClick,
-            enabled = enabled
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(label)
+            CircularProgressIndicator(
+                modifier = Modifier.width(32.dp),
+                color = PrincipalColor,
+                trackColor = PrincipalColor.copy(alpha = 0.5f),
+            )
         }
     } else {
-        OutlinedButton(
-            modifier = modifier,
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = PrincipalColor),
-            border = BorderStroke(width = 2.dp, color = PrincipalColor),
-            onClick = onClick,
-            enabled = enabled
-        ) {
-            Text(label)
+        if (filled) {
+            Button(
+                modifier = modifier,
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PrincipalColor),
+                onClick = onClick,
+                enabled = enabled
+            ) {
+                Text(label)
+            }
+        } else {
+            OutlinedButton(
+                modifier = modifier,
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = PrincipalColor),
+                border = BorderStroke(width = 2.dp, color = PrincipalColor),
+                onClick = onClick,
+                enabled = enabled
+            ) {
+                Text(label)
+            }
         }
     }
 }
