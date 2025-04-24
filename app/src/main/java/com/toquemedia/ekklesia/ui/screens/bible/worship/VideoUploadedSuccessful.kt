@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.ui.screens.bible.devocional
+package com.toquemedia.ekklesia.ui.screens.bible.worship
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 fun VideoUploadedSuccessful(
     modifier: Modifier = Modifier,
     text: String,
+    color: Color,
     onDeleteVideo: () -> Unit = {}
 ) {
     Row(
@@ -40,7 +42,7 @@ fun VideoUploadedSuccessful(
             Icon(
                 imageVector = Icons.Rounded.Slideshow,
                 contentDescription = "",
-                tint = PrincipalColor,
+                tint = color,
             )
             Spacer(Modifier.width(4.dp))
             Text(text)
@@ -50,7 +52,7 @@ fun VideoUploadedSuccessful(
             Icon(
                 imageVector = Icons.Rounded.Delete,
                 contentDescription = stringResource(R.string.delete_created_video),
-                tint = PrincipalColor,
+                tint = color,
             )
         }
     }
@@ -61,6 +63,7 @@ fun VideoUploadedSuccessful(
 private fun VideoUploadedSuccessfulPrev() {
     VideoUploadedSuccessful(
         text = "Video carregado com sucesso",
+        color = PrincipalColor,
         onDeleteVideo = {}
     )
 }

@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.ui.screens.bible.devocional
+package com.toquemedia.ekklesia.ui.screens.bible.worship
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,9 +24,10 @@ import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @Composable
-fun AddResourceForDevocional(
+fun AddResourceForWorship(
     text: String,
-    onAddVerseToDevocional: () -> Unit
+    color: Color,
+    onAddVerseToWorship: () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -34,18 +36,18 @@ fun AddResourceForDevocional(
             .padding(vertical = 16.dp)
             .fillMaxWidth()
             .clickable {
-                onAddVerseToDevocional()
+                onAddVerseToWorship()
             }
     ) {
         Icon(
             imageVector = Icons.Rounded.AddBox,
             contentDescription = null,
-            tint = PrincipalColor
+            tint = color
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             text = text,
-            color = PrincipalColor,
+            color = color,
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold
         )
@@ -54,9 +56,10 @@ fun AddResourceForDevocional(
 
 @Preview
 @Composable
-private fun AddResourceForDevocionalPrev() {
-    AddResourceForDevocional(
+private fun AddResourceForWorshipPrev() {
+    AddResourceForWorship(
         text = stringResource(R.string.tap_to_add_verse),
-        onAddVerseToDevocional = {}
+        color = PrincipalColor,
+        onAddVerseToWorship = {}
     )
 }

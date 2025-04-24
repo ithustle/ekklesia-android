@@ -78,6 +78,7 @@ fun FeedPost(
             chapter = verseData.second,
             verse = post.verse,
             bookNameAsTitle = false,
+            color = PrincipalColor,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .clickable { onNavigateToComments(post.verseId) }

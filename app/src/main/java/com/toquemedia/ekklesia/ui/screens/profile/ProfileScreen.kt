@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
+import androidx.compose.material.icons.rounded.AutoStories
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.ProfileList
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
@@ -29,8 +31,23 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 @Composable
 fun ProfileScreen(
     user: UserType,
-    onSignOut: () -> Unit = {}
+    onNavigateToMyDevocional: () -> Unit = {},
+    onSignOut: () -> Unit = {},
 ) {
+
+    val profileList = listOf<ProfileList>(
+        ProfileList.Devocional(
+            title = stringResource(R.string.menu_devocional),
+            icon = Icons.Rounded.AutoStories,
+            onAction = onNavigateToMyDevocional
+        ),
+        ProfileList.Logout(
+            title = stringResource(R.string.menu_logout),
+            icon = Icons.AutoMirrored.Rounded.Logout,
+            onAction = onSignOut
+        )
+    )
+
     Column {
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -47,23 +64,23 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        List(size = 1) {
+        List(size = profileList.size) { index ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier
                     .clickable {
-                        onSignOut()
+                        profileList[index].onAction()
                     }
                     .padding(vertical = 12.dp, horizontal = 16.dp)
             ) {
                 Image(
-                    imageVector = Icons.AutoMirrored.Rounded.Logout,
-                    contentDescription = "Logout",
+                    imageVector = profileList[index].icon,
+                    contentDescription = profileList[index].title,
                     colorFilter = ColorFilter.tint(PrincipalColor)
                 )
 
                 Text(
-                    text = stringResource(R.string.menu_logout),
+                    text = profileList[index].title,
                     fontSize = 20.sp,
                 )
 

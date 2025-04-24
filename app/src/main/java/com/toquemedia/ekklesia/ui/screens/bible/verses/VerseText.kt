@@ -30,18 +30,18 @@ fun VerseText(
     selectedVerse: String,
     markedVerse: List<String>,
     hasNote: Boolean,
-    hasDevocional: Boolean
+    hasWorship: Boolean
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
 
-    val paragraphs = verse.splitTextByLineWidth(screenWidth = screenWidthPx.toInt(), percentOfScreen = 0.9f)
+    val paragraphs = verse.splitTextByLineWidth(screenWidth = screenWidthPx.toInt(), percentOfScreen = 0.75f)
 
     Column {
         paragraphs.forEachIndexed { index, paragraph ->
 
-            if (index == paragraphs.size - 1 && (hasNote || hasDevocional)) {
+            if (index == paragraphs.size - 1 && (hasNote || hasWorship)) {
                 Row {
                     Text(
                         text = paragraph,
@@ -63,7 +63,7 @@ fun VerseText(
                         )
                     }
 
-                    if (hasDevocional) {
+                    if (hasWorship) {
                         Spacer(modifier = Modifier.padding(start = 4.dp))
                         Icon(
                             imageVector = Icons.Default.Diversity3,
@@ -97,6 +97,6 @@ private fun VerseTextPrev() {
         selectedVerse = "",
         markedVerse = listOf("Observem o mês de abibe e celebrem a Páscoa do Senhor, do seu Deus, pois no mês de abibe, de noite, ele os tirou do Egito"),
         hasNote = true,
-        hasDevocional = false,
+        hasWorship = true,
     )
 }

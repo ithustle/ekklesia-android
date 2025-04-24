@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -33,7 +34,8 @@ fun VerseToAnnotation(
     chapter: String,
     versicle: Int,
     verse: String,
-    bookNameAsTitle: Boolean = true
+    bookNameAsTitle: Boolean = true,
+    color: Color = PrincipalColor
 ) {
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
@@ -53,7 +55,7 @@ fun VerseToAnnotation(
                     "$bookName $chapter:$versicle",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = PrincipalColor
+                    color = color
                 )
             }
         } else {
@@ -61,7 +63,7 @@ fun VerseToAnnotation(
                 "$bookName $chapter:$versicle",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = PrincipalColor,
+                color = color,
             )
         }
 
@@ -71,7 +73,7 @@ fun VerseToAnnotation(
         ) {
             Box(
                 modifier = Modifier
-                    .border(width = 3.dp, color = PrincipalColor, shape = RectangleShape)
+                    .border(width = 3.dp, color = color, shape = RectangleShape)
                     .width(3.dp)
                     .height(paragraphs.size * 50.dp)
             )
@@ -79,7 +81,7 @@ fun VerseToAnnotation(
 
             Text(
                 text = verse,
-                color = PrincipalColor,
+                color = color,
                 fontStyle = FontStyle.Italic
             )
         }
@@ -93,6 +95,7 @@ private fun VerseToAnnotationPrev() {
         bookName = "Provérbios",
         chapter = "13",
         versicle = 1,
+        color = PrincipalColor,
         verse = "Provérbios de Salomão: O filho sábio da alegria ao pai; o filho tolo dá tristeza à mãe."
     )
 }

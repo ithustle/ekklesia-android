@@ -1,4 +1,4 @@
-package com.toquemedia.ekklesia.ui.screens.bible.devocional
+package com.toquemedia.ekklesia.ui.screens.bible.worship
 
 import android.content.Context
 import android.net.Uri

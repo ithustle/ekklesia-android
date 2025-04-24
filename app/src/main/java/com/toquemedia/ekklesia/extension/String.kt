@@ -1,13 +1,6 @@
 package com.toquemedia.ekklesia.extension
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Base64
-import androidx.core.graphics.scale
-import androidx.core.net.toUri
-import java.io.ByteArrayOutputStream
-import kotlin.math.sqrt
+import androidx.compose.ui.graphics.Color
 
 fun String.splitTextByLineWidth(screenWidth: Int, percentOfScreen: Float): List<String> {
     val maxCharsPerLine = (screenWidth * percentOfScreen / 10).toInt()
@@ -31,21 +24,34 @@ fun String.splitTextByLineWidth(screenWidth: Int, percentOfScreen: Float): List<
     return result
 }
 
-fun String.uriToBase64(context: Context): String {
+fun String.toColor(): Color {
+    if (!this.startsWith("Color(") || !this.endsWith(")")) {
+        return Color.Gray
+    }
+
     return try {
-        val inputStream = context.contentResolver.openInputStream(this.toUri())
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        inputStream?.close()
-        bitmapToBase64WithSizeLimit(bitmap)
+        val content = this.substringAfter("Color(").substringBeforeLast(")")
+
+        val parts = content.split(',').map { it.trim() }
+
+        if (parts.size < 4) {
+            return Color.Gray
+        }
+
+        val red = parts[0].toFloat()
+        val green = parts[1].toFloat()
+        val blue = parts[2].toFloat()
+        val alpha = parts[3].toFloat()
+
+        Color(red = red, green = green, blue = blue, alpha = alpha)
+
+    } catch (e: NumberFormatException) {
+        e.printStackTrace()
+        Color.Red
     } catch (e: Exception) {
         e.printStackTrace()
-        throw e
+        Color.Gray
     }
-}
-
-fun String.base64ToBitmap(): Bitmap {
-    val decodedBytes = Base64.decode(this, Base64.DEFAULT)
-    return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
 }
 
 fun String.getInitials(): String {
@@ -127,32 +133,4 @@ fun String.toPortuguese(): String {
         "Revelation" to "Apocalipse"
     )
     return books[this] ?: this
-}
-
-
-private fun bitmapToBase64WithSizeLimit(bitmap: Bitmap): String {
-    val outputStream = ByteArrayOutputStream()
-    var quality = 100
-    val maxSizeKB = 500
-    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-
-    while (outputStream.size() > maxSizeKB * 1024 && quality > 10) {
-        outputStream.reset()
-        quality -= 10
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-    }
-
-    if (outputStream.size() > maxSizeKB * 1024) {
-        val scaleFactor = sqrt((maxSizeKB * 1024.0) / outputStream.size())
-        val newWidth = (bitmap.width * scaleFactor).toInt()
-        val newHeight = (bitmap.height * scaleFactor).toInt()
-
-        val resizedBitmap = bitmap.scale(newWidth, newHeight)
-
-        outputStream.reset()
-        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
-    }
-
-    val byteArray = outputStream.toByteArray()
-    return Base64.encodeToString(byteArray, Base64.DEFAULT)
 }

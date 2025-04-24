@@ -53,7 +53,8 @@ fun NoteScreen(
             bookName = bookName,
             chapter = chapter,
             versicle = versicle,
-            verse = verse
+            verse = verse,
+            color = PrincipalColor
         )
         Spacer(modifier = Modifier.size(30.dp))
 

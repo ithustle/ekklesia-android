@@ -3,19 +3,19 @@ package com.toquemedia.ekklesia.di.modules
 import com.toquemedia.ekklesia.model.interfaces.AuthRepository
 import com.toquemedia.ekklesia.model.interfaces.BibleRepository
 import com.toquemedia.ekklesia.model.interfaces.CommunityRepository
-import com.toquemedia.ekklesia.model.interfaces.DevocionalRepository
 import com.toquemedia.ekklesia.model.interfaces.MessageRepository
 import com.toquemedia.ekklesia.model.interfaces.NoteRepository
 import com.toquemedia.ekklesia.model.interfaces.PostRepository
 import com.toquemedia.ekklesia.model.interfaces.VerseRepository
+import com.toquemedia.ekklesia.model.interfaces.WorshipRepository
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
 import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
-import com.toquemedia.ekklesia.repository.DevocionalRepositoryImpl
 import com.toquemedia.ekklesia.repository.MessageRepositoryImpl
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
 import com.toquemedia.ekklesia.repository.PostRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
+import com.toquemedia.ekklesia.repository.WorshipRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -45,9 +45,9 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindDevocionalRepository(
-        impl: DevocionalRepositoryImpl
-    ) : DevocionalRepository
+    abstract fun bindWorshipRepository(
+        impl: WorshipRepositoryImpl
+    ) : WorshipRepository
 
     @Binds
     @Singleton

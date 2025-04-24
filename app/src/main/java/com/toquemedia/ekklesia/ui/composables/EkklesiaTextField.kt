@@ -10,10 +10,15 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -37,20 +42,28 @@ fun EkklesiaTextField(
     imeAction: ImeAction,
     onChangeValue: (TextFieldValue) -> Unit = {}
 ) {
-    val textFieldValue = remember(value) {
-        TextFieldValue(value, TextRange(value.length))
+    var textFieldValueState by remember {
+        mutableStateOf(TextFieldValue(value, TextRange(value.length)))
+    }
+
+    LaunchedEffect(value) {
+        if (value != textFieldValueState.text) {
+            textFieldValueState = TextFieldValue(value, TextRange(value.length))
+        }
     }
 
     Box(modifier = modifier) {
         BasicTextField(
-            value = textFieldValue,
+            value = textFieldValueState,
             onValueChange = { newValue ->
+                textFieldValueState = newValue
+
                 val processedText = if (newValue.text.isNotEmpty() && value.isEmpty()) {
                     TextFieldValue(
                         newValue.text.replaceFirstChar {
                             if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
                         },
-                        TextRange(newValue.text.length)
+                        newValue.selection
                     )
                 } else {
                     val textEndsWithPeriodSpace = value.endsWith(". ") &&
@@ -66,7 +79,7 @@ fun EkklesiaTextField(
                                 before + after.replaceFirstChar {
                                     it.titlecase(Locale.getDefault())
                                 },
-                                TextRange(newValue.text.length)
+                                newValue.selection
                             )
                         } else {
                             newValue
@@ -75,6 +88,8 @@ fun EkklesiaTextField(
                         newValue
                     }
                 }
+
+                textFieldValueState = processedText
                 onChangeValue(processedText)
             },
             textStyle = TextStyle(
@@ -92,7 +107,8 @@ fun EkklesiaTextField(
                 .height(height = height)
                 .padding(vertical = 12.dp, horizontal = 10.dp),
             singleLine = singleLine,
-            enabled = enabled
+            enabled = enabled,
+            cursorBrush = SolidColor(Color.Black)
         )
 
         if (value.isEmpty()) {

@@ -71,4 +71,8 @@
     <string name="close_camera">Fechar e cancelar a gravação</string>
     <string name="delete_created_video">Eliminar video criado\n</string>
     <string name="video_upload_message">Video carregado</string>
+    <string name="logout_description">Sair da aplicação</string>
+    <string name="menu_devocional">Meus devocionais</string>
+    <string name="share_description">Partilhar o devocional</string>
+    <string name="menu_edit">Editar</string>
 </resources>

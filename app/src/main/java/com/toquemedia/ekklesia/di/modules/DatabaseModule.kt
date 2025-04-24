@@ -6,10 +6,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
-import com.toquemedia.ekklesia.dao.DevocionalDao
 import com.toquemedia.ekklesia.dao.LikeDao
 import com.toquemedia.ekklesia.dao.MessageDao
 import com.toquemedia.ekklesia.dao.NoteDao
+import com.toquemedia.ekklesia.dao.WorshipDao
 import com.toquemedia.ekklesia.services.CommunityService
 import com.toquemedia.ekklesia.services.NoteService
 import com.toquemedia.ekklesia.services.OurmannaService
@@ -32,7 +32,7 @@ class DatabaseModule {
     @Provides
     fun provideNoteDao(appDatabase: AppDatabase) : NoteDao = appDatabase.NoteDao()
     @Provides
-    fun provideDevocionalDao(appDatabase: AppDatabase) : DevocionalDao = appDatabase.DevocionalDao()
+    fun provideWorshipDao(appDatabase: AppDatabase) : WorshipDao = appDatabase.WorshipDao()
     @Provides
     fun provideMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.MessageDao()
     @Provides

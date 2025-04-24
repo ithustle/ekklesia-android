@@ -89,6 +89,7 @@ dependencies {
     implementation(libs.camera.video)
     implementation(libs.camera.view)
     implementation(libs.accompanist.permissions)
+    implementation(libs.compose.colorpicker)
 
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.compiler)
