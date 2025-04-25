@@ -78,7 +78,7 @@ fun WorshipCard(
 
                 content()
 
-                IconButton(onClick = {}) {
+                IconButton(onClick = onShareWorship) {
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = stringResource(R.string.share_description),

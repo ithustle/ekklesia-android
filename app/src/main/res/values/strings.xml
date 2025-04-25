@@ -15,6 +15,7 @@
     <string name="new_testament">Novo Testamento</string>
     <string name="old_testament">Antigo Testamento</string>
     <string name="community">Comunidades</string>
+    <string name="my_community">Minhas Comunidades</string>
     <string name="newCommunity">Nova comunidade</string>
     <string name="save_community">Criar comunidade</string>
     <string name="default_web_client_id">106484845222925049776</string>
@@ -75,4 +76,5 @@
     <string name="menu_devocional">Meus devocionais</string>
     <string name="share_description">Partilhar o devocional</string>
     <string name="menu_edit">Editar</string>
+    <string name="share_to_community">Partilhar</string>
 </resources>

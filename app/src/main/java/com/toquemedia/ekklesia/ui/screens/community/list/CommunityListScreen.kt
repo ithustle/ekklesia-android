@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.CommunityWithMembers
-import com.toquemedia.ekklesia.ui.composables.EkklesiaDialog
+import com.toquemedia.ekklesia.ui.composables.EkklesiaAlertDialog
 import com.toquemedia.ekklesia.ui.theme.backgroundLightColor
 import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
@@ -47,7 +47,7 @@ fun CommunityListScreen(
     var communityIdSelected by remember { mutableStateOf<String?>(null) }
 
     if (openDialog) {
-        EkklesiaDialog(
+        EkklesiaAlertDialog(
             onDismissRequest = {
                 onOpenDialogChange(false)
                 onDismissDialog()

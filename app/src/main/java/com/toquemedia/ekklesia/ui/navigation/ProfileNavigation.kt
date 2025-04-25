@@ -1,9 +1,12 @@
 package com.toquemedia.ekklesia.ui.navigation
 
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -16,9 +19,11 @@ import com.toquemedia.ekklesia.routes.Screen
 import com.toquemedia.ekklesia.routes.navigateBetweenScreens
 import com.toquemedia.ekklesia.ui.screens.bible.worship.CreateWorshipScreen
 import com.toquemedia.ekklesia.ui.screens.bible.worship.WorshipViewModel
+import com.toquemedia.ekklesia.ui.screens.community.CommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.login.AuthViewModel
 import com.toquemedia.ekklesia.ui.screens.profile.MyWorshipScreen
 import com.toquemedia.ekklesia.ui.screens.profile.ProfileScreen
+import kotlinx.coroutines.launch
 
 fun NavGraphBuilder.profileNavigation(navController: NavController) {
     composable<Screen.Profile> {
@@ -69,10 +74,16 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
             }
         }
 
+        val context = LocalContext.current
+        val appViewModel = LocalAppViewModel.current
+        val activity = appViewModel.activityContext as ComponentActivity
+        val vmCommunities = hiltViewModel<CommunityViewModel>(activity)
+        val communitiesStates = vmCommunities.uiState.collectAsStateWithLifecycle()
+
         val vmWorship: WorshipViewModel = hiltViewModel(bibleGraphEntry)
         val worshipState by vmWorship.uiState.collectAsStateWithLifecycle()
 
-        val appViewModel = LocalAppViewModel.current
+        val scope = rememberCoroutineScope()
 
         LaunchedEffect(Unit) {
             appViewModel.updateTopBarState(
@@ -89,8 +100,13 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
 
         MyWorshipScreen(
             worships = worshipState.worships,
-            onShareWorship = {
-
+            communities = communitiesStates.value.myCommunities,
+            sharingWorship = worshipState.sharingWorship,
+            onShareToCommunityWorship = { communityId, worship ->
+                scope.launch {
+                    vmWorship.shareWorshipToCommunity(communityId, worship)
+                    Toast.makeText(context, "Devocional partilhado com sucesso!", Toast.LENGTH_SHORT).show()
+                }
             },
             onEditWorship = {
                 vmWorship.prepareWorshipForEdit(it)
@@ -98,6 +114,12 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
             },
             onDeleteWorship = {
                 vmWorship.deleteWorship(it.id)
+            },
+            onDialogOpened = {
+                appViewModel.showBackgroundOverlay = true
+            },
+            onDismissDialog = {
+                appViewModel.showBackgroundOverlay = false
             }
         )
     }

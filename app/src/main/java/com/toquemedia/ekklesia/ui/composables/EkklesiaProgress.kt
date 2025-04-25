@@ -8,20 +8,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
 @Composable
 fun EkklesiaProgress(
     modifier: Modifier = Modifier,
-    color: Color
+    color: Color,
+    size: Dp = 32.dp
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.width(32.dp),
+            modifier = Modifier.width(size),
             color = color,
             trackColor = color.copy(alpha = 0.5f),
         )

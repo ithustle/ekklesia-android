@@ -12,6 +12,7 @@ data class WorshipUiState(
     var worshipBackgroundColorString: String = "",
     var progressUploadVideo: Float = 0f,
     var savingWorship: Boolean = false,
+    var sharingWorship: Boolean = false,
     var worshipBackgroundColor: Color = PrincipalColor,
     var videoUri: Uri? = null,
     val worships: List<WorshipEntity> = emptyList(),

@@ -76,7 +76,7 @@ fun FeedPost(
             bookName = verseData.first,
             versicle = verseData.third,
             chapter = verseData.second,
-            verse = post.verse,
+            verse = post.verse.toString(),
             bookNameAsTitle = false,
             color = PrincipalColor,
             modifier = Modifier

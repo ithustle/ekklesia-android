@@ -3,6 +3,7 @@ package com.toquemedia.ekklesia.ui.screens.profile
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,27 +16,67 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.WorshipEntity
+import com.toquemedia.ekklesia.ui.composables.EkklesiaDialog
 import com.toquemedia.ekklesia.ui.composables.EkklesiaLabelWithIcon
+import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 import com.toquemedia.ekklesia.utils.mocks.WorshipMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyWorshipScreen(
     worships: List<WorshipEntity>,
-    onShareWorship: (WorshipEntity) -> Unit = {},
+    communities: List<CommunityWithMembers>,
+    sharingWorship: Boolean = false,
+    onShareToCommunityWorship: (String, WorshipEntity) -> Unit = { _, _ -> },
     onEditWorship: (WorshipEntity) -> Unit = {},
-    onDeleteWorship: (WorshipEntity) -> Unit = {}
+    onDeleteWorship: (WorshipEntity) -> Unit = {},
+    onDialogOpened: () -> Unit = {},
+    onDismissDialog: () -> Unit = {},
 ) {
 
     val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
+    var openDialog by remember { mutableStateOf(false) }
+    var selectedWorship by remember { mutableStateOf<WorshipEntity?>(null) }
+
+    LaunchedEffect(sharingWorship) {
+        if (sharingWorship == false) {
+            openDialog = false
+            onDismissDialog()
+        }
+    }
+
+    if (openDialog) {
+        EkklesiaDialog(
+            onDismissRequest = {
+                openDialog = it
+                onDismissDialog()
+            }
+        ) {
+            MyCommunities(
+                modifier = Modifier.fillMaxWidth(),
+                sharingWorship = sharingWorship,
+                communities = communities,
+                onShareToCommunity = {
+                    selectedWorship?.let { worship ->
+                        onShareToCommunityWorship(it.community.id, worship)
+                    }
+                }
+            )
+        }
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -57,7 +98,9 @@ fun MyWorshipScreen(
                 worship = worship,
                 onLongPress = { expandedStates[worship.id] = !expanded },
                 onShareWorship = {
-                    onShareWorship(worship)
+                    selectedWorship = worship
+                    openDialog = true
+                    onDialogOpened()
                 }
             ) {
                 DropdownMenu(
@@ -67,10 +110,15 @@ fun MyWorshipScreen(
                     DropdownMenuItem(
                         text = {
                             EkklesiaLabelWithIcon(
-                                icon = { Icon(imageVector = Icons.Default.Edit, contentDescription = null) },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Edit,
+                                        contentDescription = null
+                                    )
+                                },
                                 label = stringResource(R.string.menu_edit)
                             )
-                       },
+                        },
                         onClick = {
                             expandedStates[worship.id] = false
                             onEditWorship(worship)
@@ -79,7 +127,12 @@ fun MyWorshipScreen(
                     DropdownMenuItem(
                         text = {
                             EkklesiaLabelWithIcon(
-                                icon = { Icon(imageVector = Icons.Default.Delete, contentDescription = null) },
+                                icon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = null
+                                    )
+                                },
                                 label = stringResource(R.string.delete_community)
                             )
                         },
@@ -102,6 +155,7 @@ fun MyWorshipScreen(
 @Composable
 private fun MyWorshipScreenPrev() {
     MyWorshipScreen(
-        worships = WorshipMock.getAll()
+        worships = WorshipMock.getAll(),
+        communities = CommunityMock.getAllCommunityWithMembers()
     )
 }

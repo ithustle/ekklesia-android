@@ -186,6 +186,12 @@ class WorshipViewModel @Inject constructor(
 
     }
 
+    suspend fun shareWorshipToCommunity(communityId: String, worship: WorshipEntity) {
+        _uiState.update { it.copy(sharingWorship = true) }
+        repository.shareToCommunity(communityId, worship).await()
+        _uiState.update { it.copy(sharingWorship = false) }
+    }
+
     private fun clearState() {
         _uiState.update {
             it.copy(

@@ -1,63 +1,48 @@
 package com.toquemedia.ekklesia.ui.composables
 
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.toquemedia.ekklesia.R
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import com.toquemedia.ekklesia.ui.screens.profile.MyCommunities
+import com.toquemedia.ekklesia.utils.mocks.CommunityMock
 
 @Composable
 fun EkklesiaDialog(
-    modifier: Modifier = Modifier,
-    dialogTitle: String,
-    dialogText: String,
-    confirmText: String? = null,
-    dismissText: String? = null,
-    onDismissRequest: () -> Unit = {},
-    onConfirmation: () -> Unit = {}
+    onDismissRequest: (Boolean) -> Unit = {},
+    content: @Composable () -> Unit
 ) {
-    AlertDialog(
-        title = {
-            Text(text = dialogTitle)
-        },
-        text = {
-            Text(text = dialogText)
-        },
-        onDismissRequest = {
-            onDismissRequest()
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirmation()
-                }
+
+    BackHandler(enabled = true) {
+        onDismissRequest(false)
+    }
+
+    Dialog(
+        onDismissRequest = { onDismissRequest(false) },
+        content = {
+            Card(
+                modifier = Modifier
+                    .height(256.dp),
+                shape = RoundedCornerShape(4.dp)
             ) {
-                Text(confirmText ?: stringResource(R.string.yes_confirmation))
-            }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismissRequest()
-                }
-            ) {
-                Text(dismissText ?: stringResource(R.string.cancelar))
+                content()
             }
         }
     )
-
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun EkklesiaDialogPrev() {
-    EkklesiaDialog(
-        dialogTitle = "Eliminar comunidades",
-        dialogText = "Você deseja realmente eliminar a comunidade?",
-        onDismissRequest = {},
-        onConfirmation = {}
-    )
+    EkklesiaDialog {
+        MyCommunities(
+            communities = CommunityMock.getAllCommunityWithMembers(),
+            onShareToCommunity = {}
+        )
+    }
 }

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Circle
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +39,8 @@ fun CommunityCard(
     modifier: Modifier = Modifier,
     community: CommunityWithMembers,
     onNavigateToCommunity: () -> Unit = {},
+    selectedCommunity: String? = null,
+    onSelectedCommunity: ((CommunityWithMembers?) -> Unit)? = null,
     onOpenMoreMenu: () -> Unit = {},
     contentMenu: @Composable () -> Unit = {}
 ) {
@@ -45,7 +49,15 @@ fun CommunityCard(
         modifier = modifier
             .fillMaxWidth()
             .clickable {
-                onNavigateToCommunity()
+                if (onSelectedCommunity != null) {
+                    if (selectedCommunity == community.community.id) {
+                        onSelectedCommunity(null)
+                    } else {
+                        onSelectedCommunity(community)
+                    }
+                } else {
+                    onNavigateToCommunity()
+                }
             }
     ) {
         EkklesiaImage(
@@ -74,15 +86,38 @@ fun CommunityCard(
 
         Spacer(Modifier.weight(1f))
 
-        Box {
-            IconButton(onClick = onOpenMoreMenu) {
-                Icon(
-                    imageVector = Icons.Rounded.MoreVert,
-                    contentDescription = stringResource(R.string.more_option),
-                    tint = Color.DarkGray
-                )
+        if (onSelectedCommunity == null) {
+            Box {
+                IconButton(onClick = onOpenMoreMenu) {
+                    Icon(
+                        imageVector = Icons.Rounded.MoreVert,
+                        contentDescription = stringResource(R.string.more_option),
+                        tint = Color.DarkGray
+                    )
+                }
+                contentMenu()
             }
-            contentMenu()
+        } else {
+            if (selectedCommunity == community.community.id) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Circle,
+                        contentDescription = stringResource(R.string.more_option),
+                        tint = PrincipalColor,
+                        modifier = Modifier
+                            .size(28.dp)
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.Done,
+                        contentDescription = stringResource(R.string.more_option),
+                        tint = Color.White,
+                        modifier = Modifier
+                            .size(20.dp)
+                    )
+                }
+            }
         }
     }
 }
@@ -91,6 +126,7 @@ fun CommunityCard(
 @Composable
 private fun CommunityCardPrev() {
     CommunityCard(
-        community = CommunityMock.getAllCommunityWithMembers().first()
+        community = CommunityMock.getAllCommunityWithMembers().first(),
+        onSelectedCommunity = {}
     )
 }
