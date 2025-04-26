@@ -19,7 +19,19 @@ class WorshipRepositoryImpl @Inject constructor(
 ) : WorshipRepository {
 
     override suspend fun saveWorship(worship: WorshipEntity) = dao.insert(worship)
-    override suspend fun updateWorship(worship: WorshipEntity) = dao.update(worship)
+    override suspend fun updateWorship(worship: WorshipEntity) {
+        dao.update(worship)
+
+        if (worship.postId != null && worship.communityId != null) {
+            val post = PostType(
+                worship = worship,
+                communityId = listOf(worship.communityId!!),
+                user = user.getCurrentUser(),
+                verseId = worship.postId!!
+            )
+            postService.addPost(post, isUpdate = true)
+        }
+    }
     override suspend fun deleteWorship(id: String) = dao.deleteWorship(id)
     override fun getAllWorships(): Flow<List<WorshipEntity>> = dao.getAll()
 
@@ -27,14 +39,20 @@ class WorshipRepositoryImpl @Inject constructor(
         coroutineScope {
             async {
                 val currentUser = user.getCurrentUser()
+                val postId = UUID.randomUUID().toString()
+
+                worship.communityId = communityId
+                worship.postId = postId
+
+                println(worship)
 
                 val post = PostType(
                     worship = worship,
                     communityId = listOf(communityId),
                     user = currentUser,
-                    verseId = UUID.randomUUID().toString()
+                    verseId = postId
                 )
-
+                dao.associatePostToWorship(postId, communityId, worship.id)
                 postService.addPost(post)
             }
         }

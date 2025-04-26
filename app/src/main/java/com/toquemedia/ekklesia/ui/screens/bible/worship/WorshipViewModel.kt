@@ -82,7 +82,7 @@ class WorshipViewModel @Inject constructor(
                         backgroundColor = worshipBackgroundColorString,
                         title = worshipTitle.text.trimEnd(),
                         worship = worshipContent.text,
-                        video = video.toString()
+                        video = video?.toString()
                     )
                     repository.saveWorship(worship)
                     clearState()
@@ -132,6 +132,8 @@ class WorshipViewModel @Inject constructor(
                     backgroundColor = worshipBackgroundColorString,
                     title = worshipTitle.text.trimEnd(),
                     worship = worshipContent.text,
+                    postId = worship.postId,
+                    communityId = worship.communityId,
                     video = videoUri?.toString()
                 )
                 repository.updateWorship(worship)

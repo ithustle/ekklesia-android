@@ -13,6 +13,7 @@ import com.toquemedia.ekklesia.model.BookType
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.model.UserType
+import com.toquemedia.ekklesia.model.WorshipEntity
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,6 +44,8 @@ class AppViewModel @Inject constructor(
         internal set
 
     var selectedCommunity by mutableStateOf<CommunityWithMembers?>(null)
+
+    var selectedWorship by mutableStateOf<WorshipEntity?>(null)
 
     var showBackgroundOverlay by mutableStateOf(false)
 

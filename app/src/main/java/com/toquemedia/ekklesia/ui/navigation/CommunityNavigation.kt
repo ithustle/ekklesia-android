@@ -39,6 +39,7 @@ import com.toquemedia.ekklesia.ui.screens.community.create.CreateCommunityScreen
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedPostAddComment
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
+import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.WorshipPostScreen
 import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
@@ -139,6 +140,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         }
 
         LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = selectedCommunity?.community?.communityName.toString(),
@@ -175,7 +177,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 posts = state.posts,
                 likedPosts = state.likedPosts,
                 loadingPosts = state.loadingPosts,
-                selectedPost = state.selectedPost,
                 user = user,
                 onNavigateToComments = {
                     navController.navigateToAddCommentOnPost(postId = it, communityId = community.community.id)
@@ -199,6 +200,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val arg = stackEntry.toRoute<Screen.CommentPost>()
         val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
+        val appViewModel = LocalAppViewModel.current
 
         val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(parentEntry)
         val state by sharedViewModel.uiState.collectAsStateWithLifecycle()
@@ -209,14 +211,30 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             }
         }
 
-        FeedPostAddComment(
-            textComment = state.textComment,
-            selectedPost = state.selectedPost,
-            onChangeTextComment = state.onChangeTextComment,
-            onSendComment = {
-                sharedViewModel.addCommentOnPost(communityId = arg.communityId)
+        state.selectedPost?.let { post ->
+            post.worship?.let {
+
+                LaunchedEffect(Unit) {
+                    appViewModel.showTopBar = false
+                }
+
+                WorshipPostScreen(
+                    post = post
+                )
+            } ?: run {
+                FeedPostAddComment(
+                    textComment = state.textComment,
+                    selectedPost = state.selectedPost,
+                    onLikePost = {
+                        sharedViewModel.likeAPost(post = it, communityId = arg.communityId)
+                    },
+                    onChangeTextComment = state.onChangeTextComment,
+                    onSendComment = {
+                        sharedViewModel.addCommentOnPost(communityId = arg.communityId)
+                    }
+                )
             }
-        )
+        }
     }
 
     composable<Screen.Chat> { stackEntry ->
@@ -248,9 +266,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 }
 
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
-fun NavController.navigateToCommunityFeed() {
-    this.navigateBetweenScreens(Screen.CommunityFeed)
-}
+fun NavController.navigateToCommunityFeed() = this.navigateBetweenScreens(Screen.CommunityFeed)
 
 fun NavController.navigateToChatScreen(community: CommunityType) =
     this.navigateBetweenScreens(Screen.Chat(communityId = community.id))

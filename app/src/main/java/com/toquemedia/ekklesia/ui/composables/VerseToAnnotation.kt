@@ -53,7 +53,7 @@ fun VerseToAnnotation(
             ) {
                 Text(
                     "$bookName $chapter:$versicle",
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = color
                 )
@@ -61,7 +61,7 @@ fun VerseToAnnotation(
         } else {
             Text(
                 "$bookName $chapter:$versicle",
-                fontSize = 15.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = color,
             )
