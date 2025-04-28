@@ -91,6 +91,9 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.compose.colorpicker)
     implementation(libs.retrofit.adapter)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.exoplayer.hls)
 
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.compiler)

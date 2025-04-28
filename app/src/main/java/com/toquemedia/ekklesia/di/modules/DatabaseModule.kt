@@ -10,6 +10,7 @@ import com.toquemedia.ekklesia.dao.LikeDao
 import com.toquemedia.ekklesia.dao.MessageDao
 import com.toquemedia.ekklesia.dao.NoteDao
 import com.toquemedia.ekklesia.dao.WorshipDao
+import com.toquemedia.ekklesia.model.EkklesiaPlayer
 import com.toquemedia.ekklesia.services.BunnyService
 import com.toquemedia.ekklesia.services.CommunityService
 import com.toquemedia.ekklesia.services.NoteService
@@ -45,6 +46,9 @@ class DatabaseModule {
     fun provideStorageService(@ApplicationContext context: Context, storage: FirebaseStorage): StorageService = StorageService(context, storage)
     @Provides
     fun provideVerseOfDayService(firestore: FirebaseFirestore): VerseOfDayService = VerseOfDayService(firestore)
+
+    @Provides
+    fun provideEkklesiaPlayer(@ApplicationContext context: Context): EkklesiaPlayer = EkklesiaPlayer(context)
 
     @Provides
     fun provideOurmannaService(@Named("ourmannaService") retrofit: Retrofit) : OurmannaService = retrofit.create(

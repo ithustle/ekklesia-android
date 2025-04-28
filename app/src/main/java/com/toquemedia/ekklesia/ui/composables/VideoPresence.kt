@@ -1,5 +1,6 @@
 package com.toquemedia.ekklesia.ui.composables
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,12 +32,16 @@ fun VideoPresence(
     icon: ImageVector,
     label: String,
     duration: String,
-    backgroundColor: Color
+    backgroundColor: Color,
+    onWatchVideo: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable {
+                onWatchVideo()
+            },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = backgroundColor.copy(alpha = 0.1f)

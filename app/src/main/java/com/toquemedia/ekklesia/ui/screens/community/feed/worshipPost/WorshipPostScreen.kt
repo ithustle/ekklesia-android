@@ -21,7 +21,8 @@ import com.toquemedia.ekklesia.utils.mocks.PostsMock
 
 @Composable
 fun WorshipPostScreen(
-    post: PostType
+    post: PostType,
+    onNavigateToVideo: (String) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -56,7 +57,10 @@ fun WorshipPostScreen(
                     icon = Icons.Rounded.PlayCircle,
                     label = "Assista o video",
                     duration = "",
-                    backgroundColor = post.worship?.backgroundColor?.toColor() ?: Color.DarkGray
+                    backgroundColor = post.worship.backgroundColor.toColor(),
+                    onWatchVideo = {
+                        onNavigateToVideo(it)
+                    }
                 )
             }
 

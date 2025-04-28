@@ -72,6 +72,11 @@ sealed class Screen() {
     ): Screen()
 
     @Serializable
+    data class VideoPlayer(
+        val videoUrl: String
+    ): Screen()
+
+    @Serializable
     object CommunityFeed: Screen()
 
     @Serializable

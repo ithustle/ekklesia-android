@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -39,6 +40,8 @@ import com.toquemedia.ekklesia.ui.screens.community.create.CreateCommunityScreen
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedPostAddComment
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
+import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.VideoPlayer
+import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.VideoPlayerViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.WorshipPostScreen
 import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
@@ -219,7 +222,10 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 }
 
                 WorshipPostScreen(
-                    post = post
+                    post = post,
+                    onNavigateToVideo = {
+                        navController.navigateToPlayer(videoUrl = it)
+                    }
                 )
             } ?: run {
                 FeedPostAddComment(
@@ -231,6 +237,41 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                     onChangeTextComment = state.onChangeTextComment,
                     onSendComment = {
                         sharedViewModel.addCommentOnPost(communityId = arg.communityId)
+                    }
+                )
+            }
+        }
+    }
+
+    composable<Screen.VideoPlayer> {
+
+        val appViewModel = LocalAppViewModel.current
+        val arg = it.toRoute<Screen.VideoPlayer>()
+        val video = arg.videoUrl.toUri()
+
+        val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
+        val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(parentEntry)
+        val state by sharedViewModel.uiState.collectAsStateWithLifecycle()
+
+        val viewModel = hiltViewModel<VideoPlayerViewModel>(it)
+        val playerState by viewModel.uiState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(Unit) {
+            appViewModel.showTopBar = false
+            viewModel.prepareVideo(video)
+            viewModel.playVideo()
+        }
+
+        state.selectedPost?.let {
+            playerState.player?.let { player ->
+                VideoPlayer(
+                    post = it,
+                    player = player,
+                    onPlay = {
+
+                    },
+                    onPause = {
+
                     }
                 )
             }
@@ -267,6 +308,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
 fun NavController.navigateToCommunityFeed() = this.navigateBetweenScreens(Screen.CommunityFeed)
+fun NavController.navigateToPlayer(videoUrl: String) = this.navigateBetweenScreens(Screen.VideoPlayer(videoUrl = videoUrl))
 
 fun NavController.navigateToChatScreen(community: CommunityType) =
     this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
