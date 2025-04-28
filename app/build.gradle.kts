@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.camera.view)
     implementation(libs.accompanist.permissions)
     implementation(libs.compose.colorpicker)
+    implementation(libs.retrofit.adapter)
 
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.compiler)

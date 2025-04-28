@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.storage.FirebaseStorage
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.toquemedia.ekklesia.dao.AppCacheDao
 import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.LikeDao
@@ -15,6 +16,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import jakarta.inject.Named
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -61,8 +63,18 @@ object AppModules {
 
     @Singleton
     @Provides
-    fun provideRetrofitService(): Retrofit = Retrofit.Builder()
+    @Named("ourmannaService")
+    fun provideRetrofitOurmannaService(): Retrofit = Retrofit.Builder()
         .baseUrl("https://beta.ourmanna.com/")
         .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    @Singleton
+    @Provides
+    @Named("bunnyService")
+    fun provideRetrofitBunnyService(): Retrofit = Retrofit.Builder()
+        .baseUrl("https://video.bunnycdn.com/library/415301/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(CoroutineCallAdapterFactory())
         .build()
 }

@@ -277,6 +277,7 @@ fun NavGraphBuilder.verseNavigation(
                 vmWorship.addVerseToWorship(it)
             },
             onDeleteWorshipVideo = {
+                println("videoPathResult: $videoPathResult")
                 videoPathResult?.let {
                     vmWorship.deleteRecordedVideo(it)
                 }
@@ -304,6 +305,7 @@ fun NavGraphBuilder.verseNavigation(
             context = context,
             lifecycleOwner = lifecycleOwner,
             onSaveRecording = {
+                navController.previousBackStackEntry?.savedStateHandle?.set("videoPath", it)
                 navController.popBackStack()
                 viewModel.uploadRecordedVideo(it)
             },

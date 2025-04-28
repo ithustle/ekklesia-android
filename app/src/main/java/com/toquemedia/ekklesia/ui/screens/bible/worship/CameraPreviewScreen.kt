@@ -1,7 +1,6 @@
 package com.toquemedia.ekklesia.ui.screens.bible.worship
 
 import android.content.Context
-import android.net.Uri
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -48,7 +47,7 @@ fun CameraPreviewScreen(
     context: Context,
     lifecycleOwner: LifecycleOwner,
     onCancelRecording: () -> Unit = {},
-    onSaveRecording: (Uri) -> Unit = {},
+    onSaveRecording: (String) -> Unit = {},
     onDeleteRecord: (String) -> Unit = {}
 ) {
     if (LocalInspectionMode.current) {

@@ -3,7 +3,6 @@ package com.toquemedia.ekklesia.ui.screens.bible.worship
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
@@ -42,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.extension.formatTime
 import com.toquemedia.ekklesia.model.RecordingState
@@ -61,7 +59,7 @@ fun VideoRecordingControls(
     onSwitchCamera: () -> Unit,
     onStartRecording: () -> Unit,
     onStopRecording: () -> Unit,
-    onSaveRecording: (videoUri: Uri) -> Unit,
+    onSaveRecording: (videoUri: String) -> Unit,
     onDeleteRecord: (String) -> Unit,
 ) {
 
@@ -70,7 +68,7 @@ fun VideoRecordingControls(
     var totalSeconds by remember { mutableIntStateOf(0) }
     var isRunning by remember { mutableStateOf(false) }
     var timing by remember { mutableStateOf("00:00") }
-    var videoPath by remember { mutableStateOf<Pair<String, Uri>?>(null) }
+    var videoPath by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(isRunning) {
         if (isRunning) {
@@ -85,6 +83,70 @@ fun VideoRecordingControls(
                 recording?.stop()
                 recording = null
                 onStopRecording()
+            }
+        }
+    }
+
+    fun handleRecordingVideo() {
+        when (recordingState) {
+            RecordingState.RECORDING -> {
+                isRunning = false
+                recording?.stop()
+                recording = null
+                onStopRecording()
+            }
+
+            RecordingState.INIT -> {
+                isRunning = true
+                totalSeconds = 0
+
+                val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+                val outputDir = context.getExternalFilesDir(null)
+                    ?: context.filesDir
+                val videoFile = File(outputDir, "VIDEO_$timeStamp.mp4")
+
+                val outputOptions = FileOutputOptions.Builder(videoFile).build()
+
+                recording = videoCapture.output
+                    .prepareRecording(context, outputOptions)
+                    .apply {
+                        if (ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.RECORD_AUDIO
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            withAudioEnabled()
+                        }
+                    }
+                    .start(ContextCompat.getMainExecutor(context)) { event ->
+                        when (event) {
+                            is VideoRecordEvent.Start -> {
+                                isRecording = true
+                            }
+
+                            is VideoRecordEvent.Finalize -> {
+                                isRecording = false
+                                recording = null
+                                if (event.hasError()) {
+                                    println("Gravação falhou: ${event.error} - ${event.cause?.message}")
+                                } else {
+                                    videoPath = videoFile.absolutePath
+                                }
+                            }
+                        }
+                    }
+
+                onStartRecording()
+            }
+
+            RecordingState.STOPPED -> {
+                isRunning = false
+                timing = "00:00"
+                totalSeconds = 0
+
+                videoPath?.let {
+                    onDeleteRecord(it)
+                }
             }
         }
     }
@@ -115,65 +177,7 @@ fun VideoRecordingControls(
 
             IconButton(
                 onClick = {
-                    when (recordingState) {
-                        RecordingState.RECORDING -> {
-                            isRunning = false
-                            recording?.stop()
-                            recording = null
-                            onStopRecording()
-                        }
-                        RecordingState.INIT -> {
-                            isRunning = true
-                            totalSeconds = 0
-
-                            val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                            val outputDir = context.getExternalFilesDir(null)
-                                ?: context.filesDir
-                            val videoFile = File(outputDir, "VIDEO_$timeStamp.mp4")
-
-                            val outputOptions = FileOutputOptions.Builder(videoFile).build()
-
-                            recording = videoCapture.output
-                                .prepareRecording(context, outputOptions)
-                                .apply {
-                                    if (ContextCompat.checkSelfPermission(
-                                            context,
-                                            Manifest.permission.RECORD_AUDIO
-                                        ) == PackageManager.PERMISSION_GRANTED
-                                    ) {
-                                        withAudioEnabled()
-                                    }
-                                }
-                                .start(ContextCompat.getMainExecutor(context)) { event ->
-                                    when (event) {
-                                        is VideoRecordEvent.Start -> {
-                                            isRecording = true
-                                        }
-                                        is VideoRecordEvent.Finalize -> {
-                                            isRecording = false
-                                            recording = null
-                                            if (event.hasError()) {
-                                                println("Gravação falhou: ${event.error} - ${event.cause?.message}")
-                                            } else {
-                                                println("Vídeo salvo em: ${videoFile.absolutePath.toUri()} - ${videoFile.toUri()}")
-                                                videoPath = Pair(videoFile.absolutePath, videoFile.toUri())
-                                            }
-                                        }
-                                    }
-                                }
-
-                            onStartRecording()
-                        }
-                        RecordingState.STOPPED -> {
-                            isRunning = false
-                            timing = "00:00"
-                            totalSeconds = 0
-
-                            videoPath?.let {
-                                onDeleteRecord(it.first)
-                            }
-                        }
-                    }
+                    handleRecordingVideo()
                 },
                 modifier = Modifier
                     .fillMaxHeight()
@@ -197,7 +201,7 @@ fun VideoRecordingControls(
                 IconButton(
                     onClick = {
                         videoPath?.let {
-                            onSaveRecording(it.second)
+                            onSaveRecording(it)
                         }
                     }
                 ) {

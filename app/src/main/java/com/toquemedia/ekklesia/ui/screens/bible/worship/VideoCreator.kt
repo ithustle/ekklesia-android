@@ -2,14 +2,15 @@ package com.toquemedia.ekklesia.ui.screens.bible.worship
 
 import android.Manifest
 import android.content.Context
-import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -20,7 +21,7 @@ fun VideoCreator(
     context: Context,
     lifecycleOwner: LifecycleOwner,
     onCancelRecording: () -> Unit = {},
-    onSaveRecording: (Uri) -> Unit = {},
+    onSaveRecording: (String) -> Unit = {},
     onDeleteRecord: (String) -> Unit
 ) {
     val permissionsState = rememberMultiplePermissionsState(
@@ -43,7 +44,9 @@ fun VideoCreator(
             permissionsState.launchMultiplePermissionRequest()
         }
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             Text("Câmera e áudio requerem a tua permissão para serem usadas.")

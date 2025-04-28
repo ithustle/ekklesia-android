@@ -45,8 +45,6 @@ class AppViewModel @Inject constructor(
 
     var selectedCommunity by mutableStateOf<CommunityWithMembers?>(null)
 
-    var selectedWorship by mutableStateOf<WorshipEntity?>(null)
-
     var showBackgroundOverlay by mutableStateOf(false)
 
     var showTopBar by mutableStateOf(true)

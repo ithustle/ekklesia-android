@@ -7,10 +7,9 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.extension.toColor
+import com.toquemedia.ekklesia.model.UploadStatus
 import com.toquemedia.ekklesia.model.WorshipEntity
-import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.WorshipRepositoryImpl
-import com.toquemedia.ekklesia.services.StorageService
 import com.toquemedia.ekklesia.ui.screens.bible.states.WorshipUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,8 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class WorshipViewModel @Inject constructor(
     private val repository: WorshipRepositoryImpl,
-    private val serviceUpload: StorageService,
-    private val auth: AuthRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<WorshipUiState> =
@@ -148,17 +145,17 @@ class WorshipViewModel @Inject constructor(
         }
     }
 
-    fun uploadRecordedVideo(videoUri: Uri) {
+    fun uploadRecordedVideo(videoPath: String) {
+        _uiState.update { it.copy(uploadStatus = UploadStatus.INIT) }
+        val file = File(videoPath)
+
         viewModelScope.launch {
-            val currentUser = auth.getCurrentUser()
-            serviceUpload.uploadVideo(
-                userEmail = currentUser?.email.toString(),
-                videoPath = videoUri
-            ).collect { progress ->
+            repository.uploadWorshipVideo(file = file).collect { progress ->
                 _uiState.update {
                     it.copy(
                         progressUploadVideo = progress.first,
-                        videoUri = progress.second
+                        videoUri = progress.second,
+                        uploadStatus = if (progress.first == 1f) UploadStatus.FINISHED else UploadStatus.DOWNLOADING
                     )
                 }
             }
@@ -170,7 +167,7 @@ class WorshipViewModel @Inject constructor(
         videoPath?.let {
             val file = File(videoPath)
             if (file.exists()) {
-                _uiState.update { it.copy(progressUploadVideo = 0f) }
+                _uiState.update { it.copy(progressUploadVideo = 0f, uploadStatus = UploadStatus.IDLE) }
                 file.delete()
             }
         } ?: run {
@@ -178,14 +175,6 @@ class WorshipViewModel @Inject constructor(
                 it.copy(videoUri = null)
             }
         }
-    }
-
-    fun startingRecordingVideo() {
-
-    }
-
-    fun stopRecordingVideo() {
-
     }
 
     suspend fun shareWorshipToCommunity(communityId: String, worship: WorshipEntity) {
@@ -202,6 +191,7 @@ class WorshipViewModel @Inject constructor(
                 progressUploadVideo = 0f,
                 worshipBackgroundColorString = "",
                 worshipBackgroundColor = PrincipalColor,
+                uploadStatus = UploadStatus.IDLE,
                 worshipTitle = TextFieldValue(""),
                 worshipContent = TextFieldValue("")
             )

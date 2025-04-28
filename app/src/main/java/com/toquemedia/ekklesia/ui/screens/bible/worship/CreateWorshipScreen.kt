@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.UploadStatus
 import com.toquemedia.ekklesia.model.WorshipEntity
 import com.toquemedia.ekklesia.ui.composables.EkklesiaButton
 import com.toquemedia.ekklesia.ui.composables.EkklesiaProgress
@@ -134,17 +135,17 @@ fun CreateWorshipScreen(
             }
         }
 
-        if (videoPathResult != null) {
+        if (state.uploadStatus == UploadStatus.INIT) {
             EkklesiaProgress(color = state.worshipBackgroundColor)
-        } else if (state.videoUri != null) {
+        } else if (state.uploadStatus == UploadStatus.FINISHED) {
             VideoUploadedSuccessful(
                 text = stringResource(R.string.video_upload_message),
                 color = state.worshipBackgroundColor,
                 onDeleteVideo = onDeleteWorshipVideo
             )
-        } else if (state.progressUploadVideo > 0f && state.progressUploadVideo < 1f) {
+        } else if (state.uploadStatus == UploadStatus.DOWNLOADING) {
             LinearProgressIndicator(
-                progress = { state.progressUploadVideo },
+                progress = { state.progressUploadVideo.toFloat() },
                 trackColor = state.worshipBackgroundColor.copy(alpha = 0.5f),
                 color = state.worshipBackgroundColor,
                 modifier = Modifier

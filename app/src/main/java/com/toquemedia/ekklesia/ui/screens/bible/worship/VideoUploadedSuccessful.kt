@@ -58,7 +58,7 @@ fun VideoUploadedSuccessful(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun VideoUploadedSuccessfulPrev() {
     VideoUploadedSuccessful(

@@ -3,6 +3,7 @@ package com.toquemedia.ekklesia.ui.screens.bible.states
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
+import com.toquemedia.ekklesia.model.UploadStatus
 import com.toquemedia.ekklesia.model.WorshipEntity
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
@@ -11,6 +12,7 @@ data class WorshipUiState(
     var worshipContent: TextFieldValue = TextFieldValue(),
     var worshipBackgroundColorString: String = "",
     var progressUploadVideo: Float = 0f,
+    var uploadStatus: UploadStatus = UploadStatus.IDLE,
     var savingWorship: Boolean = false,
     var sharingWorship: Boolean = false,
     var worshipBackgroundColor: Color = PrincipalColor,
