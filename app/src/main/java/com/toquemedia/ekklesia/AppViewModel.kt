@@ -45,6 +45,8 @@ class AppViewModel @Inject constructor(
 
     var selectedCommunity by mutableStateOf<CommunityWithMembers?>(null)
 
+    var videoPlayerVisible by mutableStateOf<Boolean>(false)
+
     var showBackgroundOverlay by mutableStateOf(false)
 
     var showTopBar by mutableStateOf(true)

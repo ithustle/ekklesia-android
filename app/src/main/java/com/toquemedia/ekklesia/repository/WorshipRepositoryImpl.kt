@@ -7,7 +7,6 @@ import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.WorshipEntity
 import com.toquemedia.ekklesia.model.interfaces.WorshipRepository
 import com.toquemedia.ekklesia.services.BunnyService
-import com.toquemedia.ekklesia.services.CreateVideoRequest
 import com.toquemedia.ekklesia.services.PostService
 import com.toquemedia.ekklesia.services.ProgressRequestBody
 import com.toquemedia.ekklesia.services.UserService
@@ -69,9 +68,6 @@ class WorshipRepositoryImpl @Inject constructor(
 
     override fun uploadWorshipVideo(file: File): Flow<Pair<Float, Uri?>> = callbackFlow {
         try {
-            val responseVideoCreated = async {
-                return@async bunnyService.createVideo(CreateVideoRequest(title = file.name))
-            }.await()
 
             val progressRequestBody = ProgressRequestBody(
                 file = file,
@@ -81,18 +77,22 @@ class WorshipRepositoryImpl @Inject constructor(
                 trySend(Pair(pr, null))
             }
 
-            println(file.name)
+            val filename = file.name
+
+            println(filename)
             println(progressRequestBody)
-            println(responseVideoCreated)
 
-            val response = bunnyService.uploadVideo(videoId = responseVideoCreated.guid, file = progressRequestBody)
+            val response = bunnyService.uploadVideo(filename = filename, file = progressRequestBody)
 
-            if (response.success) {
-                val uri = "https://vz-2889bfe2-aa6.b-cdn.net/${responseVideoCreated.guid}/playlist.m3u8".toUri()
+            println(response)
+
+            if (response.HttpCode == "201") {
+                val uri = "https://ekklesia.b-cdn.net/$filename".toUri()
                 trySend(Pair(1f, uri))
                 close()
             } else {
-                close(IllegalStateException("Erro na resposta: ${response.statusCode}"))
+                trySend(Pair(0f, null))
+                close(IllegalStateException("Erro na resposta: ${response.Message}"))
             }
 
         } catch(e: Exception) {

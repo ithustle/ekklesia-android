@@ -5,6 +5,8 @@ import com.toquemedia.ekklesia.model.EkklesiaPlayer
 
 data class VideoPlayerUiState(
     val videoUri: Uri? = null,
-    val isPlaying: Boolean = false,
     var player: EkklesiaPlayer? = null,
+    var duration: Long = 0L,
+    var currentTime: Long = 0L,
+    var buffering: Boolean = false,
 )

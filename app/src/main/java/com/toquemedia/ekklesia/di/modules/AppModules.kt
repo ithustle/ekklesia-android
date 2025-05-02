@@ -73,8 +73,8 @@ object AppModules {
     @Provides
     @Named("bunnyService")
     fun provideRetrofitBunnyService(): Retrofit = Retrofit.Builder()
-        .baseUrl("https://video.bunnycdn.com/library/415301/")
-        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl("https://storage.bunnycdn.com/")
         .addCallAdapterFactory(CoroutineCallAdapterFactory())
+        .addConverterFactory(GsonConverterFactory.create())
         .build()
 }

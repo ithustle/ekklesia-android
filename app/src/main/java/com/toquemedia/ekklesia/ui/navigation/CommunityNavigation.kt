@@ -258,8 +258,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         LaunchedEffect(Unit) {
             appViewModel.showTopBar = false
+            appViewModel.videoPlayerVisible = true
             viewModel.prepareVideo(video)
-            viewModel.playVideo()
         }
 
         state.selectedPost?.let {
@@ -267,11 +267,15 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 VideoPlayer(
                     post = it,
                     player = player,
-                    onPlay = {
-
-                    },
-                    onPause = {
-
+                    onPlay = viewModel::playVideo,
+                    onPause = viewModel::pauseVideo,
+                    onSeekBack = viewModel::handleReplay,
+                    onSeekForward = viewModel::handleReplay,
+                    buffering = playerState.buffering,
+                    onReleasePlayer = {
+                        viewModel.releasePlayer()
+                        appViewModel.videoPlayerVisible = false
+                        navController.popBackStack()
                     }
                 )
             }

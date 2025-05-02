@@ -33,6 +33,7 @@ fun EkklesiaApp(
     currentUser: UserType?,
     topBarState: TopBarState,
     showTopBar: Boolean = true,
+    videoPlayerVisible: Boolean = false,
     content: @Composable () -> Unit = {}
 ) {
     if (showOverlay) {
@@ -68,19 +69,17 @@ fun EkklesiaApp(
                             tabSelected == Screen.Chapters(bookName = "") -> EkklesiaBottomNavigation(
                         currentScreen = tabSelected,
                         onTabSelected = onTabItemChange,
-                        modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
                     )
+
                     else -> return@Scaffold
                 }
             }
         },
-        modifier = Modifier
-            .windowInsetsPadding(WindowInsets.navigationBars)
+        modifier = if (videoPlayerVisible) Modifier else Modifier.windowInsetsPadding(WindowInsets.navigationBars)
     ) { padding ->
         Box(
             modifier = modifier
                 .padding(padding)
-                .windowInsetsPadding(WindowInsets.navigationBars)
         ) {
             content()
         }

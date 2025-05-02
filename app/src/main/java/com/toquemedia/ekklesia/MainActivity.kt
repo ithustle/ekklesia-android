@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -58,6 +59,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             val navController = rememberNavController()
@@ -117,6 +120,7 @@ class MainActivity : ComponentActivity() {
                             },
                             topBarState = appViewModel.topBarState.value,
                             showTopBar = appViewModel.showTopBar,
+                            videoPlayerVisible = appViewModel.videoPlayerVisible,
                             content = {
                                 EkklesiaNavHost(
                                     navController = navController,

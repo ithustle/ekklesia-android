@@ -6,45 +6,29 @@ import okio.Buffer
 import okio.BufferedSink
 import okio.buffer
 import okio.source
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Headers
-import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import java.io.File
 
+
 data class BunnyServiceResponse(
-    val success: Boolean,
-    val message: String,
-    val statusCode: Int
-)
-
-data class CreateVideoRequest(
-    val title: String
-)
-
-data class BunnyServiceResponseBody(
-    val guid: String,
+    val HttpCode: String?,
+    val Message: String?
 )
 
 interface BunnyService {
     @Headers(
+        "Accept: application/json",
         "Content-Type: application/octet-stream",
-        "AccessKey: c8bc6189-cb0e-4626-9070f90376fe-adfb-4894"
+        "AccessKey: a0a4e00f-3d78-4506-9bdb92628370-7535-4001"
     )
-    @PUT("videos/{videoId}")
+    @PUT("ekklesia/{filename}")
     suspend fun uploadVideo(
-        @Path("videoId") videoId: String,
+        @Path("filename") filename: String,
         @Body file: RequestBody
     ): BunnyServiceResponse
-
-    @Headers(
-        "Accept: application/json",
-        "AccessKey: c8bc6189-cb0e-4626-9070f90376fe-adfb-4894"
-    )
-    @POST("videos")
-    suspend fun createVideo(@Body title: CreateVideoRequest): BunnyServiceResponseBody
 }
 
 class ProgressRequestBody(

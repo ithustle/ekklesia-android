@@ -29,6 +29,7 @@ fun PostOwner(
     user: UserType,
     postType: String,
     timeAgo: String,
+    color: Color,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -49,19 +50,20 @@ fun PostOwner(
                 text = user.displayName.toString(),
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
-                lineHeight = 2.sp
+                lineHeight = 2.sp,
+                color = color
             )
 
             Text(
                 text = postType,
                 fontSize = 10.sp,
-                color = Color.DarkGray,
+                color = color,
                 lineHeight = 2.sp
             )
             Text(
                 text = timeAgo,
                 fontSize = 10.sp,
-                color = Color.DarkGray,
+                color = color,
                 lineHeight = 2.sp
             )
         }
@@ -77,6 +79,7 @@ private fun PostOwnerPrev() {
             displayName = "João Silva",
             photo = "".toUri().toString()
         ),
+        color = Color.DarkGray,
         postType = stringResource(R.string.post_type_without_note),
         timeAgo = PostsMock.getPosts().first().createdAt.timeAgo(),
         modifier = Modifier

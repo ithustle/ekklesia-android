@@ -24,6 +24,7 @@ fun WorshipPostScreen(
     post: PostType,
     onNavigateToVideo: (String) -> Unit = {}
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -45,7 +45,8 @@ fun Scripture(
                 fontSize = 18.sp,
                 textAlign = TextAlign.Justify,
                 fontWeight = FontWeight.Medium,
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
+                color = backgroundColor.copy(alpha = 0.8f)
             )
 
             Spacer(Modifier.weight(1f))
@@ -54,7 +55,7 @@ fun Scripture(
                 Spacer(Modifier.weight(1f))
                 Text(
                     text = "$bookName $chapter:$versicle",
-                    color = Color.DarkGray
+                    color = backgroundColor.copy(alpha = 0.4f)
                 )
             }
         }

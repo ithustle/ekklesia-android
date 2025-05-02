@@ -76,6 +76,7 @@ fun FeedPostWorship(
                     modifier = Modifier,
                     user = post.user!!,
                     timeAgo = post.createdAt.timeAgo(),
+                    color = Color.DarkGray,
                     postType = stringResource(R.string.post_type_worship)
                 )
 

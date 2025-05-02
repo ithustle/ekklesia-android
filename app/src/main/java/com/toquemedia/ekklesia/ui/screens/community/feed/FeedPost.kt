@@ -65,6 +65,7 @@ fun FeedPost(
                 .padding(horizontal = 16.dp),
             user = post.user!!,
             timeAgo = post.createdAt.timeAgo(),
+            color = Color.DarkGray,
             postType = if (post.note == null) stringResource(R.string.post_type_without_note) else stringResource(
                 R.string.post_type_with_note,
             )
