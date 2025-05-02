@@ -15,7 +15,8 @@ object WorshipMock {
                 title = "O Bom Pastor",
                 backgroundColor = "Color(0.19215687, 0.101960786, 1.0, 1.0, sRGB IEC61966-2.1)",
                 worship = "Este salmo nos lembra que Deus cuida de nós como um pastor cuida de suas ovelhas...",
-                video = "https://example.com/videos/salmo23.mp4"
+                video = "https://example.com/videos/salmo23.mp4",
+                durationVideo = 78
             ),
             WorshipEntity(
                 id = UUID.randomUUID().toString(),
@@ -25,7 +26,8 @@ object WorshipMock {
                 verse = "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito...",
                 title = "O Amor de Deus",
                 worship = "Este versículo nos mostra o imenso amor que Deus tem pela humanidade...",
-                video = "https://example.com/videos/joao316.mp4"
+                video = "https://example.com/videos/joao316.mp4",
+                durationVideo = 45
             ),
             WorshipEntity(
                 id = UUID.randomUUID().toString(),
@@ -35,7 +37,8 @@ object WorshipMock {
                 verse = "Tudo posso naquele que me fortalece.",
                 title = "Força em Cristo",
                 worship = "Paulo nos ensina que através de Cristo podemos superar qualquer desafio...",
-                video = "https://example.com/videos/filipenses413.mp4"
+                video = "https://example.com/videos/filipenses413.mp4",
+                durationVideo = 196
             )
         )
     }

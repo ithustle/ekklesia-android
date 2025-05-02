@@ -11,15 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.QuestionAnswer
-import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.LiveTv
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,13 +28,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.extension.formatTime
 import com.toquemedia.ekklesia.extension.timeAgo
 import com.toquemedia.ekklesia.extension.toColor
 import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
 import com.toquemedia.ekklesia.ui.composables.VideoPresence
-import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import com.toquemedia.ekklesia.utils.mocks.WorshipMock
 
 @Composable
@@ -129,7 +123,7 @@ fun FeedPostWorship(
                 VideoPresence(
                     icon = Icons.Rounded.LiveTv,
                     label = "Contém video devocional",
-                    duration = "1:30",
+                    duration = post.worship.durationVideo?.formatTime() ?: "",
                     backgroundColor = post.worship.backgroundColor.toColor()
                 )
             }
@@ -140,7 +134,7 @@ fun FeedPostWorship(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(
+                /*IconButton(
                     onClick = {
                         if (liked) {
                             onRemoveLikePost(post)
@@ -178,7 +172,7 @@ fun FeedPostWorship(
                         contentDescription = stringResource(R.string.bookmark_icon_description),
                         tint = PrincipalColor
                     )
-                }
+                }*/
             }
         }
 

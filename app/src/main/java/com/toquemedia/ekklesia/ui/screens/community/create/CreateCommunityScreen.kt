@@ -97,7 +97,7 @@ fun CreateCommunityScreen(
                 state.onCommunityDescriptionChange(it.text)
             },
             enabled = !isLoading,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.None
         )
 
         Spacer(Modifier.weight(1f))

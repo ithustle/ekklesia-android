@@ -40,7 +40,7 @@ class VideoPlayerViewModel @OptIn(UnstableApi::class)
                 when(playbackState) {
                     Player.STATE_BUFFERING -> _uiState.update { it.copy(buffering = true) }
                     Player.STATE_READY -> _uiState.update { it.copy(buffering = false) }
-                    Player.STATE_ENDED -> {}
+                    Player.STATE_ENDED -> { _uiState.update { it.copy(buffering = false) } }
                     Player.STATE_IDLE -> {}
                 }
             }

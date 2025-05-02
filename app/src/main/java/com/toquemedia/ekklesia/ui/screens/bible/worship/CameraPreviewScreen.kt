@@ -1,6 +1,8 @@
 package com.toquemedia.ekklesia.ui.screens.bible.worship
 
 import android.content.Context
+import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -30,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
@@ -38,13 +41,21 @@ import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.compose.PlayerSurface
+import androidx.media3.ui.compose.SURFACE_TYPE_TEXTURE_VIEW
+import androidx.media3.ui.compose.modifiers.resizeWithContentScale
+import androidx.media3.ui.compose.state.rememberPresentationState
 import com.toquemedia.ekklesia.R
+import com.toquemedia.ekklesia.model.EkklesiaPlayer
 import com.toquemedia.ekklesia.model.RecordingState
 import androidx.compose.ui.tooling.preview.Preview as PV
 
+@OptIn(UnstableApi::class)
 @Composable
 fun CameraPreviewScreen(
     context: Context,
+    player: EkklesiaPlayer? = null,
     lifecycleOwner: LifecycleOwner,
     onCancelRecording: () -> Unit = {},
     onSaveRecording: (String) -> Unit = {},
@@ -85,7 +96,6 @@ fun CameraPreviewScreen(
                     recordingState = RecordingState.INIT,
                     onSwitchCamera = {},
                     onDeleteRecord = {},
-                    onSaveRecording = {},
                     onStopRecording = {},
                     onStartRecording = {}
                 )
@@ -112,13 +122,14 @@ fun CameraPreviewScreen(
         val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
         var cameraProvider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
         var previewView by remember { mutableStateOf<PreviewView?>(null) }
+        var videoUri by remember { mutableStateOf<Uri?>(null) }
 
         LaunchedEffect(Unit) {
             cameraProviderFuture.addListener({
                 try {
                     cameraProvider = cameraProviderFuture.get()
                 } catch (e: Exception) {
-                    println("Camera Falha ao obter ProcessCameraProvider: $e", )
+                    println("Camera Falha ao obter ProcessCameraProvider: $e")
                 }
             }, ContextCompat.getMainExecutor(context))
         }
@@ -169,43 +180,67 @@ fun CameraPreviewScreen(
                         }
                     },
                     onDeleteRecord = {
+                        videoUri = null
                         recording = RecordingState.INIT
                         onDeleteRecord(it)
                     },
-                    onSaveRecording = onSaveRecording,
-                    onStopRecording = { recording = RecordingState.STOPPED },
+                    onSaveRecording = { path ->
+                        onSaveRecording(path)
+                    },
+                    onStopRecording = { pathUri ->
+                        println(pathUri)
+                        videoUri = pathUri
+                        recording = RecordingState.STOPPED
+                    },
                     onStartRecording = { recording = RecordingState.RECORDING }
                 )
             }
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { ctx ->
-                    PreviewView(ctx).apply {
-                        implementationMode = PreviewView.ImplementationMode.PERFORMANCE
-                        scaleType = PreviewView.ScaleType.FILL_CENTER
-                    }.also { previewView = it }
-                },
-                update = { view ->
-                    val provider = cameraProvider ?: return@AndroidView
 
-                    try {
-                        provider.unbindAll()
-
-                        val preview = Preview.Builder().build().also {
-                            it.surfaceProvider = view.surfaceProvider
-                        }
-
-                        provider.bindToLifecycle(
-                            lifecycleOwner,
-                            cameraSelector,
-                            preview,
-                            videoCapture
-                        )
-                    } catch (e: Exception) {
-                        println("Camera Falha ao vincular preview: $e")
-                    }
+            if (videoUri != null) {
+                player?.let {
+                    var presentationState = rememberPresentationState(it.getPlayer())
+                    it.prepareVideo(videoUri!!)
+                    PlayerSurface(
+                        player = it.getPlayer(),
+                        modifier = Modifier
+                            .resizeWithContentScale(
+                                contentScale = ContentScale.FillHeight,
+                                sourceSizeDp = presentationState.videoSizeDp
+                            ),
+                        surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
+                    )
                 }
-            )
+            } else {
+                AndroidView(
+                    modifier = Modifier.fillMaxSize(),
+                    factory = { ctx ->
+                        PreviewView(ctx).apply {
+                            implementationMode = PreviewView.ImplementationMode.PERFORMANCE
+                            scaleType = PreviewView.ScaleType.FILL_CENTER
+                        }.also { previewView = it }
+                    },
+                    update = { view ->
+                        val provider = cameraProvider ?: return@AndroidView
+
+                        try {
+                            provider.unbindAll()
+
+                            val preview = Preview.Builder().build().also {
+                                it.surfaceProvider = view.surfaceProvider
+                            }
+
+                            provider.bindToLifecycle(
+                                lifecycleOwner,
+                                cameraSelector,
+                                preview,
+                                videoCapture
+                            )
+                        } catch (e: Exception) {
+                            println("Camera Falha ao vincular preview: $e")
+                        }
+                    }
+                )
+            }
         }
     }
 }

@@ -18,5 +18,6 @@ data class WorshipEntity(
     @ColumnInfo(name = "post_id") var postId: String? = null,
     @ColumnInfo(name = "community_id") var communityId: String? = null,
     @ColumnInfo(name = "background_color") val backgroundColor: String = "",
-    @ColumnInfo(name = "video") val video: String? = null
+    @ColumnInfo(name = "video") val video: String? = null,
+    @ColumnInfo(name = "duration_video") val durationVideo: Int? = null
 )

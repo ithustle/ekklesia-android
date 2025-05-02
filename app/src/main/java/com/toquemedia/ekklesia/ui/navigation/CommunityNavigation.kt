@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -46,6 +48,7 @@ import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.WorshipPost
 import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
+@OptIn(UnstableApi::class)
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.Communities> {
 
@@ -272,6 +275,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                     onSeekBack = viewModel::handleReplay,
                     onSeekForward = viewModel::handleReplay,
                     buffering = playerState.buffering,
+                    isPlaying = playerState.isPlaying,
                     onReleasePlayer = {
                         viewModel.releasePlayer()
                         appViewModel.videoPlayerVisible = false

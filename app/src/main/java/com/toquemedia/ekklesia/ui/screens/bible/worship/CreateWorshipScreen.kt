@@ -91,7 +91,7 @@ fun CreateWorshipScreen(
             placeholder = stringResource(R.string.let_holy_spirit_come),
             height = 250.dp,
             onChangeValue = state.onWorshipContentChange,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.None
         )
 
         Spacer(Modifier.height(10.dp))

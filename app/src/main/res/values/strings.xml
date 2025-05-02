@@ -80,5 +80,5 @@
     <string name="share_to_community">Partilhar</string>
     <string name="bookmark_icon_description">Guardar a publicação</string>
     <string name="play_description_icon">Botão de play</string>
-    <string name="duration">minutos</string>
+    <string name="duration">min</string>
 </resources>

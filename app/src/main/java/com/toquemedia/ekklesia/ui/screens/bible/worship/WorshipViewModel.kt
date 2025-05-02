@@ -1,5 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.bible.worship
 
+import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
@@ -13,6 +15,7 @@ import com.toquemedia.ekklesia.repository.WorshipRepositoryImpl
 import com.toquemedia.ekklesia.ui.screens.bible.states.WorshipUiState
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +26,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorshipViewModel @Inject constructor(
+    @ApplicationContext val context: Context,
     private val repository: WorshipRepositoryImpl,
 ) : ViewModel() {
 
@@ -79,7 +83,8 @@ class WorshipViewModel @Inject constructor(
                         backgroundColor = worshipBackgroundColorString,
                         title = worshipTitle.text.trimEnd(),
                         worship = worshipContent.text,
-                        video = video?.toString()
+                        video = video?.toString(),
+                        durationVideo = video?.let { (getDurationVideo(it) / 1000).toInt() }
                     )
                     repository.saveWorship(worship)
                     clearState()
@@ -111,7 +116,7 @@ class WorshipViewModel @Inject constructor(
                     worshipContent = TextFieldValue(this.worship),
                     worshipBackgroundColor = backgroundColor.toColor(),
                     worshipBackgroundColorString = backgroundColor,
-                    videoUri = video?.toUri()
+                    videoUri = video?.toUri(),
                 )
             }
         }
@@ -131,7 +136,8 @@ class WorshipViewModel @Inject constructor(
                     worship = worshipContent.text,
                     postId = worship.postId,
                     communityId = worship.communityId,
-                    video = videoUri?.toString()
+                    video = videoUri?.toString(),
+                    durationVideo = videoUri?.let { (getDurationVideo(it) / 1000).toInt() }
                 )
                 repository.updateWorship(worship)
                 clearState()
@@ -181,6 +187,20 @@ class WorshipViewModel @Inject constructor(
         _uiState.update { it.copy(sharingWorship = true) }
         repository.shareToCommunity(communityId, worship).await()
         _uiState.update { it.copy(sharingWorship = false) }
+    }
+
+    private fun getDurationVideo(uri: Uri): Long {
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(context, uri)
+            val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            time?.toLongOrNull() ?: 0L
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0L
+        } finally {
+            retriever.release()
+        }
     }
 
     private fun clearState() {

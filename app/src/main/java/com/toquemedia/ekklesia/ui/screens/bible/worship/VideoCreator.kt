@@ -12,14 +12,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
+import androidx.media3.common.util.UnstableApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.toquemedia.ekklesia.model.EkklesiaPlayer
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun VideoCreator(
     context: Context,
     lifecycleOwner: LifecycleOwner,
+    player: EkklesiaPlayer? = null,
     onCancelRecording: () -> Unit = {},
     onSaveRecording: (String) -> Unit = {},
     onDeleteRecord: (String) -> Unit
@@ -34,6 +38,7 @@ fun VideoCreator(
     if (permissionsState.allPermissionsGranted) {
         CameraPreviewScreen(
             context = context,
+            player = player,
             lifecycleOwner = lifecycleOwner,
             onSaveRecording = onSaveRecording,
             onCancelRecording = onCancelRecording,

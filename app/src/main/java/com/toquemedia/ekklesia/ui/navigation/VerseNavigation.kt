@@ -11,6 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -26,6 +27,7 @@ import com.toquemedia.ekklesia.ui.screens.bible.verses.VersesScreen
 import com.toquemedia.ekklesia.ui.screens.bible.worship.CreateWorshipScreen
 import com.toquemedia.ekklesia.ui.screens.bible.worship.VideoCreator
 import com.toquemedia.ekklesia.ui.screens.bible.worship.WorshipViewModel
+import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.VideoPlayerViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -277,7 +279,6 @@ fun NavGraphBuilder.verseNavigation(
                 vmWorship.addVerseToWorship(it)
             },
             onDeleteWorshipVideo = {
-                println("videoPathResult: $videoPathResult")
                 videoPathResult?.let {
                     vmWorship.deleteRecordedVideo(it)
                 }
@@ -293,6 +294,9 @@ fun NavGraphBuilder.verseNavigation(
 
         val viewModel: WorshipViewModel = hiltViewModel(bibleGraphEntry)
 
+        val vmPlayer: VideoPlayerViewModel = hiltViewModel(bibleGraphEntry)
+        val playerState by vmPlayer.uiState.collectAsStateWithLifecycle()
+
         val appViewModel = LocalAppViewModel.current
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
@@ -304,6 +308,7 @@ fun NavGraphBuilder.verseNavigation(
         VideoCreator(
             context = context,
             lifecycleOwner = lifecycleOwner,
+            player = playerState.player,
             onSaveRecording = {
                 navController.previousBackStackEntry?.savedStateHandle?.set("videoPath", it)
                 navController.popBackStack()

@@ -13,10 +13,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +42,7 @@ fun VideoPlayer(
     post: PostType,
     player: EkklesiaPlayer,
     buffering: Boolean = false,
+    isPlaying: Boolean = false,
     onPlay: () -> Unit = {},
     onPause: () -> Unit = {},
     onSeekBack: (Long) -> Unit = {},
@@ -53,7 +50,6 @@ fun VideoPlayer(
     onReleasePlayer: () -> Unit = {},
 ) {
 
-    var isPlaying by remember { mutableStateOf<Boolean>(!buffering) }
     val presentationState = rememberPresentationState(player.getPlayer())
 
     DisposableEffect(Unit) {
@@ -118,7 +114,6 @@ fun VideoPlayer(
                 } else {
                     onPlay()
                 }
-                isPlaying = !isPlaying
             },
             toggleSeekBack = { onSeekBack(-10000) },
             toggleSeekForward = { onSeekForward(10000) },

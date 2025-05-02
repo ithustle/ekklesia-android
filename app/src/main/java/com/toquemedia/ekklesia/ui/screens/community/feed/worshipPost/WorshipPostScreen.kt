@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toquemedia.ekklesia.extension.formatTime
 import com.toquemedia.ekklesia.extension.toColor
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.ui.composables.VideoPresence
@@ -57,7 +58,7 @@ fun WorshipPostScreen(
                 VideoPresence(
                     icon = Icons.Rounded.PlayCircle,
                     label = "Assista o video",
-                    duration = "",
+                    duration = post.worship.durationVideo?.formatTime() ?: "",
                     backgroundColor = post.worship.backgroundColor.toColor(),
                     onWatchVideo = {
                         onNavigateToVideo(it)

@@ -3,6 +3,7 @@ package com.toquemedia.ekklesia.ui.screens.bible.worship
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Recorder
 import androidx.camera.video.Recording
@@ -58,8 +59,8 @@ fun VideoRecordingControls(
     videoCapture: VideoCapture<Recorder>,
     onSwitchCamera: () -> Unit,
     onStartRecording: () -> Unit,
-    onStopRecording: () -> Unit,
-    onSaveRecording: (videoUri: String) -> Unit,
+    onStopRecording: (Uri?) -> Unit,
+    onSaveRecording: (String) -> Unit = { _ -> },
     onDeleteRecord: (String) -> Unit,
 ) {
 
@@ -70,6 +71,12 @@ fun VideoRecordingControls(
     var timing by remember { mutableStateOf("00:00") }
     var videoPath by remember { mutableStateOf<String?>(null) }
 
+    fun stopRecording() {
+        isRunning = false
+        recording?.stop()
+        recording = null
+    }
+
     LaunchedEffect(isRunning) {
         if (isRunning) {
             while (true) {
@@ -79,10 +86,7 @@ fun VideoRecordingControls(
             }
 
             if (totalSeconds >= 120) {
-                isRunning = false
-                recording?.stop()
-                recording = null
-                onStopRecording()
+                stopRecording()
             }
         }
     }
@@ -90,10 +94,7 @@ fun VideoRecordingControls(
     fun handleRecordingVideo() {
         when (recordingState) {
             RecordingState.RECORDING -> {
-                isRunning = false
-                recording?.stop()
-                recording = null
-                onStopRecording()
+                stopRecording()
             }
 
             RecordingState.INIT -> {
@@ -132,6 +133,7 @@ fun VideoRecordingControls(
                                 } else {
                                     videoPath = videoFile.absolutePath
                                 }
+                                onStopRecording(event.outputResults.outputUri)
                             }
                         }
                     }
@@ -159,7 +161,7 @@ fun VideoRecordingControls(
             text = "$timing / 02:00",
             color = Color.White
         )
-        
+
         Row(
             modifier = modifier
                 .height(64.dp)
@@ -230,7 +232,6 @@ private fun VideoRecordingControlsPrev() {
         onSwitchCamera = {},
         onStartRecording = {},
         onStopRecording = {},
-        onSaveRecording = {},
         onDeleteRecord = {}
     )
 }
