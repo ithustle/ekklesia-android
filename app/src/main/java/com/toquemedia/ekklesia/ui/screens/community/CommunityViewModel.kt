@@ -184,7 +184,7 @@ class CommunityViewModel @Inject constructor(
                         }
                         _uiState.value = _uiState.value.copy(
                             communities = communityWithMembers.communitiesToJoin(user?.id.toString()),
-                            myCommunities = communityWithMembers,
+                            myCommunities = communityWithMembers.filter { it.community.email == user?.email },
                             loadCommunities = false
                         )
                     }

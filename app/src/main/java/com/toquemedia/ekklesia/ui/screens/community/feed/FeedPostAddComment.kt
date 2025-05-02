@@ -20,6 +20,7 @@ fun FeedPostAddComment(
     modifier: Modifier = Modifier,
     onSendComment: () -> Unit = {},
     onChangeTextComment: (String) -> Unit = {},
+    onLikePost: (PostType) -> Unit = {},
     selectedPost: PostType? = null,
     textComment: String
 ) {
@@ -42,12 +43,12 @@ fun FeedPostAddComment(
 
         ) {
             selectedPost?.let { post ->
-                println("comments: ${post.comments.size}")
                 item {
                     FeedPost(
                         post = post,
                         comments = post.comments,
-                        showLikes = post.likes > 0
+                        showLikes = post.likes > 0,
+                        onLikePost = onLikePost
                     )
 
                     Spacer(Modifier.height(20.dp))

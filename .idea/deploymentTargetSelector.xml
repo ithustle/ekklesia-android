@@ -4,17 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-04-21T11:46:12.771429Z">
+        <DropdownSelection timestamp="2025-04-28T17:07:49.843075Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ithustle/.android/avd/Pixel_3.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ithustle/.android/avd/Pixel_3a_API_34_extension_level_7_arm64-v8a.avd" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="HomeCommunityPrev">
-        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="HomePrev">
         <option name="selectionMode" value="DROPDOWN" />
@@ -26,6 +23,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="EkklesiaImagePrev">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="CreateCommunityScreenPrev">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

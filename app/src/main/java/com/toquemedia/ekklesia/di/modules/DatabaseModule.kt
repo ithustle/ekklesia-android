@@ -1,15 +1,19 @@
 package com.toquemedia.ekklesia.di.modules
 
 import android.content.Context
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.toquemedia.ekklesia.dao.AppDatabase
 import com.toquemedia.ekklesia.dao.BibleDao
-import com.toquemedia.ekklesia.dao.DevocionalDao
 import com.toquemedia.ekklesia.dao.LikeDao
 import com.toquemedia.ekklesia.dao.MessageDao
 import com.toquemedia.ekklesia.dao.NoteDao
+import com.toquemedia.ekklesia.dao.WorshipDao
+import com.toquemedia.ekklesia.model.EkklesiaPlayer
+import com.toquemedia.ekklesia.services.BunnyService
 import com.toquemedia.ekklesia.services.CommunityService
 import com.toquemedia.ekklesia.services.NoteService
 import com.toquemedia.ekklesia.services.OurmannaService
@@ -22,6 +26,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import jakarta.inject.Named
 import retrofit2.Retrofit
 
 @InstallIn(SingletonComponent::class)
@@ -32,7 +37,7 @@ class DatabaseModule {
     @Provides
     fun provideNoteDao(appDatabase: AppDatabase) : NoteDao = appDatabase.NoteDao()
     @Provides
-    fun provideDevocionalDao(appDatabase: AppDatabase) : DevocionalDao = appDatabase.DevocionalDao()
+    fun provideWorshipDao(appDatabase: AppDatabase) : WorshipDao = appDatabase.WorshipDao()
     @Provides
     fun provideMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.MessageDao()
     @Provides
@@ -43,9 +48,19 @@ class DatabaseModule {
     fun provideStorageService(@ApplicationContext context: Context, storage: FirebaseStorage): StorageService = StorageService(context, storage)
     @Provides
     fun provideVerseOfDayService(firestore: FirebaseFirestore): VerseOfDayService = VerseOfDayService(firestore)
+
+    @OptIn(UnstableApi::class)
     @Provides
-    fun provideOurmannaService(retrofit: Retrofit) : OurmannaService = retrofit.create(
+    fun provideEkklesiaPlayer(@ApplicationContext context: Context): EkklesiaPlayer = EkklesiaPlayer(context)
+
+    @Provides
+    fun provideOurmannaService(@Named("ourmannaService") retrofit: Retrofit) : OurmannaService = retrofit.create(
         OurmannaService::class.java)
+
+    @Provides
+    fun provideBunnyService(@Named("bunnyService") retrofit: Retrofit): BunnyService =
+        retrofit.create(BunnyService::class.java)
+
     @Provides
     fun providePostService(firestore: FirebaseFirestore): PostService = PostService(firestore)
     @Provides

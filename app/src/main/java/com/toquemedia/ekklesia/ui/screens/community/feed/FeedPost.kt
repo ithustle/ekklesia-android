@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.QuestionAnswer
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -65,6 +65,7 @@ fun FeedPost(
                 .padding(horizontal = 16.dp),
             user = post.user!!,
             timeAgo = post.createdAt.timeAgo(),
+            color = Color.DarkGray,
             postType = if (post.note == null) stringResource(R.string.post_type_without_note) else stringResource(
                 R.string.post_type_with_note,
             )
@@ -76,8 +77,9 @@ fun FeedPost(
             bookName = verseData.first,
             versicle = verseData.third,
             chapter = verseData.second,
-            verse = post.verse,
+            verse = post.verse.toString(),
             bookNameAsTitle = false,
+            color = PrincipalColor,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .clickable { onNavigateToComments(post.verseId) }
@@ -103,7 +105,9 @@ fun FeedPost(
         }
 
         Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
@@ -129,12 +133,14 @@ fun FeedPost(
                 }
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.comment),
+                    imageVector = Icons.Filled.QuestionAnswer,
                     contentDescription = stringResource(R.string.comment_icon_description),
                     tint = PrincipalColor,
                     modifier = Modifier.size(20.dp)
                 )
             }
+
+            IconButton(onClick = {}) {}
         }
 
         if (showLikes) {

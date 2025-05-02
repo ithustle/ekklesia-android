@@ -9,7 +9,8 @@ import java.util.Date
 @Serializable
 data class PostType(
     val note: NoteEntity? = null,
-    val verse: String = "",
+    val worship: WorshipEntity? = null,
+    val verse: String? = null,
     val user: UserType? = null,
     val verseId: String = "",
     @Serializable(with = DateSerializer::class)

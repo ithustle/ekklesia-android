@@ -3,6 +3,7 @@ package com.toquemedia.ekklesia.services
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
@@ -16,8 +17,12 @@ class PostService @Inject constructor(
     private val subCollectionComments = "comments"
     private val subCollectionLikes = "likes"
 
-    suspend fun addPost(post: PostType) {
-        db.collection(collection).document(post.verseId).set(post).await()
+    suspend fun addPost(post: PostType, isUpdate: Boolean = false) {
+        if (isUpdate) {
+            db.collection(collection).document(post.verseId).set(post, SetOptions.merge()).await()
+        } else {
+            db.collection(collection).document(post.verseId).set(post).await()
+        }
     }
 
     suspend fun removePost(postId: String) {

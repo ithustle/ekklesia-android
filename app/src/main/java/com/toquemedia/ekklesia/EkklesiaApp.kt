@@ -32,6 +32,8 @@ fun EkklesiaApp(
     onNavigateBack: () -> Unit = {},
     currentUser: UserType?,
     topBarState: TopBarState,
+    showTopBar: Boolean = true,
+    videoPlayerVisible: Boolean = false,
     content: @Composable () -> Unit = {}
 ) {
     if (showOverlay) {
@@ -45,7 +47,7 @@ fun EkklesiaApp(
 
     Scaffold(
         topBar = {
-            if (currentUser != null) {
+            if (currentUser != null && showTopBar) {
                 EkklesiaTopBar(
                     title = topBarState.title,
                     isBackgroundTransparent = topBarState.isBackgroundTransparent,
@@ -67,19 +69,17 @@ fun EkklesiaApp(
                             tabSelected == Screen.Chapters(bookName = "") -> EkklesiaBottomNavigation(
                         currentScreen = tabSelected,
                         onTabSelected = onTabItemChange,
-                        modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)
                     )
+
                     else -> return@Scaffold
                 }
             }
         },
-        modifier = Modifier
-            .windowInsetsPadding(WindowInsets.navigationBars)
+        modifier = if (videoPlayerVisible) Modifier else Modifier.windowInsetsPadding(WindowInsets.navigationBars)
     ) { padding ->
         Box(
             modifier = modifier
                 .padding(padding)
-                .windowInsetsPadding(WindowInsets.navigationBars)
         ) {
             content()
         }
@@ -100,6 +100,7 @@ private fun EkklesiaAppPrev() {
     )
     EkklesiaApp(
         currentUser = currentUser,
+        showTopBar = true,
         topBarState = TopBarState(title = "Aplicação Ekklesia")
     )
 }

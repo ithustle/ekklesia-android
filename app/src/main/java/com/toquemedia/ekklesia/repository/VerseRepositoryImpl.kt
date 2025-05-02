@@ -44,16 +44,20 @@ class VerseRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getVerseOfDay(): VerseResponse? {
-        val regex = Regex("""([\w\s]+)\s(\d+):(\d+)""")
-        val response = ourmannaService.getVerseOfDay()
+        try {
+            val regex = Regex("""([\w\s]+)\s(\d+):(\d+)""")
+            val response = ourmannaService.getVerseOfDay()
 
-        val matchResult = regex.find(response.verse.details.reference)
+            val matchResult = regex.find(response.verse.details.reference)
 
-        return matchResult?.let {
-            val (book, cap, verse) = it.destructured
-            val verseOfDay = Triple(book.toPortuguese(), cap.toInt(), verse.toInt())
-            val stats = verseService.getVerseOfDay()
-            VerseResponse(verseOfDay, stats)
+            return matchResult?.let {
+                val (book, cap, verse) = it.destructured
+                val verseOfDay = Triple(book.toPortuguese(), cap.toInt(), verse.toInt())
+                val stats = verseService.getVerseOfDay()
+                VerseResponse(verseOfDay, stats)
+            }
+        } catch (e: Exception) {
+            throw e
         }
     }
 

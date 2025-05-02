@@ -15,6 +15,7 @@
     <string name="new_testament">Novo Testamento</string>
     <string name="old_testament">Antigo Testamento</string>
     <string name="community">Comunidades</string>
+    <string name="my_community">Minhas Comunidades</string>
     <string name="newCommunity">Nova comunidade</string>
     <string name="save_community">Criar comunidade</string>
     <string name="default_web_client_id">106484845222925049776</string>
@@ -53,6 +54,7 @@
     <string name="loading_community">A carregar a comunidade...</string>
     <string name="loading_community_messages">A carregar as mensagens...</string>
     <string name="add_post_type">Adicionou</string>
+    <string name="post_type_worship">Adicionou um devocional</string>
     <string name="post_type_without_note">Marcou como favorito</string>
     <string name="post_type_with_note">Adicionou uma nota</string>
     <string name="comment_icon_description">Comentar a publicação</string>
@@ -64,4 +66,19 @@
     <string name="no_posts">Sem publicação no momento.</string>
     <string name="post_description">Ao reagires sobre um versículo bíblico aparecerá aqui como publicação</string>
     <string name="loading_chapters">A carregar os capítulos</string>
+    <string name="add_video">Criar um video</string>
+    <string name="save_record">Salvar a gravação e usar no devocional</string>
+    <string name="recording">Botão para gravar, parar ou eliminar</string>
+    <string name="switch_camera">Trocar a câmera</string>
+    <string name="close_camera">Fechar e cancelar a gravação</string>
+    <string name="delete_created_video">Eliminar video criado\n</string>
+    <string name="video_upload_message">Video carregado</string>
+    <string name="logout_description">Sair da aplicação</string>
+    <string name="menu_devocional">Meus devocionais</string>
+    <string name="share_description">Partilhar o devocional</string>
+    <string name="menu_edit">Editar</string>
+    <string name="share_to_community">Partilhar</string>
+    <string name="bookmark_icon_description">Guardar a publicação</string>
+    <string name="play_description_icon">Botão de play</string>
+    <string name="duration">min</string>
 </resources>

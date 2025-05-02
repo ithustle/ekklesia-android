@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,8 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -39,9 +42,13 @@ import com.toquemedia.ekklesia.ui.screens.community.create.CreateCommunityScreen
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedPostAddComment
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
+import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.VideoPlayer
+import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.VideoPlayerViewModel
+import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.WorshipPostScreen
 import com.toquemedia.ekklesia.ui.screens.community.list.CommunityListScreen
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
+@OptIn(UnstableApi::class)
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.Communities> {
 
@@ -72,7 +79,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 viewModel.deleteCommunity(it)
                 appViewModel.showBackgroundOverlay = false
             },
-            myCommunities = uiState.myCommunities.filter { it.community.email == currentUser?.email },
+            myCommunities = uiState.myCommunities,
             openDialog = uiState.openDialog,
             onOpenDialogChange = {
                 appViewModel.showBackgroundOverlay = it
@@ -139,6 +146,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         }
 
         LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = selectedCommunity?.community?.communityName.toString(),
@@ -175,7 +183,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 posts = state.posts,
                 likedPosts = state.likedPosts,
                 loadingPosts = state.loadingPosts,
-                selectedPost = state.selectedPost,
                 user = user,
                 onNavigateToComments = {
                     navController.navigateToAddCommentOnPost(postId = it, communityId = community.community.id)
@@ -199,6 +206,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val arg = stackEntry.toRoute<Screen.CommentPost>()
         val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
+        val appViewModel = LocalAppViewModel.current
 
         val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(parentEntry)
         val state by sharedViewModel.uiState.collectAsStateWithLifecycle()
@@ -209,14 +217,73 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             }
         }
 
-        FeedPostAddComment(
-            textComment = state.textComment,
-            selectedPost = state.selectedPost,
-            onChangeTextComment = state.onChangeTextComment,
-            onSendComment = {
-                sharedViewModel.addCommentOnPost(communityId = arg.communityId)
+        state.selectedPost?.let { post ->
+            post.worship?.let {
+
+                LaunchedEffect(Unit) {
+                    appViewModel.showTopBar = false
+                }
+
+                WorshipPostScreen(
+                    post = post,
+                    onNavigateToVideo = {
+                        navController.navigateToPlayer(videoUrl = it)
+                    }
+                )
+            } ?: run {
+                FeedPostAddComment(
+                    textComment = state.textComment,
+                    selectedPost = state.selectedPost,
+                    onLikePost = {
+                        sharedViewModel.likeAPost(post = it, communityId = arg.communityId)
+                    },
+                    onChangeTextComment = state.onChangeTextComment,
+                    onSendComment = {
+                        sharedViewModel.addCommentOnPost(communityId = arg.communityId)
+                    }
+                )
             }
-        )
+        }
+    }
+
+    composable<Screen.VideoPlayer> {
+
+        val appViewModel = LocalAppViewModel.current
+        val arg = it.toRoute<Screen.VideoPlayer>()
+        val video = arg.videoUrl.toUri()
+
+        val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
+        val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(parentEntry)
+        val state by sharedViewModel.uiState.collectAsStateWithLifecycle()
+
+        val viewModel = hiltViewModel<VideoPlayerViewModel>(it)
+        val playerState by viewModel.uiState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(Unit) {
+            appViewModel.showTopBar = false
+            appViewModel.videoPlayerVisible = true
+            viewModel.prepareVideo(video)
+        }
+
+        state.selectedPost?.let {
+            playerState.player?.let { player ->
+                VideoPlayer(
+                    post = it,
+                    player = player,
+                    onPlay = viewModel::playVideo,
+                    onPause = viewModel::pauseVideo,
+                    onSeekBack = viewModel::handleReplay,
+                    onSeekForward = viewModel::handleReplay,
+                    buffering = playerState.buffering,
+                    isPlaying = playerState.isPlaying,
+                    onReleasePlayer = {
+                        viewModel.releasePlayer()
+                        appViewModel.videoPlayerVisible = false
+                        navController.popBackStack()
+                    }
+                )
+            }
+        }
     }
 
     composable<Screen.Chat> { stackEntry ->
@@ -248,9 +315,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 }
 
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
-fun NavController.navigateToCommunityFeed() {
-    this.navigateBetweenScreens(Screen.CommunityFeed)
-}
+fun NavController.navigateToCommunityFeed() = this.navigateBetweenScreens(Screen.CommunityFeed)
+fun NavController.navigateToPlayer(videoUrl: String) = this.navigateBetweenScreens(Screen.VideoPlayer(videoUrl = videoUrl))
 
 fun NavController.navigateToChatScreen(community: CommunityType) =
     this.navigateBetweenScreens(Screen.Chat(communityId = community.id))

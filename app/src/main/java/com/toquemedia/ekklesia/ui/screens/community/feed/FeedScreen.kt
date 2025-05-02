@@ -22,6 +22,7 @@ import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.model.UserType
+import com.toquemedia.ekklesia.model.WorshipEntity
 import com.toquemedia.ekklesia.ui.composables.EmptyScreen
 import com.toquemedia.ekklesia.ui.composables.ScreenAppLoading
 import com.toquemedia.ekklesia.ui.screens.community.feed.story.FeedStories
@@ -35,7 +36,6 @@ fun FeedScreen(
     user: UserType? = null,
     loadingPosts: Boolean = false,
     posts: List<PostType> = emptyList(),
-    selectedPost: PostType? = null,
     likedPosts: List<String> = emptyList(),
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
@@ -86,22 +86,34 @@ fun FeedScreen(
                 Spacer(Modifier.height(8.dp))
             }
 
-            items(items = posts) {
+            items(items = posts) { post ->
                 Box(
                     modifier = modifier
                         .background(color = Color.White)
                         .fillMaxWidth()
                 ) {
-                    FeedPost(
-                        showLastComment = it.comments.isNotEmpty(),
-                        showLikes = false, //it.likes > 0,
-                        liked = likedPosts.contains("${it.verseId}_${community.community.id}"),
-                        post = it,
-                        comments = it.comments,
-                        onNavigateToComments = onNavigateToComments,
-                        onLikePost = onLikePost,
-                        onRemoveLikePost = onRemoveLikePost,
-                    )
+                    post.worship?.let {
+                        FeedPostWorship(
+                            post = post,
+                            comments = post.comments,
+                            onNavigateToWorship = onNavigateToComments,
+                            onNavigateToComments = onNavigateToComments,
+                            onLikePost = onLikePost,
+                            onRemoveLikePost = onRemoveLikePost,
+                            liked = likedPosts.contains(post.verseId),
+                        )
+                    } ?: run {
+                        FeedPost(
+                            showLastComment = post.comments.isNotEmpty(),
+                            showLikes = false, //it.likes > 0,
+                            liked = likedPosts.contains("${post.verseId}_${community.community.id}"),
+                            post = post,
+                            comments = post.comments,
+                            onNavigateToComments = onNavigateToComments,
+                            onLikePost = onLikePost,
+                            onRemoveLikePost = onRemoveLikePost,
+                        )
+                    }
                 }
                 Spacer(Modifier.height(8.dp))
             }

@@ -1,6 +1,5 @@
 package com.toquemedia.ekklesia.utils.mocks
 
-import androidx.core.net.toUri
 import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.NoteEntity
 import com.toquemedia.ekklesia.model.PostType
@@ -34,6 +33,16 @@ object PostsMock {
                         id = "107d5865-fa65-4687-baca-26f500a31cd4"
                     )
                 )
+            ),
+            PostType(
+                worship = WorshipMock.getAll().last(),
+                user = UserType(
+                    id = "1",
+                    displayName = "Elsa Tomás",
+                    photo = "https://picsum.photos/200/300"
+                ),
+                verseId = "Jó_19_25_1",
+                createdAt = Date()
             ),
             PostType(
                 note = NoteEntity(

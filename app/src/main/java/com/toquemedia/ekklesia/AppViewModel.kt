@@ -13,6 +13,7 @@ import com.toquemedia.ekklesia.model.BookType
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.model.UserType
+import com.toquemedia.ekklesia.model.WorshipEntity
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,7 +45,11 @@ class AppViewModel @Inject constructor(
 
     var selectedCommunity by mutableStateOf<CommunityWithMembers?>(null)
 
+    var videoPlayerVisible by mutableStateOf<Boolean>(false)
+
     var showBackgroundOverlay by mutableStateOf(false)
+
+    var showTopBar by mutableStateOf(true)
 
     var activityContext: Activity? = null
         get() = field

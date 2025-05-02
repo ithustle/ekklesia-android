@@ -8,6 +8,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
@@ -17,29 +18,36 @@ fun EkklesiaButton(
     modifier: Modifier = Modifier,
     filled: Boolean = true,
     label: String,
+    color: Color = PrincipalColor,
     enabled: Boolean = true,
+    loading: Boolean = false,
     onClick: () -> Unit
 ) {
-    if (filled) {
-        Button(
-            modifier = modifier,
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = PrincipalColor),
-            onClick = onClick,
-            enabled = enabled
-        ) {
-            Text(label)
-        }
+    
+    if (loading) {
+        EkklesiaProgress(color = color)
     } else {
-        OutlinedButton(
-            modifier = modifier,
-            shape = RoundedCornerShape(4.dp),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = PrincipalColor),
-            border = BorderStroke(width = 2.dp, color = PrincipalColor),
-            onClick = onClick,
-            enabled = enabled
-        ) {
-            Text(label)
+        if (filled) {
+            Button(
+                modifier = modifier,
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = color),
+                onClick = onClick,
+                enabled = enabled
+            ) {
+                Text(label)
+            }
+        } else {
+            OutlinedButton(
+                modifier = modifier,
+                shape = RoundedCornerShape(4.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = color),
+                border = BorderStroke(width = 2.dp, color = color),
+                onClick = onClick,
+                enabled = enabled
+            ) {
+                Text(label)
+            }
         }
     }
 }
