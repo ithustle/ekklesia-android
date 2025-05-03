@@ -2,6 +2,7 @@ package com.toquemedia.ekklesia.ui.screens.community.feed.story
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -26,35 +27,31 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 fun FeedAddStory(
     modifier: Modifier = Modifier,
     userPhoto: Uri,
-    onAddStory: () -> Unit = {}
+    hasStory: Boolean = false,
+    onShowStory: () -> Unit = {}
 ) {
+
+    val modifierStory = if (hasStory) Modifier
+        .size(64.dp)
+        .clip(CircleShape)
+        .border(width = 3.dp, color = PrincipalColor, shape = CircleShape) else
+        Modifier
+            .size(64.dp)
+            .clip(CircleShape)
+
     Box(
         modifier
             .size(64.dp)
             .clickable {
-                onAddStory()
+                onShowStory()
             },
         contentAlignment = Alignment.BottomEnd
     ) {
         EkklesiaImage(
             model = userPhoto,
             contentDescription = stringResource(R.string.profileTitleScreen),
-            modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape)
+            modifier = modifierStory,
         )
-        Box(
-            Modifier
-                .clip(CircleShape)
-                .background(color = Color.White)
-                .size(24.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.AddCircle,
-                contentDescription = stringResource(R.string.add_stories_description),
-                tint = PrincipalColor
-            )
-        }
     }
 }
 

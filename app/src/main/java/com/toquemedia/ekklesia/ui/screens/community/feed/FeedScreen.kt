@@ -77,7 +77,7 @@ fun FeedScreen(
                         modifier = Modifier
                             .padding(16.dp),
                         user = user,
-                        onAddStory = onAddStory
+                        onShowStory = onAddStory
                     )
                 }
             }
