@@ -21,5 +21,6 @@ data class VerseUiState(
     val entryNote: String = "",
     val onEntryNoteChange: (String) -> Unit = {},
     val savingNote: Boolean = false,
+    val addingStory: Boolean = false,
     val onSavingNote: (Boolean) -> Unit = {}
 )

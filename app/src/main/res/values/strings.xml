@@ -81,4 +81,5 @@
     <string name="bookmark_icon_description">Guardar a publicação</string>
     <string name="play_description_icon">Botão de play</string>
     <string name="duration">min</string>
+    <string name="publish_story">Publicar</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.ekklesia.model.NoteEntity
 import com.toquemedia.ekklesia.model.PostType
+import com.toquemedia.ekklesia.model.StoryType
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.NoteRepositoryImpl
 import com.toquemedia.ekklesia.repository.PostRepositoryImpl
@@ -79,7 +80,6 @@ class VerseViewModel @Inject constructor(
     }
 
     fun changeChapter(chapter: Int) {
-        println("chapter: $chapter")
         _uiState.value = _uiState.value.copy(chapter = chapter)
     }
 
@@ -175,6 +175,22 @@ class VerseViewModel @Inject constructor(
             _uiState.value.onSelectVerse("", -1)
             _uiState.value.onEntryNoteChange("")
             _uiState.value.onSavingNote(false)
+        }
+    }
+
+    fun addStoryToCommunity(selectedVerse: String, bookNameWithVersicle: String, backgroundColor: Int, verseColor: Int) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(addingStory = true) }
+            val story = StoryType(
+                verse = selectedVerse,
+                user = userRepository.getCurrentUser(),
+                bookNameWithVersicle = bookNameWithVersicle,
+                communityId = userRepository.getCommunitiesId(),
+                backgroundColor = backgroundColor,
+                verseColor = verseColor
+            )
+            verseRepository.addStoryToCommunity(story)
+            _uiState.update { it.copy(addingStory = false) }
         }
     }
 }

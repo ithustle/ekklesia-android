@@ -80,6 +80,12 @@ sealed class Screen() {
     object CommunityFeed: Screen()
 
     @Serializable
+    data class StoryCreator(
+        val verse: String,
+        val bookWithVersicle: String
+    ): Screen()
+
+    @Serializable
     data class NoteVerse(
         val bookName: String?,
         val chapterNumber: String,

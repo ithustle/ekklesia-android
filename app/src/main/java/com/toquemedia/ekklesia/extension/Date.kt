@@ -36,3 +36,10 @@ fun Date.getGreeting(): String {
         else -> "Boa noite"
     }
 }
+
+
+fun Date.addDateForTomorrow(): Date {
+    return Calendar.getInstance().apply {
+        add(Calendar.DAY_OF_YEAR, 1)
+    }.time
+}

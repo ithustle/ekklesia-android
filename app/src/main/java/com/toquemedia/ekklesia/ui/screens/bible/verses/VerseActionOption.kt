@@ -7,12 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material.icons.rounded.Diversity3
 import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SheetState
@@ -20,9 +21,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.ui.composables.EkklesiaModalSheet
 import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 
@@ -33,7 +37,7 @@ fun VerseActionOption(
     hasDevocional: Boolean,
     onDismissRequest: (SheetState) -> Unit = {},
     onFavoriteVerse: () -> Unit = {},
-    onShareVerse: () -> Unit = {},
+    onAddStory: () -> Unit = {},
     onAddNoteToVerse: () -> Unit = {},
     onSelectVerseForDevocional: () -> Unit = {}
 ) {
@@ -42,7 +46,7 @@ fun VerseActionOption(
     ) {
         ActionOptions(
             onFavoriteVerse = onFavoriteVerse,
-            onShareVerse = onShareVerse,
+            onAddStory = onAddStory,
             onAddNoteToVerse = onAddNoteToVerse,
             onSelectVerseForDevocional = onSelectVerseForDevocional,
             hasNote = hasNote,
@@ -54,23 +58,38 @@ fun VerseActionOption(
 @Composable
 fun ActionOption(
     modifier: Modifier = Modifier,
-    actionOptionIcon: ImageVector,
+    hasBackgroundColor: Boolean = true,
+    actionOptionIcon: ImageVector? = null,
+    actionOptionPainterIcon: Painter? = null,
     onActionOptionClick: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(size = 8.dp))
-            .background(color = PrincipalColor)
+            .background(color = if (hasBackgroundColor) PrincipalColor else Color.Transparent)
             .clickable {
                 onActionOptionClick()
             }
             .padding(16.dp)
     ) {
-        Icon(
-            imageVector = actionOptionIcon,
-            contentDescription = null,
-            tint = Color.White
-        )
+
+        if (actionOptionIcon != null) {
+            Icon(
+                imageVector = actionOptionIcon,
+                contentDescription = null,
+                tint = Color.White
+            )
+        }
+
+        if (actionOptionPainterIcon != null) {
+            Icon(
+                painter = actionOptionPainterIcon,
+                contentDescription = null,
+                tint = Color.White,
+                modifier = Modifier
+                    .size(24.dp)
+            )
+        }
     }
 }
 
@@ -80,7 +99,7 @@ fun ActionOptions(
     hasNote: Boolean,
     hasDevocional: Boolean,
     onFavoriteVerse: () -> Unit = {},
-    onShareVerse: () -> Unit = {},
+    onAddStory: () -> Unit = {},
     onAddNoteToVerse: () -> Unit = {},
     onSelectVerseForDevocional: () -> Unit = {}
 ) {
@@ -117,14 +136,25 @@ fun ActionOptions(
         }
         ActionOption(
             modifier = modifier,
-            actionOptionIcon = Icons.Rounded.Share,
+            actionOptionPainterIcon = painterResource(R.drawable.story),
             onActionOptionClick = {
-                onShareVerse()
+                onAddStory()
             }
         )
     }
 }
 
+@Preview
+@Composable
+private fun XXX() {
+    ActionOption(
+        modifier = Modifier,
+        actionOptionPainterIcon = painterResource(R.drawable.story),
+        onActionOptionClick = {
+
+        }
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -135,7 +165,7 @@ private fun VerseActionOptionPrev() {
         hasNote = false,
         onDismissRequest = {},
         onFavoriteVerse = {},
-        onShareVerse = {},
+        onAddStory = {},
         onAddNoteToVerse = {},
     )
 }

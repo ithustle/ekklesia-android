@@ -2,9 +2,11 @@ package com.toquemedia.ekklesia.repository
 
 import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.extension.toPortuguese
+import com.toquemedia.ekklesia.model.StoryType
 import com.toquemedia.ekklesia.model.interfaces.VerseRepository
 import com.toquemedia.ekklesia.services.OurmannaService
 import com.toquemedia.ekklesia.services.StatsVerseOfDay
+import com.toquemedia.ekklesia.services.StoryService
 import com.toquemedia.ekklesia.services.UserService
 import com.toquemedia.ekklesia.services.VerseOfDayService
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,7 @@ class VerseRepositoryImpl @Inject constructor(
     private val ourmannaService: OurmannaService,
     private val userService: UserService,
     private val verseService: VerseOfDayService,
+    private val storyService: StoryService
 ): VerseRepository {
 
     val markedVerses: MutableStateFlow<List<String>> = verse.versesMarked
@@ -69,6 +72,10 @@ class VerseRepositoryImpl @Inject constructor(
     override suspend fun shareVerseOfDay(): StatsVerseOfDay {
         verseService.saveSharedVerseOfDay()
         return verseService.getVerseOfDay()
+    }
+
+    override suspend fun addStoryToCommunity(story: StoryType) {
+        storyService.addStory(story)
     }
 
     internal fun getId(bookName: String, chapter: Int, versicle: Int): String {
