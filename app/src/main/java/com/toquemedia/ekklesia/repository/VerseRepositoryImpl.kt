@@ -78,6 +78,10 @@ class VerseRepositoryImpl @Inject constructor(
         storyService.addStory(story)
     }
 
+    override suspend fun getStories(communityId: String): List<StoryType> {
+        return storyService.getStories(communityId)
+    }
+
     internal fun getId(bookName: String, chapter: Int, versicle: Int): String {
         val user = userService.getCurrentUser()
         return "${bookName}_${chapter}_${versicle}_${user?.id}"

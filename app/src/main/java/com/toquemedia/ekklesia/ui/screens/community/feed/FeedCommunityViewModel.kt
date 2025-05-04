@@ -6,6 +6,7 @@ import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.PostRepositoryImpl
+import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class FeedCommunityViewModel @Inject constructor(
     private val repository: PostRepositoryImpl,
     private val user: AuthRepositoryImpl,
+    private val verseRepository: VerseRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<FeedCommunityUiState>(FeedCommunityUiState())
@@ -118,6 +120,13 @@ class FeedCommunityViewModel @Inject constructor(
             }.awaitAll()
 
             _uiState.update { it.copy(posts = all, loadingPosts = false) }
+        }
+    }
+
+    fun getStories(communityId: String) {
+        viewModelScope.launch {
+            val stories = verseRepository.getStories(communityId)
+            _uiState.update { it.copy(stories = stories) }
         }
     }
 

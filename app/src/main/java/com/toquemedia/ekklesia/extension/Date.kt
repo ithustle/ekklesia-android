@@ -38,8 +38,8 @@ fun Date.getGreeting(): String {
 }
 
 
-fun Date.addDateForTomorrow(): Date {
+fun Date.addDateForTomorrow(value: Int = 1): Date {
     return Calendar.getInstance().apply {
-        add(Calendar.DAY_OF_YEAR, 1)
+        add(Calendar.DAY_OF_YEAR, value)
     }.time
 }

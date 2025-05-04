@@ -1,8 +1,10 @@
 package com.toquemedia.ekklesia.services
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query.Direction.DESCENDING
 import com.toquemedia.ekklesia.model.StoryType
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 import javax.inject.Inject
 
 class StoryService @Inject constructor(
@@ -13,5 +15,14 @@ class StoryService @Inject constructor(
 
     suspend fun addStory(story: StoryType) {
         db.collection(collection).add(story).await()
+    }
+
+    suspend fun getStories(communityId: String): List<StoryType> {
+        val snapshot = db.collection(collection)
+            .whereIn("communityId", listOf(communityId))
+            .whereGreaterThanOrEqualTo("expirationDate", Date())
+            .orderBy("createdAt", DESCENDING)
+            .get().await()
+        return snapshot.toObjects(StoryType::class.java)
     }
 }

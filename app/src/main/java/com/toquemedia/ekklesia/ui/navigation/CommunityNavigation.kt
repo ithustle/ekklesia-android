@@ -193,13 +193,22 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 onRemoveLikePost = {
                     viewModel.likeAPost(post = it, communityId = community.community.id, isRemoving = true)
                 },
-                onAddStory = {
-                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT)
-                        .show()
-                    //navController.navigateToChatScreen(community = community)
+                onShowStory = {
+                    navController.navigateToStories(communityId = community.community.id)
                 }
             )
         }
+    }
+
+    composable<Screen.StoriesNavigation> {
+
+        val appViewModel = LocalAppViewModel.current
+
+        LaunchedEffect(Unit) {
+            appViewModel.showTopBar = false
+        }
+
+
     }
 
     composable<Screen.CommentPost> { stackEntry ->
@@ -317,9 +326,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
 fun NavController.navigateToCommunityFeed() = this.navigateBetweenScreens(Screen.CommunityFeed)
 fun NavController.navigateToPlayer(videoUrl: String) = this.navigateBetweenScreens(Screen.VideoPlayer(videoUrl = videoUrl))
-
-fun NavController.navigateToChatScreen(community: CommunityType) =
-    this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
-
-fun NavController.navigateToAddCommentOnPost(postId: String, communityId: String) =
-    this.navigateBetweenScreens(Screen.CommentPost(postId, communityId))
+fun NavController.navigateToStories(communityId: String) = this.navigateBetweenScreens(Screen.StoriesNavigation(communityId))
+fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
+fun NavController.navigateToAddCommentOnPost(postId: String, communityId: String) = this.navigateBetweenScreens(Screen.CommentPost(postId, communityId))

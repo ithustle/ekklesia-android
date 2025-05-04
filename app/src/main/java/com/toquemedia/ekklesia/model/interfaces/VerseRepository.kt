@@ -13,4 +13,5 @@ interface VerseRepository {
     suspend fun handleLikeVerseOfDay(isForLike: Boolean = true): StatsVerseOfDay
     suspend fun shareVerseOfDay(): StatsVerseOfDay
     suspend fun addStoryToCommunity(story: StoryType)
+    suspend fun getStories(communityId: String): List<StoryType>
 }

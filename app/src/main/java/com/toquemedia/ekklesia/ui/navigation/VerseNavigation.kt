@@ -61,6 +61,7 @@ fun NavGraphBuilder.verseNavigation(
         val book = appViewModel.books.find { it.bookName == bookName }
 
         LaunchedEffect(versesStates.chapter) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = "Capítulo ${versesStates.chapter}",
@@ -151,7 +152,6 @@ fun NavGraphBuilder.verseNavigation(
                 )
             },
             onNextVerse = { versicle ->
-                println("$versicle ${versesStates.chapter}")
                 if (versicle <= versesStates.chapter) {
                     vmVerses.changeChapter(versicle + 1)
                     scope.launch {

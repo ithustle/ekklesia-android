@@ -86,6 +86,9 @@ sealed class Screen() {
     ): Screen()
 
     @Serializable
+    data class StoriesNavigation(val communityId: String): Screen()
+
+    @Serializable
     data class NoteVerse(
         val bookName: String?,
         val chapterNumber: String,

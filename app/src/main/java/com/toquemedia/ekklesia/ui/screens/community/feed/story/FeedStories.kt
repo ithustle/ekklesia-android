@@ -8,12 +8,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.toquemedia.ekklesia.model.StoryType
 import com.toquemedia.ekklesia.model.UserType
 
 @Composable
 fun FeedStories(
     modifier: Modifier = Modifier,
     user: UserType? = null,
+    hasStory: Boolean = false,
+    myStories: List<StoryType>,
+    stories: List<StoryType>,
     onShowStory: () -> Unit = {}
 ) {
     Row(
@@ -24,10 +28,15 @@ fun FeedStories(
             Modifier
                 .padding(end = 12.dp),
             userPhoto = user?.photo.toString().toUri(),
-            onShowStory = onShowStory
+            hasStory = hasStory,
+            onShowStory = {
+                if (hasStory) {
+                    onShowStory()
+                }
+            }
         )
 
-        List(0) {
+        List(stories.size) {
             FeedStory(
                 modifier = Modifier
                     .padding(end = 12.dp)
@@ -39,5 +48,5 @@ fun FeedStories(
 @Preview(showBackground = true)
 @Composable
 private fun FeedStoriesPrev() {
-    FeedStories()
+    FeedStories(stories = emptyList(), myStories = emptyList())
 }

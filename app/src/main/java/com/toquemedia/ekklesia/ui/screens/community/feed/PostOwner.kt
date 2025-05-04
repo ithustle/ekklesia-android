@@ -27,7 +27,7 @@ import com.toquemedia.ekklesia.utils.mocks.PostsMock
 @Composable
 fun PostOwner(
     user: UserType,
-    postType: String,
+    postType: String? = null,
     timeAgo: String,
     color: Color,
     modifier: Modifier = Modifier
@@ -54,12 +54,14 @@ fun PostOwner(
                 color = color
             )
 
-            Text(
-                text = postType,
-                fontSize = 10.sp,
-                color = color,
-                lineHeight = 2.sp
-            )
+            postType?.let {
+                Text(
+                    text = it,
+                    fontSize = 10.sp,
+                    color = color,
+                    lineHeight = 2.sp
+                )
+            }
             Text(
                 text = timeAgo,
                 fontSize = 10.sp,
