@@ -20,6 +20,9 @@ fun FeedStories(
     stories: List<StoryType>,
     onShowStory: (UserType) -> Unit = {}
 ) {
+
+    val uniqueStories = stories.distinctBy { it.user?.id }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -35,13 +38,14 @@ fun FeedStories(
             }
         )
 
-        List(stories.size) {
+        List(uniqueStories.size) {
+            val story = uniqueStories[it]
             FeedStory(
-                userPhoto = stories[it].user?.photo.toString(),
+                userPhoto = story.user?.photo.toString(),
                 modifier = Modifier
                     .padding(end = 12.dp),
                 onClickToShowStory = {
-                    stories[it].user?.let { onShowStory(it) }
+                    story.user?.let { onShowStory(it) }
                 }
             )
         }
