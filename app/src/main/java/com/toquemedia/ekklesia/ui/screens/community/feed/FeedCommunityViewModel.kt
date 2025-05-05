@@ -112,7 +112,7 @@ class FeedCommunityViewModel @Inject constructor(
         viewModelScope.launch {
 
             val cachedPosts = cache.getCache<List<PostType>>(communityId, object : TypeToken<List<PostType>>() {})
-            
+
             if (cachedPosts == null) {
                 _uiState.update { it.copy(loadingPosts = true) }
             } else {

@@ -218,7 +218,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         }
 
         StoriesViewScreen(
-            stories = state.stories.filter { it.user?.email == arg.email },
+            stories = state.stories.filter { it.user?.email == arg.email }.sortedBy { it.createdAt },
             onFinishStory = {
                 navController.popBackStack()
             }
