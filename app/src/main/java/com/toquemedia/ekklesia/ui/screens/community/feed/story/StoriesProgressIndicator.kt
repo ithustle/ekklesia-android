@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.ProgressIndicatorDefaults.drawStopIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +43,15 @@ fun StoriesProgressIndicator(
                 modifier = Modifier.width(indicatorWidth),
                 color = Color.White,
                 trackColor = Color.Gray,
-                gapSize = 10.dp
+                gapSize = 10.dp,
+                drawStopIndicator = {
+                    drawStopIndicator(
+                        drawScope = this,
+                        stopSize = 0.dp,
+                        color = Color.White,
+                        strokeCap = ProgressIndicatorDefaults.LinearStrokeCap
+                    )
+                }
             )
         }
     }

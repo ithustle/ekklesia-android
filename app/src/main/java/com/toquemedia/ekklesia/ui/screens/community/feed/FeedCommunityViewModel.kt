@@ -2,6 +2,8 @@ package com.toquemedia.ekklesia.ui.screens.community.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.reflect.TypeToken
+import com.toquemedia.ekklesia.dao.AppCacheDao
 import com.toquemedia.ekklesia.model.CommentType
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
@@ -20,7 +22,8 @@ import javax.inject.Inject
 class FeedCommunityViewModel @Inject constructor(
     private val repository: PostRepositoryImpl,
     private val user: AuthRepositoryImpl,
-    private val verseRepository: VerseRepositoryImpl
+    private val verseRepository: VerseRepositoryImpl,
+    private val cache: AppCacheDao,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<FeedCommunityUiState>(FeedCommunityUiState())
@@ -107,7 +110,14 @@ class FeedCommunityViewModel @Inject constructor(
 
     fun getAllPosts(communityId: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(loadingPosts = true) }
+
+            val cachedPosts = cache.getCache<List<PostType>>(communityId, object : TypeToken<List<PostType>>() {})
+            
+            if (cachedPosts == null) {
+                _uiState.update { it.copy(loadingPosts = true) }
+            } else {
+                _uiState.update { it.copy(posts = cachedPosts) }
+            }
 
             val posts = repository.getPosts(communityId)
 
@@ -119,6 +129,7 @@ class FeedCommunityViewModel @Inject constructor(
                 }
             }.awaitAll()
 
+            cache.saveCache(communityId, all)
             _uiState.update { it.copy(posts = all, loadingPosts = false) }
         }
     }

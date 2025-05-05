@@ -19,7 +19,7 @@ class StoryService @Inject constructor(
 
     suspend fun getStories(communityId: String): List<StoryType> {
         val snapshot = db.collection(collection)
-            .whereIn("communityId", listOf(communityId))
+            .whereArrayContains("communityId", communityId)
             .whereGreaterThanOrEqualTo("expirationDate", Date())
             .orderBy("createdAt", DESCENDING)
             .get().await()

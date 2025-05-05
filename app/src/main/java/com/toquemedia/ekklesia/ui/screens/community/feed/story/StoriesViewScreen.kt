@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,14 +36,15 @@ import com.toquemedia.ekklesia.ui.screens.community.feed.PostOwner
 import com.toquemedia.ekklesia.utils.mocks.StoriesMock
 import kotlinx.coroutines.delay
 
-const val STORY_DURATION = 5000L
+const val STORY_DURATION = 10000L
 
 @Composable
 fun StoriesViewScreen(
     stories: List<StoryType>,
+    onFinishStory: () -> Unit = {}
 ) {
 
-    var currentStoryIndex by remember { mutableStateOf(0) }
+    var currentStoryIndex by remember { mutableIntStateOf(0) }
     var progress by remember { mutableFloatStateOf(0f) }
     var isPaused by remember { mutableStateOf(false) }
     val pagerState = rememberPagerState(
@@ -75,6 +77,7 @@ fun StoriesViewScreen(
                     currentStoryIndex++
                     progress = 0f
                 } else {
+                    onFinishStory()
                     break
                 }
             }
@@ -93,7 +96,6 @@ fun StoriesViewScreen(
         ) { page ->
 
             val story = stories[page]
-
 
             Box(
                 modifier = Modifier

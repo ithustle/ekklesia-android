@@ -41,7 +41,7 @@ fun FeedScreen(
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
     onRemoveLikePost: (PostType) -> Unit = {},
-    onShowStory: () -> Unit = {}
+    onShowStory: (UserType) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -79,7 +79,6 @@ fun FeedScreen(
                             .padding(16.dp),
                         user = user,
                         hasStory = stories.any { it.user?.email == user?.email },
-                        myStories = stories.filter { it.user?.email == user?.email },
                         stories = stories.filter { it.user?.email != user?.email },
                         onShowStory = onShowStory
                     )
