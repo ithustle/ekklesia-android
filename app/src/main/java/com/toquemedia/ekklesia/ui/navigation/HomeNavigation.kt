@@ -16,6 +16,7 @@ import com.toquemedia.ekklesia.LocalAppViewModel
 import com.toquemedia.ekklesia.extension.getGreeting
 import com.toquemedia.ekklesia.model.TopBarState
 import com.toquemedia.ekklesia.routes.Screen
+import com.toquemedia.ekklesia.ui.composables.EkklesiaNoInternet
 import com.toquemedia.ekklesia.ui.screens.community.CommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.home.HomeScreen
 import com.toquemedia.ekklesia.ui.screens.home.HomeViewModel
@@ -61,25 +62,37 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             value = true
         }
 
-        HomeScreen(
-            communitiesUserIn = communityState.communitiesUserIn,
-            loadingCommunitiesUserIn = communityState.loadingCommunitiesUserIn,
-            communities = communityState.communities,
-            loadCommunities = communityState.loadCommunities,
-            joiningToCommunity = communityState.joiningToCommunity,
-            verseOfDay = state.verseOfDay,
-            verseOfDayStats = state.verseOfDayStats,
-            likedVerseOfDay = state.likedVerseOfDay,
-            context = context,
-            onJoinToCommunity = communityViewModel::joinToCommunity,
-            onNavigateToCommunity = {
-                appViewModel.selectedCommunity = it
-                navController.navigateToCommunityFeed()
-            },
-            onLikeVerseOfDay = viewModel::handleLikeVerseOfDay,
-            onShareVerseOfDay = {
-                BitmapUtil.shareVerseBitmap(context, shareLauncher, state.verseOfDay)
-            }
-        )
+        state.errorConnection?.let {
+            println("communityState.loadingCommunitiesUserIn: ${communityState.loadingCommunitiesUserIn}")
+            EkklesiaNoInternet(
+                message = it,
+                loading = communityState.loadingCommunitiesUserIn,
+                onTryAgain = {
+                    viewModel.loadingHome()
+                    communityViewModel.loadCommunities()
+                }
+            )
+        } ?: run {
+            HomeScreen(
+                communitiesUserIn = communityState.communitiesUserIn,
+                loadingCommunitiesUserIn = communityState.loadingCommunitiesUserIn,
+                communities = communityState.communities,
+                loadCommunities = communityState.loadCommunities,
+                joiningToCommunity = communityState.joiningToCommunity,
+                verseOfDay = state.verseOfDay,
+                verseOfDayStats = state.verseOfDayStats,
+                likedVerseOfDay = state.likedVerseOfDay,
+                context = context,
+                onJoinToCommunity = communityViewModel::joinToCommunity,
+                onNavigateToCommunity = {
+                    appViewModel.selectedCommunity = it
+                    navController.navigateToCommunityFeed()
+                },
+                onLikeVerseOfDay = viewModel::handleLikeVerseOfDay,
+                onShareVerseOfDay = {
+                    BitmapUtil.shareVerseBitmap(context, shareLauncher, state.verseOfDay)
+                }
+            )
+        }
     }
 }

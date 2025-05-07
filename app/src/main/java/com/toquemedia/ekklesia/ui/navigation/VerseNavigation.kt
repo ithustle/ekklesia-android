@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -27,6 +28,7 @@ import com.toquemedia.ekklesia.ui.screens.bible.verses.VersesScreen
 import com.toquemedia.ekklesia.ui.screens.bible.worship.CreateWorshipScreen
 import com.toquemedia.ekklesia.ui.screens.bible.worship.VideoCreator
 import com.toquemedia.ekklesia.ui.screens.bible.worship.WorshipViewModel
+import com.toquemedia.ekklesia.ui.screens.community.feed.story.CreateStoryScreen
 import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.VideoPlayerViewModel
 import kotlinx.coroutines.launch
 
@@ -59,6 +61,7 @@ fun NavGraphBuilder.verseNavigation(
         val book = appViewModel.books.find { it.bookName == bookName }
 
         LaunchedEffect(versesStates.chapter) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = "Capítulo ${versesStates.chapter}",
@@ -117,6 +120,16 @@ fun NavGraphBuilder.verseNavigation(
                         onShowVerseAction(false)
                         onSelectVerse("", -1)
                     }
+                },
+                onAddStory = {
+                    navController.navigateToStoryCreator(
+                        verse = versesStates.selectedVerse,
+                        bookWithVersicle = "$bookName ${versesStates.chapter}:${versesStates.versicle}"
+                    )
+                    versesStates.apply {
+                        onShowVerseAction(false)
+                        onSelectVerse("", -1)
+                    }
                 }
             )
         }
@@ -139,7 +152,6 @@ fun NavGraphBuilder.verseNavigation(
                 )
             },
             onNextVerse = { versicle ->
-                println("$versicle ${versesStates.chapter}")
                 if (versicle <= versesStates.chapter) {
                     vmVerses.changeChapter(versicle + 1)
                     scope.launch {
@@ -155,6 +167,40 @@ fun NavGraphBuilder.verseNavigation(
                     }
                 }
             },
+        )
+    }
+
+    composable<Screen.StoryCreator> {
+        val bibleGraphEntry = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.BibleScreenGraph)
+        }
+
+        val args = it.toRoute<Screen.StoryCreator>()
+
+        val vmVerses: VerseViewModel = hiltViewModel(bibleGraphEntry)
+        val versesStates by vmVerses.uiState.collectAsState()
+
+        val appViewModel = LocalAppViewModel.current
+
+        LaunchedEffect(Unit) {
+            appViewModel.showTopBar = false
+        }
+
+        CreateStoryScreen(
+            verse = args.verse,
+            addingStory = versesStates.addingStory,
+            bookNameWithVersicle = args.bookWithVersicle,
+            onPublishStory = {
+                vmVerses.addStoryToCommunity(
+                    selectedVerse = args.verse,
+                    bookNameWithVersicle = args.bookWithVersicle,
+                    backgroundColor = it.first.toArgb(),
+                    verseColor = it.second.toArgb()
+                )
+            },
+            onFinishPublishedStory = {
+                navController.popBackStack()
+            }
         )
     }
 
@@ -329,3 +375,4 @@ fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: Int) 
 fun NavController.navigateToNoteVerse(bookName: String?, chapterNumber: String, verse: String, versicle: Int) = this.navigateBetweenScreens(Screen.NoteVerse(bookName = bookName, chapterNumber = chapterNumber, verse = verse, versicle = versicle))
 fun NavController.navigateToCreateWorship(bookName: String?, chapterNumber: String, versicle: Int, verse: String) = this.navigateBetweenScreens(Screen.CreateWorship(bookName = bookName, chapterNumber = chapterNumber, versicle = versicle, verse = verse))
 fun NavController.navigateToCreateVideoForWorship() = this.navigateBetweenScreens(Screen.CreateVideo)
+fun NavController.navigateToStoryCreator(verse: String, bookWithVersicle: String) = this.navigateBetweenScreens(Screen.StoryCreator(verse = verse, bookWithVersicle = bookWithVersicle))

@@ -7,9 +7,11 @@ import com.toquemedia.ekklesia.model.CommunityWithMembers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -52,23 +54,25 @@ class CommunityService @Inject constructor(
         }
     }
 
-    fun getCommunitiesOnFeed(): Flow<List<CommunityType>> {
-        val communities: MutableStateFlow<List<CommunityType>> = MutableStateFlow(emptyList())
-
-        db.collection(collection)
+    fun getCommunitiesOnFeed(): Flow<List<CommunityType>> = callbackFlow {
+        val communityQuery = db.collection(collection)
             .whereEqualTo("active", true)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    return@addSnapshotListener
-                }
 
-                val c = snapshot?.toObjects(CommunityType::class.java)
-                if (c != null) {
-                    communities.value = c
-                }
+        val listenerRegistration = communityQuery.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                close(error)
+                return@addSnapshotListener
             }
 
-        return communities
+            val communities = snapshot?.toObjects(CommunityType::class.java)
+            if (communities != null) {
+                trySend(communities)
+            }
+        }
+
+        awaitClose {
+            listenerRegistration.remove()
+        }
     }
 
     suspend fun removeMember(communityId: String, memberId: String) {

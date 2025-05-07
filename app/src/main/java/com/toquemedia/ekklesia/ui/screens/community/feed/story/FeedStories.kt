@@ -8,29 +8,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import com.toquemedia.ekklesia.model.StoryType
 import com.toquemedia.ekklesia.model.UserType
+import com.toquemedia.ekklesia.utils.mocks.StoriesMock
 
 @Composable
 fun FeedStories(
     modifier: Modifier = Modifier,
     user: UserType? = null,
-    onAddStory: () -> Unit = {}
+    hasStory: Boolean = false,
+    stories: List<StoryType>,
+    onShowStory: (UserType) -> Unit = {}
 ) {
+
+    val uniqueStories = stories.distinctBy { it.user?.id }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
     ) {
         FeedAddStory(
-            Modifier
-                .padding(end = 12.dp),
+            Modifier.padding(end = 12.dp),
             userPhoto = user?.photo.toString().toUri(),
-            onAddStory = onAddStory
+            hasStory = hasStory,
+            onShowStory = {
+                if (hasStory && user != null) {
+                    onShowStory(user)
+                }
+            }
         )
 
-        List(0) {
+        List(uniqueStories.size) {
+            val story = uniqueStories[it]
             FeedStory(
+                userPhoto = story.user?.photo.toString(),
                 modifier = Modifier
-                    .padding(end = 12.dp)
+                    .padding(end = 12.dp),
+                onClickToShowStory = {
+                    story.user?.let { onShowStory(it) }
+                }
             )
         }
     }
@@ -39,5 +55,5 @@ fun FeedStories(
 @Preview(showBackground = true)
 @Composable
 private fun FeedStoriesPrev() {
-    FeedStories()
+    FeedStories(stories = StoriesMock.getAll())
 }

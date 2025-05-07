@@ -42,6 +42,7 @@ import com.toquemedia.ekklesia.ui.screens.community.create.CreateCommunityScreen
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedPostAddComment
 import com.toquemedia.ekklesia.ui.screens.community.feed.FeedScreen
+import com.toquemedia.ekklesia.ui.screens.community.feed.story.StoriesViewScreen
 import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.VideoPlayer
 import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.VideoPlayerViewModel
 import com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost.WorshipPostScreen
@@ -142,6 +143,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         LaunchedEffect(state.posts) {
             if (selectedCommunity != null && state.posts.isEmpty()) {
                 viewModel.getAllPosts(selectedCommunity.community.id)
+                viewModel.getStories(selectedCommunity.community.id)
             }
         }
 
@@ -184,6 +186,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 likedPosts = state.likedPosts,
                 loadingPosts = state.loadingPosts,
                 user = user,
+                stories = state.stories,
                 onNavigateToComments = {
                     navController.navigateToAddCommentOnPost(postId = it, communityId = community.community.id)
                 },
@@ -193,13 +196,33 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 onRemoveLikePost = {
                     viewModel.likeAPost(post = it, communityId = community.community.id, isRemoving = true)
                 },
-                onAddStory = {
-                    Toast.makeText(context, "Funcionalidade em desenvolvimento", Toast.LENGTH_SHORT)
-                        .show()
-                    //navController.navigateToChatScreen(community = community)
+                onShowStory = {
+                    navController.navigateToStories(email = it.email.toString())
                 }
             )
         }
+    }
+
+    composable<Screen.StoriesNavigation> {
+
+        val appViewModel = LocalAppViewModel.current
+        val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
+
+        val arg = it.toRoute<Screen.StoriesNavigation>()
+
+        val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(parentEntry)
+        val state by sharedViewModel.uiState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(Unit) {
+            appViewModel.showTopBar = false
+        }
+
+        StoriesViewScreen(
+            stories = state.stories.filter { it.user?.email == arg.email }.sortedBy { it.createdAt },
+            onFinishStory = {
+                navController.popBackStack()
+            }
+        )
     }
 
     composable<Screen.CommentPost> { stackEntry ->
@@ -317,9 +340,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
 fun NavController.navigateToCommunityFeed() = this.navigateBetweenScreens(Screen.CommunityFeed)
 fun NavController.navigateToPlayer(videoUrl: String) = this.navigateBetweenScreens(Screen.VideoPlayer(videoUrl = videoUrl))
-
-fun NavController.navigateToChatScreen(community: CommunityType) =
-    this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
-
-fun NavController.navigateToAddCommentOnPost(postId: String, communityId: String) =
-    this.navigateBetweenScreens(Screen.CommentPost(postId, communityId))
+fun NavController.navigateToStories(email: String) = this.navigateBetweenScreens(Screen.StoriesNavigation(email))
+fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
+fun NavController.navigateToAddCommentOnPost(postId: String, communityId: String) = this.navigateBetweenScreens(Screen.CommentPost(postId, communityId))

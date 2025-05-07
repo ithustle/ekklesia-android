@@ -36,7 +36,7 @@ fun VerseText(
     val configuration = LocalConfiguration.current
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
 
-    val paragraphs = verse.splitTextByLineWidth(screenWidth = screenWidthPx.toInt(), percentOfScreen = 0.75f)
+    val paragraphs = verse.splitTextByLineWidth(screenWidth = screenWidthPx.toInt(), percentOfScreen = 0.60f)
 
     Column {
         paragraphs.forEachIndexed { index, paragraph ->
@@ -73,7 +73,6 @@ fun VerseText(
                                 .size(20.dp)
                         )
                     }
-
                 }
             } else {
                 Text(
@@ -89,7 +88,7 @@ fun VerseText(
     }
 }
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 private fun VerseTextPrev() {
     VerseText(

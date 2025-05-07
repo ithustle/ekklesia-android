@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.toquemedia.ekklesia.R
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.PostType
+import com.toquemedia.ekklesia.model.StoryType
 import com.toquemedia.ekklesia.model.UserType
-import com.toquemedia.ekklesia.model.WorshipEntity
 import com.toquemedia.ekklesia.ui.composables.EmptyScreen
 import com.toquemedia.ekklesia.ui.composables.ScreenAppLoading
 import com.toquemedia.ekklesia.ui.screens.community.feed.story.FeedStories
@@ -36,11 +36,12 @@ fun FeedScreen(
     user: UserType? = null,
     loadingPosts: Boolean = false,
     posts: List<PostType> = emptyList(),
+    stories: List<StoryType> = emptyList(),
     likedPosts: List<String> = emptyList(),
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
     onRemoveLikePost: (PostType) -> Unit = {},
-    onAddStory: () -> Unit = {}
+    onShowStory: (UserType) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -77,7 +78,9 @@ fun FeedScreen(
                         modifier = Modifier
                             .padding(16.dp),
                         user = user,
-                        onAddStory = onAddStory
+                        hasStory = stories.any { it.user?.email == user?.email },
+                        stories = stories.filter { it.user?.email != user?.email },
+                        onShowStory = onShowStory
                     )
                 }
             }

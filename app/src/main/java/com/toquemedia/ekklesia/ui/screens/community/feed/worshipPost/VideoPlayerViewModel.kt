@@ -29,20 +29,17 @@ class VideoPlayerViewModel @OptIn(UnstableApi::class)
 
 
         player.getPlayer().addListener(object : Player.Listener {
-            override fun onVideoSizeChanged(videoSize: VideoSize) {
-                println("PLAYER Video size changed: ${videoSize.width}x${videoSize.height}")
-            }
-        })
-
-
-        player.getPlayer().addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 when(playbackState) {
                     Player.STATE_BUFFERING -> _uiState.update { it.copy(buffering = true) }
-                    Player.STATE_READY -> _uiState.update { it.copy(buffering = false) }
-                    Player.STATE_ENDED -> { _uiState.update { it.copy(buffering = false) } }
+                    Player.STATE_READY -> _uiState.update { it.copy(buffering = false, isPlaying = true) }
+                    Player.STATE_ENDED -> { _uiState.update { it.copy(buffering = false, isPlaying = false) } }
                     Player.STATE_IDLE -> {}
                 }
+            }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                _uiState.update { it.copy(isPlaying = isPlaying) }
             }
         })
     }

@@ -1,25 +1,32 @@
 package com.toquemedia.ekklesia.ui.screens.home
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil3.network.HttpException
 import com.toquemedia.ekklesia.dao.LikeDao
 import com.toquemedia.ekklesia.extension.convertToString
+import com.toquemedia.ekklesia.extension.isInternetAvailable
 import com.toquemedia.ekklesia.extension.toPortuguese
 import com.toquemedia.ekklesia.model.VerseType
 import com.toquemedia.ekklesia.repository.BibleRepositoryImpl
 import com.toquemedia.ekklesia.repository.VerseRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okio.IOException
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    @ApplicationContext val context: Context,
     private val verseRepository: VerseRepositoryImpl,
     private val bibleRepository: BibleRepositoryImpl,
     private val likeDao: LikeDao
@@ -29,18 +36,44 @@ class HomeViewModel @Inject constructor(
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            try {
-                getVerseOfDay()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        loadingHome()
+    }
 
-        viewModelScope.launch {
-            likeDao.getLikes().collect {
-                _uiState.value = _uiState.value.copy(likedVerseOfDay = it.contains(Date().convertToString()))
+    fun loadingHome() {
+        if (context.isInternetAvailable()) {
+            viewModelScope.launch {
+                try {
+                    getVerseOfDay()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    _uiState.update { it.copy(errorConnection = "Sem conexão a internet. Mensagem: ${e.localizedMessage}") }
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    _uiState.update { it.copy(errorConnection = "Erro no servidor") }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _uiState.update { it.copy(errorConnection = "Ocorreu um erro inesperado") }
+                }
             }
+
+            viewModelScope.launch {
+                try {
+                    likeDao.getLikes().collect {
+                        _uiState.value = _uiState.value.copy(likedVerseOfDay = it.contains(Date().convertToString()))
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    _uiState.update { it.copy(errorConnection = "Sem conexão a internet. Mensagem: ${e.localizedMessage}") }
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                    _uiState.update { it.copy(errorConnection = "Erro no servidor") }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    _uiState.update { it.copy(errorConnection = "Ocorreu um erro inesperado") }
+                }
+            }
+        } else {
+            _uiState.update { it.copy(errorConnection = "Sem conexão a internet") }
         }
     }
 
@@ -83,9 +116,11 @@ class HomeViewModel @Inject constructor(
                     bookName = res.verseOfDay.first.toPortuguese(),
                     chapter = res.verseOfDay.second,
                     versicle = res.verseOfDay.third,
-                    text = verses?.get(res.verseOfDay.second - 1)?.get(res.verseOfDay.third - 1).toString()
+                    text = verses?.get(res.verseOfDay.second - 1)?.get(res.verseOfDay.third - 1)
+                        .toString()
                 ),
-                verseOfDayStats = res.stats
+                verseOfDayStats = res.stats,
+                errorConnection = null,
             )
         }
     }

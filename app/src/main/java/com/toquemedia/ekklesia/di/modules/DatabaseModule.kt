@@ -19,6 +19,7 @@ import com.toquemedia.ekklesia.services.NoteService
 import com.toquemedia.ekklesia.services.OurmannaService
 import com.toquemedia.ekklesia.services.PostService
 import com.toquemedia.ekklesia.services.StorageService
+import com.toquemedia.ekklesia.services.StoryService
 import com.toquemedia.ekklesia.services.UserService
 import com.toquemedia.ekklesia.services.VerseOfDayService
 import dagger.Module
@@ -43,7 +44,7 @@ class DatabaseModule {
     @Provides
     fun provideCommunityService(userService: UserService, firestore: FirebaseFirestore): CommunityService = CommunityService(auth = userService, db = firestore)
     @Provides
-    fun provideNoteService(): NoteService = NoteService()
+    fun provideNoteService(firestore: FirebaseFirestore): NoteService = NoteService(firestore)
     @Provides
     fun provideStorageService(@ApplicationContext context: Context, storage: FirebaseStorage): StorageService = StorageService(context, storage)
     @Provides
@@ -54,15 +55,15 @@ class DatabaseModule {
     fun provideEkklesiaPlayer(@ApplicationContext context: Context): EkklesiaPlayer = EkklesiaPlayer(context)
 
     @Provides
-    fun provideOurmannaService(@Named("ourmannaService") retrofit: Retrofit) : OurmannaService = retrofit.create(
-        OurmannaService::class.java)
+    fun provideOurmannaService(@Named("ourmannaService") retrofit: Retrofit) : OurmannaService = retrofit.create(OurmannaService::class.java)
 
     @Provides
-    fun provideBunnyService(@Named("bunnyService") retrofit: Retrofit): BunnyService =
-        retrofit.create(BunnyService::class.java)
+    fun provideBunnyService(@Named("bunnyService") retrofit: Retrofit): BunnyService = retrofit.create(BunnyService::class.java)
 
     @Provides
     fun providePostService(firestore: FirebaseFirestore): PostService = PostService(firestore)
     @Provides
     fun provideUserService(@ApplicationContext context: Context, firestore: FirebaseFirestore, auth: FirebaseAuth, dao: LikeDao): UserService = UserService(context, firestore, auth, dao)
+    @Provides
+    fun provideStoryService(firestore: FirebaseFirestore): StoryService = StoryService(firestore)
 }

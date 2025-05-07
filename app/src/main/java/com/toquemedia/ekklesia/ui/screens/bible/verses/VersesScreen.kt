@@ -92,7 +92,7 @@ fun VersesScreen(
                         hasNote = versesStates.notes.find { it.verse == verse } != null,
                         hasWorship = worshipState.worships.find { it.verse == verse } != null,
                         modifier = Modifier
-                            .padding(bottom = 4.dp)
+                            .padding(bottom = 6.dp)
                             .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
                             .clickable {
                                 if (markedVerses.contains(verse)) {
@@ -115,7 +115,8 @@ fun VersesScreen(
             currentVerse = chapterNumber ?: 0,
             bookName = book?.bookName.toString(),
             onNextVerse = onNextVerse,
-            onPreviousVerse = onPreviousVerse
+            onPreviousVerse = onPreviousVerse,
+            maxVerses = book?.verses?.size ?: 0
         )
         Spacer(modifier = Modifier.padding(vertical = 16.dp))
     }

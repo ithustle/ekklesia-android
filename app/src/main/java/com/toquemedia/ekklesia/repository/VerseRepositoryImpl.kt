@@ -2,12 +2,16 @@ package com.toquemedia.ekklesia.repository
 
 import com.toquemedia.ekklesia.dao.VerseDao
 import com.toquemedia.ekklesia.extension.toPortuguese
+import com.toquemedia.ekklesia.model.StoryType
 import com.toquemedia.ekklesia.model.interfaces.VerseRepository
 import com.toquemedia.ekklesia.services.OurmannaService
 import com.toquemedia.ekklesia.services.StatsVerseOfDay
+import com.toquemedia.ekklesia.services.StoryService
 import com.toquemedia.ekklesia.services.UserService
 import com.toquemedia.ekklesia.services.VerseOfDayService
 import kotlinx.coroutines.flow.MutableStateFlow
+import okio.IOException
+import retrofit2.HttpException
 import javax.inject.Inject
 
 data class VerseResponse(
@@ -20,6 +24,7 @@ class VerseRepositoryImpl @Inject constructor(
     private val ourmannaService: OurmannaService,
     private val userService: UserService,
     private val verseService: VerseOfDayService,
+    private val storyService: StoryService
 ): VerseRepository {
 
     val markedVerses: MutableStateFlow<List<String>> = verse.versesMarked
@@ -56,7 +61,14 @@ class VerseRepositoryImpl @Inject constructor(
                 val stats = verseService.getVerseOfDay()
                 VerseResponse(verseOfDay, stats)
             }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            throw e
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             throw e
         }
     }
@@ -69,6 +81,14 @@ class VerseRepositoryImpl @Inject constructor(
     override suspend fun shareVerseOfDay(): StatsVerseOfDay {
         verseService.saveSharedVerseOfDay()
         return verseService.getVerseOfDay()
+    }
+
+    override suspend fun addStoryToCommunity(story: StoryType) {
+        storyService.addStory(story)
+    }
+
+    override suspend fun getStories(communityId: String): List<StoryType> {
+        return storyService.getStories(communityId)
     }
 
     internal fun getId(bookName: String, chapter: Int, versicle: Int): String {

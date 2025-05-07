@@ -1,9 +1,9 @@
 package com.toquemedia.ekklesia.ui.screens.community.feed.story
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -21,6 +21,7 @@ import com.toquemedia.ekklesia.ui.theme.PrincipalColor
 @Composable
 fun FeedStory(
     modifier: Modifier = Modifier,
+    userPhoto: String = "",
     onClickToShowStory: () -> Unit = {}
 ) {
     Row(
@@ -28,10 +29,13 @@ fun FeedStory(
         horizontalArrangement = Arrangement.Center,
         modifier = modifier
             .size(68.dp)
-            .border(width = 3.dp, color = PrincipalColor, shape = CircleShape),
+            .border(width = 3.dp, color = PrincipalColor, shape = CircleShape)
+            .clickable {
+                onClickToShowStory()
+            },
     ) {
         EkklesiaImage(
-            model = "photo".toUri(),
+            model = userPhoto.toUri(),
             contentDescription = stringResource(R.string.profileTitleScreen),
             modifier = Modifier
                 .size(64.dp)
