@@ -3,22 +3,38 @@ package com.toquemedia.ekklesia.extension
 import androidx.compose.ui.graphics.Color
 
 fun String.splitTextByLineWidth(screenWidth: Int, percentOfScreen: Float): List<String> {
-    val maxCharsPerLine = (screenWidth * percentOfScreen / 10).toInt()
+    val pixelsPerChar = 8
+    val maxCharsPerLine = ((screenWidth * percentOfScreen) / pixelsPerChar).toInt()
 
-    val words = this.split(" ")
+    val forcedLineBreaks = this.split("\n")
     val result = mutableListOf<String>()
-    var currentLine = ""
 
-    words.forEach { word ->
-        if (currentLine.length + word.length + 1 > maxCharsPerLine) {
-            result.add(currentLine.trim())
-            currentLine = ""
+    for (paragraph in forcedLineBreaks) {
+        if (paragraph.trim().isEmpty()) {
+            result.add("")
+            continue
         }
-        currentLine += "$word "
-    }
 
-    if (currentLine.isNotEmpty()) {
-        result.add(currentLine.trim())
+        val words = paragraph.split(" ")
+        var currentLine = ""
+        var currentLineLength = 0
+
+        for (word in words) {
+            val wordWithSpaceLength = word.length + 1
+
+            if (currentLineLength + wordWithSpaceLength > maxCharsPerLine && currentLineLength > 0) {
+                result.add(currentLine.trim())
+                currentLine = ""
+                currentLineLength = 0
+            }
+
+            currentLine += "$word "
+            currentLineLength += wordWithSpaceLength
+        }
+
+        if (currentLine.isNotEmpty()) {
+            result.add(currentLine.trim())
+        }
     }
 
     return result
