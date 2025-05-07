@@ -1,15 +1,19 @@
 package com.toquemedia.ekklesia.ui.screens.community
 
+import android.content.Context
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil3.network.HttpException
 import com.toquemedia.ekklesia.extension.communitiesToJoin
+import com.toquemedia.ekklesia.extension.isInternetAvailable
 import com.toquemedia.ekklesia.model.CommunityMemberType
 import com.toquemedia.ekklesia.model.CommunityWithMembers
 import com.toquemedia.ekklesia.model.ValidationResult
 import com.toquemedia.ekklesia.repository.AuthRepositoryImpl
 import com.toquemedia.ekklesia.repository.CommunityRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -22,10 +26,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import okio.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityViewModel @Inject constructor(
+    @ApplicationContext val context: Context,
     private val repository: CommunityRepositoryImpl,
     private val authRepository: AuthRepositoryImpl
 ) : ViewModel() {
@@ -59,15 +65,27 @@ class CommunityViewModel @Inject constructor(
 
         println("HOME VIEW MODEL")
 
+        loadCommunities()
+    }
+
+    fun loadCommunities() {
         viewModelScope.launch {
-            try {
-                val (verseOfDay, communities) = coroutineScope {
-                    val communitiesDeferred = async { getAllCommunities() }
-                    val communitiesInDeferred = async { getAllCommunitiesUserIn() }
-                    communitiesInDeferred.await() to communitiesDeferred.await()
+            if (context.isInternetAvailable()) {
+                try {
+                    coroutineScope {
+                        val communitiesDeferred = async { getAllCommunities() }
+                        val communitiesInDeferred = async { getAllCommunitiesUserIn() }
+                        communitiesInDeferred.await() to communitiesDeferred.await()
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                } catch (e: HttpException) {
+                    e.printStackTrace()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } else {
+                _uiState.update { it.copy(loadingCommunitiesUserIn = false ) }
             }
         }
     }
@@ -157,41 +175,39 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun getAllCommunities() {
-        viewModelScope.launch {
-            try {
-                val user = authRepository.getCurrentUser()
-                repository.getAll()
-                    .flowOn(Dispatchers.IO)
-                    .collect { communities ->
-                        val communityWithMembers = coroutineScope {
-                            communities.map { community ->
-                                async {
-                                    val members = repository.getAllMembers(community.id)
+    private suspend fun getAllCommunities() {
+        try {
+            val user = authRepository.getCurrentUser()
+            repository.getAll()
+                .flowOn(Dispatchers.IO)
+                .collect { communities ->
+                    val communityWithMembers = coroutineScope {
+                        communities.map { community ->
+                            async {
+                                val members = repository.getAllMembers(community.id)
 
-                                    val finalMembers = if (members.isEmpty() &&
-                                        community.email == user?.email) {
-                                        delay(500)
-                                        val retryMembers = repository.getAllMembers(community.id)
-                                        retryMembers
-                                    } else {
-                                        members
-                                    }
-
-                                    CommunityWithMembers(community, finalMembers)
+                                val finalMembers = if (members.isEmpty() &&
+                                    community.email == user?.email) {
+                                    delay(500)
+                                    val retryMembers = repository.getAllMembers(community.id)
+                                    retryMembers
+                                } else {
+                                    members
                                 }
-                            }.awaitAll()
-                        }
-                        _uiState.value = _uiState.value.copy(
-                            communities = communityWithMembers.communitiesToJoin(user?.id.toString()),
-                            myCommunities = communityWithMembers.filter { it.community.email == user?.email },
-                            loadCommunities = false
-                        )
+
+                                CommunityWithMembers(community, finalMembers)
+                            }
+                        }.awaitAll()
                     }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                throw e
-            }
+                    _uiState.value = _uiState.value.copy(
+                        communities = communityWithMembers.communitiesToJoin(user?.id.toString()),
+                        myCommunities = communityWithMembers.filter { it.community.email == user?.email },
+                        loadCommunities = false
+                    )
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
         }
     }
 
@@ -200,7 +216,7 @@ class CommunityViewModel @Inject constructor(
             val communities = repository.getCommunitiesUserIn()
             _uiState.value = _uiState.value.copy(
                 communitiesUserIn = communities,
-                loadingCommunitiesUserIn = false
+                loadingCommunitiesUserIn = false,
             )
         }
     }

@@ -10,6 +10,8 @@ import com.toquemedia.ekklesia.services.StoryService
 import com.toquemedia.ekklesia.services.UserService
 import com.toquemedia.ekklesia.services.VerseOfDayService
 import kotlinx.coroutines.flow.MutableStateFlow
+import okio.IOException
+import retrofit2.HttpException
 import javax.inject.Inject
 
 data class VerseResponse(
@@ -59,7 +61,14 @@ class VerseRepositoryImpl @Inject constructor(
                 val stats = verseService.getVerseOfDay()
                 VerseResponse(verseOfDay, stats)
             }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            throw e
+        } catch (e: HttpException) {
+            e.printStackTrace()
+            throw e
         } catch (e: Exception) {
+            e.printStackTrace()
             throw e
         }
     }
