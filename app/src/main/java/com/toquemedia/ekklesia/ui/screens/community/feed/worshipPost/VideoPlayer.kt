@@ -1,6 +1,7 @@
 package com.toquemedia.ekklesia.ui.screens.community.feed.worshipPost
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +14,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -34,6 +42,7 @@ import com.toquemedia.ekklesia.model.EkklesiaPlayer
 import com.toquemedia.ekklesia.model.PostType
 import com.toquemedia.ekklesia.ui.screens.community.feed.PostOwner
 import com.toquemedia.ekklesia.utils.mocks.PostsMock
+import kotlinx.coroutines.delay
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,6 +60,23 @@ fun VideoPlayer(
 ) {
 
     val presentationState = rememberPresentationState(player.getPlayer())
+    var showControls by remember { mutableStateOf(true) }
+    var iteration by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(showControls) {
+        if (showControls) {
+            while (true) {
+                if (iteration == 5) {
+                    showControls = false
+                    iteration = 0
+                } else {
+                    iteration += 1
+                }
+
+                delay(1000)
+            }
+        }
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -100,27 +126,36 @@ fun VideoPlayer(
             PlayerSurface(
                 player = player.getPlayer(),
                 modifier = Modifier
-                    .resizeWithContentScale(contentScale = ContentScale.FillHeight, sourceSizeDp = presentationState.videoSizeDp),
+                    .resizeWithContentScale(contentScale = ContentScale.FillHeight, sourceSizeDp = presentationState.videoSizeDp)
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onTap = {
+                                showControls = true
+                            }
+                        )
+                    },
                 surfaceType = SURFACE_TYPE_TEXTURE_VIEW,
             )
         }
 
-        VideoPlayerControl(
-            isPlaying = isPlaying,
-            buffering = buffering,
-            togglePlayPauseButton = {
-                if (isPlaying) {
-                    onPause()
-                } else {
-                    onPlay()
-                }
-            },
-            toggleSeekBack = { onSeekBack(-10000) },
-            toggleSeekForward = { onSeekForward(10000) },
-            modifier = Modifier
-                .align(alignment = Alignment.Center)
-                .padding(horizontal = 8.dp)
-        )
+        if (showControls) {
+            VideoPlayerControl(
+                isPlaying = isPlaying,
+                buffering = buffering,
+                togglePlayPauseButton = {
+                    if (isPlaying) {
+                        onPause()
+                    } else {
+                        onPlay()
+                    }
+                },
+                toggleSeekBack = { onSeekBack(-10000) },
+                toggleSeekForward = { onSeekForward(10000) },
+                modifier = Modifier
+                    .align(alignment = Alignment.Center)
+                    .padding(horizontal = 8.dp)
+            )
+        }
     }
 }
 
