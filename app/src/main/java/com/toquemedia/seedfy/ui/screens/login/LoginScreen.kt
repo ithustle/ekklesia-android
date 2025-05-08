@@ -37,7 +37,6 @@ fun LoginScreen(
 ) {
 
     LaunchedEffect(state.user) {
-        println("Está a correr aqui ${state.user}")
         if (state.user != null) {
             onUserAuthenticated(state.user)
         }
@@ -57,10 +56,10 @@ fun LoginScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.devotion_social_network_logo),
+                painter = painterResource(id = R.drawable.seedfy_logo),
                 contentDescription = "App Logo",
                 modifier = Modifier
-                    .size(120.dp)
+                    .size(132.dp)
                     .padding(bottom = 8.dp)
             )
 

@@ -1,6 +1,7 @@
 package com.toquemedia.seedfy.ui.screens.profile
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +33,6 @@ import com.toquemedia.seedfy.model.WorshipEntity
 import com.toquemedia.seedfy.ui.composables.EkklesiaDialog
 import com.toquemedia.seedfy.ui.composables.EkklesiaLabelWithIcon
 import com.toquemedia.seedfy.utils.mocks.CommunityMock
-import com.toquemedia.seedfy.utils.mocks.WorshipMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,6 +75,17 @@ fun MyWorshipScreen(
                     }
                 }
             )
+        }
+    }
+
+    if (worships.isEmpty()) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            WorshipInstructions()
         }
     }
 
@@ -155,7 +166,7 @@ fun MyWorshipScreen(
 @Composable
 private fun MyWorshipScreenPrev() {
     MyWorshipScreen(
-        worships = WorshipMock.getAll(),
+        worships = emptyList(),
         communities = CommunityMock.getAllCommunityWithMembers()
     )
 }

@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,9 +35,7 @@ fun GoogleSignInButton(
             .fillMaxWidth(0.8f)
             .height(56.dp)
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(28.dp)),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.White
-        ),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
         shape = RoundedCornerShape(28.dp)
     ) {
         Row(
@@ -46,7 +44,7 @@ fun GoogleSignInButton(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.devotion_social_network_logo),
+                painter = painterResource(id = R.drawable.google),
                 contentDescription = "Google Logo",
                 modifier = modifier.size(24.dp)
             )
