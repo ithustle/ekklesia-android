@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +29,7 @@ import com.toquemedia.seedfy.ui.composables.EkklesiaButton
 import com.toquemedia.seedfy.ui.composables.VerseToAnnotation
 import com.toquemedia.seedfy.ui.theme.PrincipalColor
 import com.toquemedia.seedfy.ui.theme.TextPlaceholderColor
-import com.toquemedia.seedfy.ui.theme.backgroundLightColor
+import com.toquemedia.seedfy.ui.theme.BackgroundLightColor
 
 @Composable
 fun NoteScreen(
@@ -46,7 +46,7 @@ fun NoteScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = backgroundLightColor)
+            .background(color = BackgroundLightColor)
             .padding(horizontal = 16.dp, vertical = 30.dp)
     ) {
         VerseToAnnotation(
@@ -97,7 +97,7 @@ fun NoteScreen(
                 CircularProgressIndicator(
                     modifier = Modifier.width(48.dp),
                     color = PrincipalColor,
-                    backgroundColor = MaterialTheme.colors.surface,
+                    backgroundColor = MaterialTheme.colorScheme.surface,
                 )
             }
         } else {

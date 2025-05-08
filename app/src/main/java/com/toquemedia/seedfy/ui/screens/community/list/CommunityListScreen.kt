@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.toquemedia.seedfy.R
 import com.toquemedia.seedfy.model.CommunityWithMembers
 import com.toquemedia.seedfy.ui.composables.EkklesiaAlertDialog
-import com.toquemedia.seedfy.ui.theme.backgroundLightColor
+import com.toquemedia.seedfy.ui.theme.BackgroundLightColor
 import com.toquemedia.seedfy.utils.mocks.CommunityMock
 
 @Composable
@@ -64,7 +64,7 @@ fun CommunityListScreen(
     Box {
         Column(
             modifier = modifier
-                .background(color = backgroundLightColor)
+                .background(color = BackgroundLightColor)
                 .padding(horizontal = 16.dp, vertical = 30.dp)
                 .fillMaxSize()
         ) {

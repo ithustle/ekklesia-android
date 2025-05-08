@@ -4,8 +4,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 val PrincipalColor = Color(0xFF633B48)
 val TextPlaceholderColor = Color(0xFF888888)
-val backgroundLightColor = Color(0xFFEEEEEE)
-val backgroundDarkColor = Color(0xFF131111)
+val BackgroundLightColor = Color(0xFFEEEEEE)
+val BackgroundDarkColor = Color(0xFF131111)
 val cosmicParadiseGradient = Brush.linearGradient(
     colors = listOf(
         Color(0xFF633B48),

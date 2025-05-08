@@ -1,6 +1,7 @@
 package com.toquemedia.seedfy.ui.screens.home
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -31,10 +32,10 @@ fun HomeScreen(
     verseOfDayStats: StatsVerseOfDay = StatsVerseOfDay(),
     likedVerseOfDay: Boolean = false,
     joiningToCommunity: Boolean = false,
-    loadCommunities: Boolean = true,
+    loadCommunities: Boolean = false,
     communitiesUserIn: List<CommunityWithMembers> = emptyList(),
     communities: List<CommunityWithMembers> = emptyList(),
-    loadingCommunitiesUserIn: Boolean = true,
+    loadingCommunitiesUserIn: Boolean = false,
     onJoinToCommunity: (String) -> Unit = {},
     onNavigateToCommunity: (CommunityWithMembers) -> Unit = {},
     onShareVerseOfDay: () -> Unit = {},
@@ -90,7 +91,7 @@ fun HomeScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, backgroundColor = 0xFF121212)
 @Composable
 private fun HomePrev() {
     HomeScreen(
