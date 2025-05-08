@@ -24,5 +24,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Ekklesia"
+rootProject.name = "Seedfy"
 include(":app")
