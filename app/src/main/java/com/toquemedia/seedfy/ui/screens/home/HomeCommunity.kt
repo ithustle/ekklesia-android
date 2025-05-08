@@ -36,6 +36,7 @@ import com.toquemedia.seedfy.utils.mocks.CommunityMock
 fun HomeCommunity(
     modifier: Modifier = Modifier,
     community: CommunityType,
+    joiningToCommunity: Boolean = false,
     members: List<CommunityMemberType>,
     onJoinToCommunity: (String) -> Unit = {}
 ) {
@@ -97,31 +98,10 @@ fun HomeCommunity(
 
         Spacer(Modifier.height(22.dp))
 
-        /*if (loading) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(20.dp),
-                    strokeWidth = 2.dp
-                )
-            }
-        } else {
-            EkklesiaButton(
-                filled = true,
-                label = stringResource(R.string.join_to_community),
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                onJoinToCommunity(community.id)
-            }
-        } */
         EkklesiaButton(
             filled = true,
             label = stringResource(R.string.join_to_community),
+            loading = joiningToCommunity,
             modifier = Modifier
                 .fillMaxWidth()
         ) {

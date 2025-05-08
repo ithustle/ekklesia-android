@@ -10,6 +10,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -32,15 +36,18 @@ fun HomeScreen(
     verseOfDayStats: StatsVerseOfDay = StatsVerseOfDay(),
     likedVerseOfDay: Boolean = false,
     joiningToCommunity: Boolean = false,
-    loadCommunities: Boolean = false,
+    loadCommunities: Boolean = true,
     communitiesUserIn: List<CommunityWithMembers> = emptyList(),
     communities: List<CommunityWithMembers> = emptyList(),
-    loadingCommunitiesUserIn: Boolean = false,
+    loadingCommunitiesUserIn: Boolean = true,
     onJoinToCommunity: (String) -> Unit = {},
     onNavigateToCommunity: (CommunityWithMembers) -> Unit = {},
     onShareVerseOfDay: () -> Unit = {},
     onLikeVerseOfDay: (Boolean) -> Unit = {},
 ) {
+
+    var joiningCommunityId by remember { mutableStateOf("") }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -56,7 +63,7 @@ fun HomeScreen(
             )
         }
 
-        item { Spacer(Modifier.height(38.dp)) }
+        item { Spacer(Modifier.height(20.dp)) }
 
         item {
             MyCommunitiesSection(
@@ -66,6 +73,8 @@ fun HomeScreen(
                 onNavigateToCommunity = onNavigateToCommunity
             )
         }
+
+        item { Spacer(Modifier.height(20.dp)) }
 
         if (loadCommunities) {
             item {
@@ -80,7 +89,11 @@ fun HomeScreen(
                 HomeCommunity(
                     community = community.community,
                     members = community.allMembers,
-                    onJoinToCommunity = onJoinToCommunity,
+                    joiningToCommunity = if (joiningCommunityId == community.community.id) joiningToCommunity else false,
+                    onJoinToCommunity = {
+                        joiningCommunityId = it
+                        onJoinToCommunity(it)
+                    },
                     modifier = Modifier
                         .clip(RoundedCornerShape(6.dp))
                         .padding(horizontal = 16.dp)
@@ -91,7 +104,7 @@ fun HomeScreen(
     }
 }
 
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES, backgroundColor = 0xFF121212)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun HomePrev() {
     HomeScreen(
