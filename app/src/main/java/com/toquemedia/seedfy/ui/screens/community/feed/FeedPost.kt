@@ -23,11 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import com.google.firebase.firestore.auth.User
 import com.toquemedia.seedfy.R
 import com.toquemedia.seedfy.extension.getBookWithChapterAndVersicle
 import com.toquemedia.seedfy.extension.timeAgo
 import com.toquemedia.seedfy.model.CommentType
 import com.toquemedia.seedfy.model.PostType
+import com.toquemedia.seedfy.model.UserType
 import com.toquemedia.seedfy.ui.composables.EkklesiaImage
 import com.toquemedia.seedfy.ui.composables.VerseToAnnotation
 import com.toquemedia.seedfy.ui.theme.PrincipalColor
@@ -39,11 +41,13 @@ fun FeedPost(
     showLastComment: Boolean = false,
     showLikes: Boolean = false,
     liked: Boolean = false,
+    hasStory: Boolean = false,
     post: PostType,
     comments: List<CommentType>,
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
     onRemoveLikePost: (PostType) -> Unit = {},
+    onNavigateToStory: (UserType) -> Unit = {},
     commentsCount: Long = 0L,
     likesCount: Long = 0L
 ) {
@@ -60,6 +64,8 @@ fun FeedPost(
                 .padding(horizontal = 16.dp),
             user = post.user!!,
             timeAgo = post.createdAt.timeAgo(),
+            hasStory = hasStory,
+            onNavigateToStory = onNavigateToStory,
             color = Color.DarkGray,
             postType = if (post.note == null) stringResource(R.string.post_type_without_note) else stringResource(
                 R.string.post_type_with_note,

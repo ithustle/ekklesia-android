@@ -39,7 +39,6 @@ fun FeedScreen(
     posts: List<PostType> = emptyList(),
     stories: List<StoryType> = emptyList(),
     likedPosts: List<String> = emptyList(),
-    userLikes: Map<String, Long> = mutableStateMapOf(),
     onUserLikes: (String, Long) -> Unit = {_, _ ->},
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
@@ -122,6 +121,7 @@ fun FeedScreen(
                             liked = isLiked, //it.likes > 0,
                             post = post,
                             comments = post.comments,
+                            hasStory = stories.any { it.user?.email == user?.email },
                             onNavigateToComments = onNavigateToComments,
                             onLikePost = {
                                 onUserLikes(postId, 1)
@@ -131,6 +131,7 @@ fun FeedScreen(
                                 onUserLikes(postId, 0)
                                 onRemoveLikePost(it)
                             },
+                            onNavigateToStory = onShowStory,
                             commentsCount = post.comments.size.toLong(),
                             likesCount = likesCount
                         )

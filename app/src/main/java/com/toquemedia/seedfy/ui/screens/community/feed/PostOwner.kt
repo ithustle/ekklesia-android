@@ -1,10 +1,13 @@
 package com.toquemedia.seedfy.ui.screens.community.feed
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,28 +25,45 @@ import com.toquemedia.seedfy.R
 import com.toquemedia.seedfy.extension.timeAgo
 import com.toquemedia.seedfy.model.UserType
 import com.toquemedia.seedfy.ui.composables.EkklesiaImage
+import com.toquemedia.seedfy.ui.theme.PrincipalColor
 import com.toquemedia.seedfy.utils.mocks.PostsMock
 
 @Composable
 fun PostOwner(
     user: UserType,
     postType: String? = null,
+    hasStory: Boolean = false,
     timeAgo: String,
     color: Color,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToStory: (UserType) -> Unit = {}
 ) {
+
+    val modifierStory = if (hasStory) Modifier
+        .size(42.dp)
+        .clip(CircleShape)
+        .border(width = 3.dp, color = PrincipalColor, shape = CircleShape) else
+        Modifier
+            .size(42.dp)
+            .clip(CircleShape)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
+            .clickable {
+                if (hasStory) { onNavigateToStory(user) }
+            }
     ) {
         EkklesiaImage(
             model = user.photo?.toUri(),
             contentDescription = stringResource(R.string.profileTitleScreen),
-            modifier = Modifier
-                .padding(end = 12.dp)
-                .size(42.dp)
-                .clip(CircleShape)
+            modifier = modifierStory /*Modifier
+                    .padding(end = 12.dp)
+                    .size(42.dp)
+                    .clip(CircleShape) */
         )
+
+        Spacer(Modifier.width(8.dp))
 
         Column {
             Text(
