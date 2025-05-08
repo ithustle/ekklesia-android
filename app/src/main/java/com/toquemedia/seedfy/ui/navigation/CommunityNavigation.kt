@@ -1,25 +1,16 @@
 package com.toquemedia.seedfy.ui.navigation
 
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Chat
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,7 +38,6 @@ import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.VideoPlayer
 import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.VideoPlayerViewModel
 import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.WorshipPostScreen
 import com.toquemedia.seedfy.ui.screens.community.list.CommunityListScreen
-import com.toquemedia.seedfy.ui.theme.PrincipalColor
 
 @OptIn(UnstableApi::class)
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
@@ -155,7 +145,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                     showTitleAvatar = true,
                     showBackButton = true,
                     useAvatar = user?.photo,
-                    actions = {
+                    /*actions = {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.Chat,
                             contentDescription = stringResource(R.string.change_community_description),
@@ -171,7 +161,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                                     ).show()
                                 }
                         )
-                    },
+                    }, */
                     onBackNavigation = {
                         navController.popBackStack()
                     }

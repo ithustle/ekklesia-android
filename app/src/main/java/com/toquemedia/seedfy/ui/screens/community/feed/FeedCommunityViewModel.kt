@@ -38,7 +38,7 @@ class FeedCommunityViewModel @Inject constructor(
                 },
                 onUserLikes = { postId, like ->
                     val updatedMap = _uiState.value.userLikes.toMutableMap()
-                    
+
                     if (like > 0) {
                         updatedMap[postId] = 1
                     } else {
