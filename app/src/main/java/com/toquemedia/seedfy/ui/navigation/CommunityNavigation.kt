@@ -257,8 +257,12 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 FeedPostAddComment(
                     textComment = state.textComment,
                     selectedPost = state.selectedPost,
+                    liked = state.likedPosts.contains("${post.verseId}_${arg.communityId}"),
                     onLikePost = {
                         sharedViewModel.likeAPost(post = it, communityId = arg.communityId)
+                    },
+                    onRemoveLikePost = {
+                        sharedViewModel.likeAPost(post = it, communityId = arg.communityId, isRemoving = true)
                     },
                     onChangeTextComment = state.onChangeTextComment,
                     onSendComment = {

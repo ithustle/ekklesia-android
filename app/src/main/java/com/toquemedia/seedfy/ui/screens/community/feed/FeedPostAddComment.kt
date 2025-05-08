@@ -19,8 +19,10 @@ import com.toquemedia.seedfy.utils.mocks.PostsMock
 fun FeedPostAddComment(
     modifier: Modifier = Modifier,
     onSendComment: () -> Unit = {},
+    liked: Boolean = false,
     onChangeTextComment: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
+    onRemoveLikePost: (PostType) -> Unit = {},
     selectedPost: PostType? = null,
     textComment: String
 ) {
@@ -46,9 +48,11 @@ fun FeedPostAddComment(
                 item {
                     FeedPost(
                         post = post,
+                        liked = liked,
                         comments = post.comments,
                         showLikes = post.likes > 0,
-                        onLikePost = onLikePost
+                        onLikePost = onLikePost,
+                        onRemoveLikePost = onRemoveLikePost
                     )
 
                     Spacer(Modifier.height(20.dp))
