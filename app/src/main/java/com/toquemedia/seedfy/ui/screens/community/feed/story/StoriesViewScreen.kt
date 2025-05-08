@@ -114,7 +114,7 @@ fun StoriesViewScreen(
                                 } else if (offset.x <= size.width / 2 && currentStoryIndex > 0) {
                                     currentStoryIndex--
                                 }
-                            }
+                            },
                         )
                     }
             ) {
