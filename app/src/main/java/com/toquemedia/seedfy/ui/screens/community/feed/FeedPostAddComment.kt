@@ -47,12 +47,14 @@ fun FeedPostAddComment(
             selectedPost?.let { post ->
                 item {
                     FeedPost(
-                        post = post,
-                        liked = liked,
-                        comments = post.comments,
                         showLikes = post.likes > 0,
+                        liked = liked,
+                        post = post,
+                        comments = post.comments,
                         onLikePost = onLikePost,
-                        onRemoveLikePost = onRemoveLikePost
+                        onRemoveLikePost = onRemoveLikePost,
+                        commentsCount = post.comments.size.toLong(),
+                        likesCount = post.likes
                     )
 
                     Spacer(Modifier.height(20.dp))

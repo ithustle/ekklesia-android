@@ -185,6 +185,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 posts = state.posts,
                 likedPosts = state.likedPosts,
                 loadingPosts = state.loadingPosts,
+                onUserLikes = state.onUserLikes,
+                userLikes = state.userLikes,
                 user = user,
                 stories = state.stories,
                 onNavigateToComments = {

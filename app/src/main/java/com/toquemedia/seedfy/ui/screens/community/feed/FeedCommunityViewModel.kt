@@ -30,10 +30,21 @@ class FeedCommunityViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
+        println("INIT: ${_uiState.value.userLikes.toMutableMap()}")
         _uiState.update { currentState ->
             currentState.copy(
                 onChangeTextComment = {
                     _uiState.value = _uiState.value.copy(textComment = it)
+                },
+                onUserLikes = { postId, like ->
+                    val updatedMap = _uiState.value.userLikes.toMutableMap()
+                    
+                    if (like > 0) {
+                        updatedMap[postId] = 1
+                    } else {
+                        updatedMap.remove(postId)
+                    }
+                    _uiState.value = _uiState.value.copy(userLikes = updatedMap)
                 }
             )
         }
@@ -124,8 +135,7 @@ class FeedCommunityViewModel @Inject constructor(
             val all = posts.map {
                 async {
                     val comments = repository.getComments(postId = it.verseId, communityId = communityId, limit = 15)
-                    val likes = repository.getLikesOnPost(it.verseId)
-                    it.copy(comments = comments, firstUsersLiked = likes)
+                    it.copy(comments = comments)
                 }
             }.awaitAll()
 
@@ -143,9 +153,19 @@ class FeedCommunityViewModel @Inject constructor(
 
     private fun getUserLiked() {
         viewModelScope.launch {
-            repository.getUserLikesOnPost().collect {
+            repository.getUserLikesOnPost().collect { likes ->
+
+                val currentLikes = _uiState.value.userLikes.toMutableMap()
+
+                likes.distinct().forEach { postId ->
+                    currentLikes[postId] = 1
+                }
+
                 _uiState.update { state ->
-                    state.copy(likedPosts = it)
+                    state.copy(
+                        likedPosts = likes,
+                        userLikes = currentLikes
+                    )
                 }
             }
         }

@@ -2,7 +2,6 @@ package com.toquemedia.seedfy.ui.screens.community.feed
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,12 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.QuestionAnswer
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -50,7 +43,9 @@ fun FeedPost(
     comments: List<CommentType>,
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
-    onRemoveLikePost: (PostType) -> Unit = {}
+    onRemoveLikePost: (PostType) -> Unit = {},
+    commentsCount: Long = 0L,
+    likesCount: Long = 0L
 ) {
 
     val verseData = post.getBookWithChapterAndVersicle()
@@ -104,44 +99,17 @@ fun FeedPost(
             }
         }
 
-        Row(
+        PostInteractionsButtons(
             modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = {
-                    if (liked) {
-                        onRemoveLikePost(post)
-                    } else {
-                        onLikePost(post)
-                    }
-                }
-            ) {
-                Icon(
-                    imageVector = if (liked) Icons.Filled.Favorite else Icons.Rounded.FavoriteBorder,
-                    contentDescription = stringResource(R.string.like_icon_description),
-                    tint = PrincipalColor,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-
-            IconButton(
-                onClick = {
-                    onNavigateToComments(post.verseId)
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.QuestionAnswer,
-                    contentDescription = stringResource(R.string.comment_icon_description),
-                    tint = PrincipalColor,
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-
-            IconButton(onClick = {}) {}
-        }
+                .padding(horizontal = 8.dp),
+            liked = liked,
+            commentsCount = commentsCount,
+            likesCount = likesCount,
+            onLikePost = onLikePost,
+            onRemoveLikePost = onRemoveLikePost,
+            post = post,
+            onNavigateToComments = onNavigateToComments
+        )
 
         if (showLikes) {
             Spacer(Modifier.height(16.dp))
@@ -183,10 +151,8 @@ fun FeedPost(
 @Composable
 private fun FeedPostPrev() {
     FeedPost(
-        showLastComment = false,
-        showLikes = false,
         liked = true,
         post = PostsMock.getPosts().first(),
-        comments = PostsMock.getPosts().first().comments
+        comments = PostsMock.getPosts().first().comments,
     )
 }

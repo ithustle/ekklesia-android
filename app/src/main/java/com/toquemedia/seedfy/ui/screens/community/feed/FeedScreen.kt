@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,11 +39,14 @@ fun FeedScreen(
     posts: List<PostType> = emptyList(),
     stories: List<StoryType> = emptyList(),
     likedPosts: List<String> = emptyList(),
+    userLikes: Map<String, Long> = mutableStateMapOf(),
+    onUserLikes: (String, Long) -> Unit = {_, _ ->},
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
     onRemoveLikePost: (PostType) -> Unit = {},
     onShowStory: (UserType) -> Unit = {}
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -90,6 +94,13 @@ fun FeedScreen(
             }
 
             items(items = posts) { post ->
+
+                val postId = "${post.verseId}_${community.community.id}"
+                val isLiked = likedPosts.contains(postId)
+                val alreadyCounted = post.firstUsersLiked.any { it.email == user?.email }
+
+                val likesCount = maxOf(0, post.likes + if (isLiked && !alreadyCounted) 1 else 0)
+
                 Box(
                     modifier = modifier
                         .background(color = Color.White)
@@ -108,13 +119,20 @@ fun FeedScreen(
                     } ?: run {
                         FeedPost(
                             showLastComment = post.comments.isNotEmpty(),
-                            showLikes = false, //it.likes > 0,
-                            liked = likedPosts.contains("${post.verseId}_${community.community.id}"),
+                            liked = isLiked, //it.likes > 0,
                             post = post,
                             comments = post.comments,
                             onNavigateToComments = onNavigateToComments,
-                            onLikePost = onLikePost,
-                            onRemoveLikePost = onRemoveLikePost,
+                            onLikePost = {
+                                onUserLikes(postId, 1)
+                                onLikePost(it)
+                            },
+                            onRemoveLikePost = {
+                                onUserLikes(postId, 0)
+                                onRemoveLikePost(it)
+                            },
+                            commentsCount = post.comments.size.toLong(),
+                            likesCount = likesCount
                         )
                     }
                 }
