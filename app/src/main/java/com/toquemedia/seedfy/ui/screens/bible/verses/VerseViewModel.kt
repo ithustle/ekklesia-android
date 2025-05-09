@@ -9,6 +9,7 @@ import com.toquemedia.seedfy.repository.AuthRepositoryImpl
 import com.toquemedia.seedfy.repository.NoteRepositoryImpl
 import com.toquemedia.seedfy.repository.PostRepositoryImpl
 import com.toquemedia.seedfy.repository.VerseRepositoryImpl
+import com.toquemedia.seedfy.services.MessagingService
 import com.toquemedia.seedfy.ui.screens.bible.states.VerseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +24,7 @@ class VerseViewModel @Inject constructor(
     private val verseRepository: VerseRepositoryImpl,
     private val noteRepository: NoteRepositoryImpl,
     private val postRepository: PostRepositoryImpl,
-    private val userRepository: AuthRepositoryImpl,
+    private val userRepository: AuthRepositoryImpl
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<VerseUiState> = MutableStateFlow(VerseUiState())

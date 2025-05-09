@@ -34,7 +34,7 @@ object BitmapUtil {
         verse: VerseType?,
         widthPx: Int = 1080,
         heightPx: Int = 1920,
-        logoDrawableId: Int = R.drawable.icone_seedfy
+        logoDrawableId: Int = R.drawable.seedfy_white
     ): Bitmap {
         val bitmap = createBitmap(widthPx, heightPx)
         val canvas = android.graphics.Canvas(bitmap)

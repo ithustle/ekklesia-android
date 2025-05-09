@@ -5,6 +5,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.toquemedia.seedfy.dao.AppDatabase
 import com.toquemedia.seedfy.dao.BibleDao
@@ -16,6 +17,7 @@ import com.toquemedia.seedfy.model.EkklesiaPlayer
 import com.toquemedia.seedfy.services.BunnyService
 import com.toquemedia.seedfy.services.CommunityService
 import com.toquemedia.seedfy.services.NoteService
+import com.toquemedia.seedfy.services.NotificationService
 import com.toquemedia.seedfy.services.OurmannaService
 import com.toquemedia.seedfy.services.PostService
 import com.toquemedia.seedfy.services.StorageService
@@ -47,6 +49,8 @@ class DatabaseModule {
     fun provideNoteService(firestore: FirebaseFirestore): NoteService = NoteService(firestore)
     @Provides
     fun provideStorageService(@ApplicationContext context: Context, storage: FirebaseStorage): StorageService = StorageService(context, storage)
+    @Provides
+    fun provideNotificationService(messaging: FirebaseMessaging): NotificationService = NotificationService(messaging)
     @Provides
     fun provideVerseOfDayService(firestore: FirebaseFirestore): VerseOfDayService = VerseOfDayService(firestore)
 

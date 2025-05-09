@@ -17,6 +17,15 @@ sealed class Screen() {
     object CommunityScreenGraph: Screen()
 
     @Serializable
+    object FirstPageOnboarding: Screen()
+
+    @Serializable
+    object SecondPageOnboarding: Screen()
+
+    @Serializable
+    object ThirdPageOnboarding: Screen()
+
+    @Serializable
     object Login: Screen()
 
     @Serializable

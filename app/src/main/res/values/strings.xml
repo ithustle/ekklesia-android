@@ -82,4 +82,5 @@
     <string name="play_description_icon">Botão de play</string>
     <string name="duration">min</string>
     <string name="publish_story">Publicar</string>
+    <string name="jump_onboarding">Pular</string>
 </resources>

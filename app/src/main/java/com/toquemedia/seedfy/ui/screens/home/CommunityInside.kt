@@ -56,7 +56,7 @@ fun CommunityInside(
         Text(
             text = community.community.communityName,
             fontSize = 10.sp,
-            maxLines = 2,
+            maxLines = 1,
             lineHeight = 10.sp,
             textAlign = TextAlign.Center,
             color = Color.Gray,

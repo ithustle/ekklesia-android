@@ -7,6 +7,7 @@ import com.toquemedia.seedfy.model.CommunityWithMembers
 import com.toquemedia.seedfy.model.UserType
 import com.toquemedia.seedfy.model.interfaces.CommunityRepository
 import com.toquemedia.seedfy.services.CommunityService
+import com.toquemedia.seedfy.services.NotificationService
 import com.toquemedia.seedfy.services.StorageService
 import com.toquemedia.seedfy.services.UserService
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class CommunityRepositoryImpl @Inject constructor(
     private val service : CommunityService,
     private val storage: StorageService,
-    private val auth: UserService
+    private val auth: UserService,
+    private val notification: NotificationService
 ) : CommunityRepository {
 
     override suspend fun createCommunity(name: String, description: String, image: Uri?, user: UserType?): CommunityWithMembers? {
@@ -58,6 +60,8 @@ class CommunityRepositoryImpl @Inject constructor(
                         service.addMember(communityId = community.id, member = member)
                     }.await()
 
+                    notification.subscribeToTopicForNotification(community.id)
+
                     communityWithMembers
                 } catch (firestoreException: Exception) {
                     throw firestoreException
@@ -74,6 +78,7 @@ class CommunityRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) {
             service.addMember(communityId, member)
             auth.saveCommunityIn(communityId)
+            notification.subscribeToTopicForNotification(communityId)
         }
     }
 

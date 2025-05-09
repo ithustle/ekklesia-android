@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.toquemedia.seedfy.model.FcmManager
 import com.toquemedia.seedfy.routes.EkklesiaNavHost
 import com.toquemedia.seedfy.routes.Screen
 import com.toquemedia.seedfy.routes.navigateToBibleGraph
@@ -64,6 +65,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
+            val fcmManager = remember { FcmManager(this) }
 
             val currentUser by appViewModel.currentUser.collectAsStateWithLifecycle()
             val isLoginActive = currentUser != null
@@ -118,13 +120,14 @@ class MainActivity : ComponentActivity() {
                             onNavigateBack = {
                                 navController.popBackStack()
                             },
+                            fcmManager = fcmManager,
                             topBarState = appViewModel.topBarState.value,
                             showTopBar = appViewModel.showTopBar,
                             videoPlayerVisible = appViewModel.videoPlayerVisible,
                             content = {
                                 EkklesiaNavHost(
                                     navController = navController,
-                                    isLoginActive = isLoginActive
+                                    isLoginActive = isLoginActive,
                                 )
                             }
                         )

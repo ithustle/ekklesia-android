@@ -8,9 +8,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.toquemedia.seedfy.LocalAppViewModel
 import com.toquemedia.seedfy.routes.Screen
+import com.toquemedia.seedfy.routes.navigateBetweenScreens
 import com.toquemedia.seedfy.routes.navigateToFirstScreen
 import com.toquemedia.seedfy.ui.screens.login.AuthViewModel
 import com.toquemedia.seedfy.ui.screens.login.LoginScreen
+import com.toquemedia.seedfy.ui.screens.profile.OnboardingPageContent
+import com.toquemedia.seedfy.ui.screens.profile.onboardingPages
 
 fun NavGraphBuilder.loginNavigation(navController: NavController) {
     composable<Screen.Login> {
@@ -30,8 +33,43 @@ fun NavGraphBuilder.loginNavigation(navController: NavController) {
             }
         )
     }
+    composable<Screen.FirstPageOnboarding> {
+        OnboardingPageContent(
+            page = onboardingPages[0],
+            isLast = false,
+            onNext = { navController.navigateToSecondOnboarding() },
+            onSkip = { navController.navigateToLogin() }
+        )
+    }
+    composable<Screen.SecondPageOnboarding> {
+
+        OnboardingPageContent(
+            page = onboardingPages[1],
+            isLast = false,
+            onNext = {
+                navController.navigateToThirdOnboarding()
+            },
+            onSkip = { navController.navigateToLogin() }
+        )
+    }
+    composable<Screen.ThirdPageOnboarding> {
+
+
+        OnboardingPageContent(
+            page = onboardingPages[2],
+            isLast = true,
+            onNext = {
+                navController.navigateToLogin()
+            },
+            onSkip = { navController.navigateToLogin() }
+        )
+    }
 }
 
-fun NavController.navigateToLogin() {
-    this.navigateToFirstScreen()
-}
+fun NavController.navigateToLogin() = this.navigateToFirstScreen(Screen.Login)
+
+fun NavController.navigateToSecondOnboarding() =
+    this.navigateBetweenScreens(Screen.SecondPageOnboarding)
+
+fun NavController.navigateToThirdOnboarding() =
+    this.navigateBetweenScreens(Screen.ThirdPageOnboarding)

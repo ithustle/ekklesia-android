@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.toquemedia.seedfy.dao.AppCacheDao
@@ -41,6 +42,10 @@ object AppModules {
     fun provideUserDataStore(@ApplicationContext context: Context): VerseDao {
         return VerseDao(context)
     }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
 
     @Singleton
     @Provides

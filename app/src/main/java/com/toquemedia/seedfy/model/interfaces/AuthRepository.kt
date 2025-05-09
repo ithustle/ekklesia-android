@@ -8,4 +8,6 @@ interface AuthRepository {
     fun getCurrentUser(): UserType?
     suspend fun signOut()
     suspend fun getCommunitiesId(): List<String>
+    suspend fun registerOnboarding()
+    suspend fun getRegisteredOnboarding(): Boolean
 }
