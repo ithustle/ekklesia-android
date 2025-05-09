@@ -43,7 +43,7 @@ fun NavGraphBuilder.verseNavigation(
             navController.getBackStackEntry(Screen.BibleScreenGraph)
         }
 
-        val vmVerses: VerseViewModel = hiltViewModel()
+        val vmVerses: VerseViewModel = hiltViewModel(bibleGraphEntry)
         val vmWorship: WorshipViewModel = hiltViewModel(bibleGraphEntry)
 
         val versesStates by vmVerses.uiState.collectAsState()
@@ -106,7 +106,6 @@ fun NavGraphBuilder.verseNavigation(
                     )
                     versesStates.apply {
                         onShowVerseAction(false)
-                        onSelectVerse("", -1)
                     }
                 },
                 onSelectVerseForDevocional = {
@@ -206,62 +205,53 @@ fun NavGraphBuilder.verseNavigation(
 
     composable<Screen.NoteVerse> { backStackEntry ->
 
-        navController.previousBackStackEntry?.let {
-            val appViewModel = LocalAppViewModel.current
+        val bibleGraphEntry = remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry(Screen.BibleScreenGraph)
+        }
 
-            val vmVerses: VerseViewModel = hiltViewModel(it)
+        val appViewModel = LocalAppViewModel.current
+        val vmVerses: VerseViewModel = hiltViewModel(bibleGraphEntry)
+        val versesStates by vmVerses.uiState.collectAsState()
+        val args = backStackEntry.toRoute<Screen.NoteVerse>()
 
-            val versesStates by vmVerses.uiState.collectAsState()
+        val chapterNumber = args.chapterNumber
+        val bookName = args.bookName
+        val versicle = args.versicle
+        val selectedVerse = args.verse
 
-            val args = backStackEntry.toRoute<Screen.NoteVerse>()
+        val context = LocalContext.current
 
-            val chapterNumber = args.chapterNumber
-            val bookName = args.bookName
-            val versicle = args.versicle
-            val selectedVerse = args.verse
-
-            val context = LocalContext.current
-
-            LaunchedEffect(Unit) {
-                appViewModel.updateTopBarState(
-                    newState = TopBarState(
-                        title = "Adicionar nota",
-                        showBackButton = true,
-                        onBackNavigation = {
-                            navController.popBackStack()
-                        }
-                    )
+        LaunchedEffect(Unit) {
+            appViewModel.updateTopBarState(
+                newState = TopBarState(
+                    title = "Adicionar nota",
+                    showBackButton = true,
+                    onBackNavigation = {
+                        navController.popBackStack()
+                    }
                 )
-            }
-
-            NoteScreen(
-                verse = selectedVerse,
-                bookName = bookName.toString(),
-                versicle = versicle,
-                chapter = chapterNumber.toString(),
-                entryNote = versesStates.entryNote,
-                onEntryNoteChange = versesStates.onEntryNoteChange,
-                savingNote = versesStates.savingNote,
-                onSaveNote = {
-                    vmVerses.addNoteToVerse(
-                        bookName = bookName.toString(),
-                        chapter = chapterNumber.toInt(),
-                        versicle = versesStates.versicle,
-                        verse = versesStates.selectedVerse
-                    )
-                    Toast.makeText(context, "Nota adicionada com sucesso", Toast.LENGTH_SHORT).show()
-                },
-                onSaveAndShareNote = {
-                    vmVerses.saveAndShareNote(
-                        bookName = bookName.toString(),
-                        chapter = chapterNumber.toInt(),
-                        versicle = versesStates.versicle,
-                        verse = versesStates.selectedVerse
-                    )
-                    Toast.makeText(context, "Nota salva e partilhada com sucesso", Toast.LENGTH_SHORT).show()
-                }
             )
         }
+
+        NoteScreen(
+            verse = selectedVerse,
+            bookName = bookName.toString(),
+            versicle = versicle,
+            chapter = chapterNumber.toString(),
+            entryNote = versesStates.entryNote,
+            onEntryNoteChange = versesStates.onEntryNoteChange,
+            savingNote = versesStates.savingNote,
+            onSaveAndShareNote = {
+                vmVerses.addNoteToVerse(
+                    bookName = bookName.toString(),
+                    chapter = chapterNumber.toInt(),
+                    versicle = versesStates.versicle,
+                    verse = versesStates.selectedVerse
+                )
+                Toast.makeText(context, "Nota salva e partilhada com sucesso", Toast.LENGTH_SHORT).show()
+                navController.popBackStack()
+            }
+        )
     }
 
     composable<Screen.CreateWorship> { backStackEntry ->

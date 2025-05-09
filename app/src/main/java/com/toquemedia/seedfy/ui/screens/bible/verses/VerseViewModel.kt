@@ -9,7 +9,6 @@ import com.toquemedia.seedfy.repository.AuthRepositoryImpl
 import com.toquemedia.seedfy.repository.NoteRepositoryImpl
 import com.toquemedia.seedfy.repository.PostRepositoryImpl
 import com.toquemedia.seedfy.repository.VerseRepositoryImpl
-import com.toquemedia.seedfy.services.MessagingService
 import com.toquemedia.seedfy.ui.screens.bible.states.VerseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -136,11 +135,6 @@ class VerseViewModel @Inject constructor(
                 id = "${bookName}_${chapter}_$versicle"
             )
             noteRepository.addNoteToVerse(note)
-            _uiState.value.onShowAddNote(false)
-            _uiState.value.onSelectVerse("", -1)
-            _uiState.value.onEntryNoteChange("")
-            _uiState.value.onSavingNote(false)
-
             launch {
                 val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
                 val communityId = userRepository.getCommunitiesId()
@@ -153,25 +147,6 @@ class VerseViewModel @Inject constructor(
                 )
                 postRepository.addPost(post)
             }
-        }
-    }
-
-    fun saveAndShareNote(
-        bookName: String,
-        chapter: Int,
-        versicle: Int,
-        verse: String,
-    ) {
-        viewModelScope.launch {
-            val note = NoteEntity(
-                bookName = bookName,
-                chapter = chapter,
-                versicle = versicle,
-                verse = verse,
-                note = _uiState.value.entryNote,
-                id = "${bookName}_${chapter}_$versicle"
-            )
-            noteRepository.shareNote(note)
             _uiState.value.onShowAddNote(false)
             _uiState.value.onSelectVerse("", -1)
             _uiState.value.onEntryNoteChange("")
