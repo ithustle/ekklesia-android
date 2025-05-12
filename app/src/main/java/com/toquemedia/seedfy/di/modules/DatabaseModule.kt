@@ -14,8 +14,10 @@ import com.toquemedia.seedfy.dao.MessageDao
 import com.toquemedia.seedfy.dao.NoteDao
 import com.toquemedia.seedfy.dao.WorshipDao
 import com.toquemedia.seedfy.model.EkklesiaPlayer
+import com.toquemedia.seedfy.model.interfaces.AuthRepository
 import com.toquemedia.seedfy.services.BunnyService
 import com.toquemedia.seedfy.services.CommunityService
+import com.toquemedia.seedfy.services.MessagingService
 import com.toquemedia.seedfy.services.NoteService
 import com.toquemedia.seedfy.services.NotificationService
 import com.toquemedia.seedfy.services.OurmannaService
@@ -53,6 +55,9 @@ class DatabaseModule {
     fun provideNotificationService(messaging: FirebaseMessaging): NotificationService = NotificationService(messaging)
     @Provides
     fun provideVerseOfDayService(firestore: FirebaseFirestore): VerseOfDayService = VerseOfDayService(firestore)
+
+    @Provides
+    fun provideMessagingService(auth: UserService): MessagingService = MessagingService(auth)
 
     @OptIn(UnstableApi::class)
     @Provides

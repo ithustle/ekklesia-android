@@ -6,25 +6,36 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.toquemedia.seedfy.MainActivity
 import com.toquemedia.seedfy.R
+import javax.inject.Inject
 import kotlin.random.Random
 
-class MessagingService : FirebaseMessagingService() {
+class MessagingService @Inject constructor(
+    private val user: UserService
+) : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
     }
+
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
         val title = remoteMessage.notification?.title ?: "Nova notificação"
         val body = remoteMessage.notification?.body ?: "Você recebeu uma nova mensagem"
+        val data = remoteMessage.data
 
-        showNotification(title, body)
+        val userEmail = data["email"]
+        val user = user.getCurrentUser()
+
+        if (user?.email != userEmail) {
+            showNotification(title, body)
+        }
     }
 
     private fun showNotification(title: String, message: String) {
