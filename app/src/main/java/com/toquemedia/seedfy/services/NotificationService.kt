@@ -12,4 +12,8 @@ class NotificationService @Inject constructor(
     suspend fun subscribeToTopicForNotification(topic: String) {
         messagingService.subscribeToTopic(topic).await()
     }
+
+    suspend fun unsubscribeToTopicForNotification(topic: String) {
+        messagingService.unsubscribeFromTopic(topic).await()
+    }
 }

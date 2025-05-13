@@ -30,7 +30,7 @@
       </SelectionState>
       <SelectionState runConfigName="Seedfy.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-13T13:51:49.961716Z">
+        <DropdownSelection timestamp="2025-05-13T17:01:23.130142Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=/Users/ithustle/.android/avd/Pixel_3a_API_34_extension_level_7_arm64-v8a.avd" />

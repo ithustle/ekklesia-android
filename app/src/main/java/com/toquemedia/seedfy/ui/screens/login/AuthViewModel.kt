@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,7 +21,16 @@ class AuthViewModel @Inject constructor(
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     init {
-        _uiState.value = _uiState.value.copy(user = repository.getCurrentUser())
+        _uiState.update { currentState ->
+            currentState.copy(
+                onMyNote = {
+                    _uiState.value = _uiState.value.copy(myNote = it)
+                },
+                user = repository.getCurrentUser()
+            )
+        }
+        //_uiState.value = _uiState.value.copy(user = )
+        getMyNotes()
     }
 
     fun signIn(activityContext: Activity?) {
@@ -38,10 +48,15 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signOut() {
+    fun saveMyNote(myNote: String) {
         viewModelScope.launch {
-            repository.signOut()
-            _uiState.value = _uiState.value.copy(user = null)
+            repository.saveMyNotes(myNote)
+        }
+    }
+
+    private fun getMyNotes() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(myNote = repository.getMyNotes())
         }
     }
 }

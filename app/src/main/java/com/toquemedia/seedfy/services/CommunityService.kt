@@ -104,6 +104,28 @@ class CommunityService @Inject constructor(
         db.collection(collection).document(id).update("active", false).await()
     }
 
+    suspend fun getCommunitiesActiveIds(ids: List<String>): List<String> {
+        val communityDocs = withContext(Dispatchers.IO) {
+            val docRefs = ids.map { db.collection(collection).document(it) }
+
+            db.runTransaction { transaction ->
+                docRefs.map { docRef ->
+                    transaction.get(docRef)
+                }
+            }.await()
+        }
+
+        return communityDocs
+            .filter { it.exists() }
+            .mapNotNull { doc ->
+                doc.toObject(CommunityType::class.java)?.let { community ->
+                    if (community.active == true) {
+                        community.id
+                    } else null
+                }
+            }
+    }
+
     suspend fun getCommunitiesUserIn(): List<CommunityWithMembers> {
 
         val ids = auth.getCommunitiesIn()

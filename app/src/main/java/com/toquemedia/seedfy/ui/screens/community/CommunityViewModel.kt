@@ -12,6 +12,7 @@ import com.toquemedia.seedfy.model.CommunityWithMembers
 import com.toquemedia.seedfy.model.ValidationResult
 import com.toquemedia.seedfy.repository.AuthRepositoryImpl
 import com.toquemedia.seedfy.repository.CommunityRepositoryImpl
+import com.toquemedia.seedfy.services.NotificationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers

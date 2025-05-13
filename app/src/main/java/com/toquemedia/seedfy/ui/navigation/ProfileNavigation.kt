@@ -49,6 +49,11 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
         uiState.user?.let {
             ProfileScreen(
                 user = it,
+                myNote = uiState.myNote,
+                onChangeMyNote = uiState.onMyNote,
+                onSaveNote = {
+                    viewModel.saveMyNote(it)
+                },
                 onSignOut = {
                     appViewModel.logout()
                 },

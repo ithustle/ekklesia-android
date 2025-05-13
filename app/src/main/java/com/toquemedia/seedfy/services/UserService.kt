@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.toquemedia.seedfy.R
 import com.toquemedia.seedfy.dao.LikeDao
 import com.toquemedia.seedfy.model.UserType
@@ -32,20 +33,16 @@ class UserService @Inject constructor(
 ) {
 
     private val collection = "users"
+    private val subCollectionPostLiked = "postsLiked"
 
     suspend fun saveCommunityIn(id: String) {
         val user = this.getCurrentUser()
 
         try {
-            db.collection(collection).document(user?.email.toString()).update("communitiesIn", FieldValue.arrayUnion(id)).await()
+            db.collection(collection).document(user?.email.toString())
+                .update("communitiesIn", FieldValue.arrayUnion(id)).await()
         } catch (e: Exception) {
             e.printStackTrace()
-            val data = mapOf(
-                "communitiesIn" to listOf(id),
-                "postsLiked" to emptyList<String>(),
-                "id" to user?.id,
-            )
-            db.collection(collection).document(user?.email.toString()).set(data).await()
         }
     }
 
@@ -53,15 +50,21 @@ class UserService @Inject constructor(
         val user = this.getCurrentUser()
 
         try {
-            db.collection(collection).document(user?.email.toString()).update("postsLiked", FieldValue.arrayUnion(id)).await()
+            db.collection(collection).document(user?.email.toString())
+                .collection(subCollectionPostLiked).document(id).set(mapOf("like" to id)).await()
         } catch (e: Exception) {
             e.printStackTrace()
-            val data = mapOf(
-                "postsLiked" to listOf(id),
-                "communitiesIn" to emptyList<String>(),
-                "id" to user?.id,
-            )
-            db.collection(collection).document(user?.email.toString()).set(data).await()
+        }
+    }
+
+    suspend fun saveMyNotes(myNote: String) {
+        val user = this.getCurrentUser()
+
+        try {
+            db.collection(collection).document(user?.email.toString())
+                .set(mapOf("myNotes" to myNote), SetOptions.merge()).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -75,11 +78,22 @@ class UserService @Inject constructor(
         val user = this.handleSignIn(activityContext)
 
         return user?.let { user ->
-            val userInfo = db.collection(collection).document(user.email.toString()).get().await().toObject(UserType::class.java)
+            val userRef = db.collection(collection).document(user.email.toString())
+            val userInfo = userRef.get().await()
+                .toObject(UserType::class.java)
 
-            userInfo?.let {
-                it.postsLiked.forEach { postId ->
-                    dao.saveLikeRegister(postId)
+            val likes = userRef.collection(subCollectionPostLiked).get().await().toObjects(Map::class.java)
+
+            likes.forEach { doc ->
+                @Suppress("UNCHECKED_CAST")
+                val likesMap = doc as? Map<String, Any>
+                likesMap?.forEach { (key, value) ->
+                    when (key) {
+                        "like" -> {
+                            val id = value.toString()
+                            dao.saveLikeRegister(id)
+                        }
+                    }
                 }
             }
 
@@ -141,7 +155,8 @@ class UserService @Inject constructor(
                 credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
             ) {
                 val tokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                val firebaseCredential = GoogleAuthProvider.getCredential(tokenCredential.idToken, null)
+                val firebaseCredential =
+                    GoogleAuthProvider.getCredential(tokenCredential.idToken, null)
                 val authResult = auth.signInWithCredential(firebaseCredential).await()
                 return authResult.user
             }

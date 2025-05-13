@@ -5,6 +5,7 @@ import com.toquemedia.seedfy.model.CommentType
 import com.toquemedia.seedfy.model.PostType
 import com.toquemedia.seedfy.model.UserType
 import com.toquemedia.seedfy.model.interfaces.PostRepository
+import com.toquemedia.seedfy.services.CommunityService
 import com.toquemedia.seedfy.services.PostService
 import com.toquemedia.seedfy.services.UserService
 import kotlinx.coroutines.flow.Flow
@@ -13,10 +14,15 @@ import javax.inject.Inject
 class PostRepositoryImpl @Inject constructor(
     private val postService: PostService,
     private val auth: UserService,
-    private val dao: LikeDao
+    private val dao: LikeDao,
+    private val communityService: CommunityService
 ) : PostRepository {
 
-    override suspend fun addPost(post: PostType) = postService.addPost(post)
+    override suspend fun addPost(post: PostType) {
+        val communitiesActiveIds = communityService.getCommunitiesActiveIds(post.communityId)
+        post.copy(communityId = communitiesActiveIds)
+        postService.addPost(post)
+    }
     override suspend fun removePost(postId: String) = postService.removePost(postId)
     override suspend fun getPosts(communityId: String): List<PostType> = postService.getAllPosts(communityId)
 

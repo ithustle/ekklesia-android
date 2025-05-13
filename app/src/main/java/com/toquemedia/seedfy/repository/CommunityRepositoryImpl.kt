@@ -56,7 +56,12 @@ class CommunityRepositoryImpl @Inject constructor(
                     allMembers = listOf(member)
                 )
 
-                service.createCommunity(communityWithMembers)
+                val createCommunityJob =  async { service.createCommunity(communityWithMembers) }
+                val notifyJob = async { notification.subscribeToTopicForNotification(communityId) }
+
+                createCommunityJob.await()
+                notifyJob.await()
+
                 communityWithMembers
             } catch (firestoreException: Exception) {
                 throw firestoreException
@@ -89,14 +94,22 @@ class CommunityRepositoryImpl @Inject constructor(
 
     override suspend fun removeMember(communityId: String, memberId: String) {
         withContext(Dispatchers.IO) {
-            service.removeMember(communityId, memberId)
+            val removedJob = async { service.removeMember(communityId, memberId) }
+            val notificationJob = async { notification.unsubscribeToTopicForNotification(communityId) }
+
+            removedJob.await()
+            notificationJob.await()
         }
     }
 
     override suspend fun deleteCommunity(id: String) {
         withContext(Dispatchers.IO) {
             try {
-                service.removeCommunity(id)
+                val removeCommunityJob = async { service.removeCommunity(id) }
+                val removeNotificationJob = async { notification.unsubscribeToTopicForNotification(id) }
+
+                removeCommunityJob.await()
+                removeNotificationJob.await()
             } catch (e: Exception) {
                 throw e
             }

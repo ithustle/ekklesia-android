@@ -16,6 +16,14 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
     override suspend fun googleSignIn(activityContext: Activity): UserType? = service.googleSignIn(activityContext)
+    override suspend fun saveMyNotes(myNote: String) {
+        cache.saveCache("myNotes", myNote)
+        service.saveMyNotes(myNote)
+    }
+
+    override suspend fun getMyNotes(): String =
+        cache.getCache("myNotes", object : TypeToken<String>() {}).toString()
+
     override fun getCurrentUser(): UserType? = service.getCurrentUser()
     override suspend fun signOut() = service.signOut()
     override suspend fun getCommunitiesId(): List<String> = service.getCommunitiesIn()

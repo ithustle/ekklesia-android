@@ -8,17 +8,38 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.AutoStories
+import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.EditNote
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,11 +52,21 @@ import com.toquemedia.seedfy.ui.theme.PrincipalColor
 @Composable
 fun ProfileScreen(
     user: UserType,
+    myNote: String = "",
+    onChangeMyNote: (String) -> Unit = {},
     onNavigateToMyDevocional: () -> Unit = {},
+    onSaveNote: (String) -> Unit = {},
     onSignOut: () -> Unit = {},
 ) {
 
+    var showInput by remember { mutableStateOf(false) }
+
     val profileList = listOf<ProfileList>(
+        ProfileList.Biography(
+            title = stringResource(R.string.my_notes),
+            icon = Icons.Rounded.EditNote,
+            onAction = onNavigateToMyDevocional
+        ),
         ProfileList.Devocional(
             title = stringResource(R.string.menu_devocional),
             icon = Icons.Rounded.AutoStories,
@@ -79,12 +110,79 @@ fun ProfileScreen(
                     colorFilter = ColorFilter.tint(PrincipalColor)
                 )
 
-                Text(
-                    text = profileList[index].title,
-                    fontSize = 20.sp,
-                )
+                if (profileList[index].title == stringResource(R.string.my_notes)) {
+                    if (showInput) {
+                        TextField(
+                            value = if (myNote == "null") "" else myNote,
+                            onValueChange = onChangeMyNote,
+                            textStyle = LocalTextStyle.current.copy(
+                                textAlign = TextAlign.Left,
+                                color = PrincipalColor,
+                                fontSize = 18.sp
+                            ),
+                            singleLine = true,
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                unfocusedIndicatorColor = Color.Gray,
+                                disabledIndicatorColor = Color.Transparent,
+                                cursorColor = MaterialTheme.colorScheme.primary
+                            ),
+                            modifier = Modifier
+                                .offset(y = (-10).dp)
+                                .height(56.dp),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done,
+                                capitalization = KeyboardCapitalization.Sentences,
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    showInput = false
+                                    onSaveNote(myNote)
+                                }
+                            )
+                        )
+                    } else {
+                        Text(
+                            text = if (myNote == "null") profileList[index].title else myNote,
+                            fontSize = 20.sp,
+                            color = Color.Gray,
+                        )
+                    }
+                } else {
+                    Text(
+                        text = profileList[index].title,
+                        fontSize = 20.sp,
+                    )
+                }
 
                 Spacer(modifier = Modifier.weight(weight = 1f))
+
+                if (profileList[index].title == stringResource(R.string.my_notes)) {
+                    if (showInput) {
+                        Icon(
+                            imageVector = Icons.Rounded.Close,
+                            contentDescription = null,
+                            tint = PrincipalColor,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    showInput = false
+                                }
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Rounded.Edit,
+                            contentDescription = null,
+                            tint = Color.Gray,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { showInput = true }
+                        )
+                    }
+                }
             }
         }
     }

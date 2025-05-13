@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import com.google.firebase.firestore.auth.User
 import com.toquemedia.seedfy.R
 import com.toquemedia.seedfy.model.CommunityWithMembers
 import com.toquemedia.seedfy.model.UserType
