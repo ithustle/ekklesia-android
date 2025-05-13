@@ -1,16 +1,27 @@
 package com.toquemedia.seedfy.ui.navigation
 
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.Logout
+import androidx.compose.material.icons.rounded.Info
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,11 +36,13 @@ import com.toquemedia.seedfy.model.CommunityType
 import com.toquemedia.seedfy.model.TopBarState
 import com.toquemedia.seedfy.routes.Screen
 import com.toquemedia.seedfy.routes.navigateBetweenScreens
+import com.toquemedia.seedfy.ui.composables.EkklesiaProgress
 import com.toquemedia.seedfy.ui.composables.ScreenAppLoading
 import com.toquemedia.seedfy.ui.screens.community.CommunityViewModel
 import com.toquemedia.seedfy.ui.screens.community.chat.ChatScreen
 import com.toquemedia.seedfy.ui.screens.community.chat.ChatViewModel
 import com.toquemedia.seedfy.ui.screens.community.create.CreateCommunityScreen
+import com.toquemedia.seedfy.ui.screens.community.details.CommunityDetailScreen
 import com.toquemedia.seedfy.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.seedfy.ui.screens.community.feed.FeedPostAddComment
 import com.toquemedia.seedfy.ui.screens.community.feed.FeedScreen
@@ -38,6 +51,9 @@ import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.VideoPlayer
 import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.VideoPlayerViewModel
 import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.WorshipPostScreen
 import com.toquemedia.seedfy.ui.screens.community.list.CommunityListScreen
+import com.toquemedia.seedfy.ui.theme.PrincipalColor
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 @OptIn(UnstableApi::class)
 fun NavGraphBuilder.communityNavigation(navController: NavController) {
@@ -124,11 +140,11 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val viewModel = hiltViewModel<FeedCommunityViewModel>(stackEntry)
         val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-        val context = LocalContext.current
         val appViewModel = LocalAppViewModel.current
         val user = appViewModel.currentUser.value
 
-        val selectedCommunity = remember(appViewModel.selectedCommunity) { appViewModel.selectedCommunity }
+        val selectedCommunity =
+            remember(appViewModel.selectedCommunity) { appViewModel.selectedCommunity }
 
         LaunchedEffect(state.posts) {
             if (selectedCommunity != null && state.posts.isEmpty()) {
@@ -144,24 +160,20 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                     title = selectedCommunity?.community?.communityName.toString(),
                     showTitleAvatar = true,
                     showBackButton = true,
-                    useAvatar = user?.photo,
-                    /*actions = {
+                    useAvatar = null,
+                    actions = {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.Chat,
+                            imageVector = Icons.Rounded.Info,
                             contentDescription = stringResource(R.string.change_community_description),
                             tint = PrincipalColor,
                             modifier = Modifier
                                 .padding(horizontal = 12.dp)
-                                .size(20.dp)
+                                .size(28.dp)
                                 .clickable {
-                                    Toast.makeText(
-                                        context,
-                                        "Funcionalidade em desenvolvimento",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    navController.navigateToCommunityDetails()
                                 }
                         )
-                    }, */
+                    },
                     onBackNavigation = {
                         navController.popBackStack()
                     }
@@ -179,17 +191,102 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 user = user,
                 stories = state.stories,
                 onNavigateToComments = {
-                    navController.navigateToAddCommentOnPost(postId = it, communityId = community.community.id)
+                    navController.navigateToAddCommentOnPost(
+                        postId = it,
+                        communityId = community.community.id
+                    )
                 },
                 onLikePost = {
                     viewModel.likeAPost(post = it, communityId = community.community.id)
                 },
                 onRemoveLikePost = {
-                    viewModel.likeAPost(post = it, communityId = community.community.id, isRemoving = true)
+                    viewModel.likeAPost(
+                        post = it,
+                        communityId = community.community.id,
+                        isRemoving = true
+                    )
                 },
                 onShowStory = {
                     navController.navigateToStories(email = it.email.toString())
                 }
+            )
+        }
+    }
+
+    composable<Screen.CommunityDetails> {
+
+        val appViewModel = LocalAppViewModel.current
+        val activity = appViewModel.activityContext as ComponentActivity
+        val viewModel = hiltViewModel<CommunityViewModel>(activity)
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+        val context = LocalContext.current
+        val communityId = appViewModel.selectedCommunity?.community?.id
+        val user = appViewModel.currentUser.value
+        val scope = rememberCoroutineScope()
+
+        fun leftCommunity() {
+            scope.launch {
+                try {
+                    async {
+                        viewModel.removeMember(
+                            communityId.toString(),
+                            user?.id.toString()
+                        )
+                    }.await()
+                    val updatedMembers =
+                        appViewModel.selectedCommunity?.allMembers?.filter { it.id != user?.id }
+                    updatedMembers?.let {
+                        appViewModel.selectedCommunity?.copy(
+                            allMembers = it
+                        )
+                    }
+                    navController.popBackStack()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.message_error_left_community),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            appViewModel.updateTopBarState(
+                newState = TopBarState(
+                    showBackButton = true,
+                    title = context.getString(R.string.community_detail_title),
+                    useAvatar = null,
+                    actions = {
+                        if (state.loadingLeftCommunity) {
+                            EkklesiaProgress(
+                                color = PrincipalColor,
+                                size = 20.dp,
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.Logout,
+                                contentDescription = stringResource(R.string.logout_description),
+                                tint = PrincipalColor,
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp)
+                                    .size(20.dp)
+                                    .clickable {
+                                        leftCommunity()
+                                    }
+                            )
+                        }
+                    },
+                )
+            )
+        }
+
+        appViewModel.selectedCommunity?.let {
+            CommunityDetailScreen(
+                data = it,
+                currentUser = user
             )
         }
     }
@@ -209,7 +306,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         }
 
         StoriesViewScreen(
-            stories = state.stories.filter { it.user?.email == arg.email }.sortedBy { it.createdAt },
+            stories = state.stories.filter { it.user?.email == arg.email }
+                .sortedBy { it.createdAt },
             onFinishStory = {
                 navController.popBackStack()
             }
@@ -253,7 +351,11 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                         sharedViewModel.likeAPost(post = it, communityId = arg.communityId)
                     },
                     onRemoveLikePost = {
-                        sharedViewModel.likeAPost(post = it, communityId = arg.communityId, isRemoving = true)
+                        sharedViewModel.likeAPost(
+                            post = it,
+                            communityId = arg.communityId,
+                            isRemoving = true
+                        )
                     },
                     onChangeTextComment = state.onChangeTextComment,
                     onSendComment = {
@@ -334,7 +436,17 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
 fun NavController.navigateToCreateCommunity() = this.navigateBetweenScreens(Screen.CreateCommunity)
 fun NavController.navigateToCommunityFeed() = this.navigateBetweenScreens(Screen.CommunityFeed)
-fun NavController.navigateToPlayer(videoUrl: String) = this.navigateBetweenScreens(Screen.VideoPlayer(videoUrl = videoUrl))
-fun NavController.navigateToStories(email: String) = this.navigateBetweenScreens(Screen.StoriesNavigation(email))
-fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
-fun NavController.navigateToAddCommentOnPost(postId: String, communityId: String) = this.navigateBetweenScreens(Screen.CommentPost(postId, communityId))
+fun NavController.navigateToPlayer(videoUrl: String) =
+    this.navigateBetweenScreens(Screen.VideoPlayer(videoUrl = videoUrl))
+
+fun NavController.navigateToStories(email: String) =
+    this.navigateBetweenScreens(Screen.StoriesNavigation(email))
+
+fun NavController.navigateToChatScreen(community: CommunityType) =
+    this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
+
+fun NavController.navigateToCommunityDetails() =
+    this.navigateBetweenScreens(Screen.CommunityDetails)
+
+fun NavController.navigateToAddCommentOnPost(postId: String, communityId: String) =
+    this.navigateBetweenScreens(Screen.CommentPost(postId, communityId))

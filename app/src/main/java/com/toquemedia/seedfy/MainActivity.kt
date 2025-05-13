@@ -32,18 +32,21 @@ import com.toquemedia.seedfy.routes.navigateToBibleGraph
 import com.toquemedia.seedfy.routes.navigateToCommunityGraph
 import com.toquemedia.seedfy.routes.navigateToFirstScreen
 import com.toquemedia.seedfy.routes.navigateToHomeGraph
+import com.toquemedia.seedfy.ui.navigation.navigateToAddCommentOnPost
 import com.toquemedia.seedfy.ui.navigation.navigateToProfile
 import com.toquemedia.seedfy.ui.screens.community.CommunityViewModel
 import com.toquemedia.seedfy.ui.theme.EkklesiaTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val communityViewModel: CommunityViewModel by viewModels()
     private val appViewModel: AppViewModel by viewModels()
 
-    @RequiresApi(Build.VERSION_CODES.S)
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -57,6 +60,7 @@ class MainActivity : ComponentActivity() {
                     splashScreen.setKeepOnScreenCondition {
                         state.loadingCommunitiesUserIn
                     }
+                    println("state.loadingCommunitiesUserIn: ${state.loadingCommunitiesUserIn}")
                 }
             }
         }
@@ -77,6 +81,26 @@ class MainActivity : ComponentActivity() {
                     navController.navigateToFirstScreen(Screen.AuthScreenGraph)
                 } else {
                     navController.navigateToFirstScreen(Screen.HomeScreenGraph)
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                println("jáaaaa???")
+
+                communityViewModel.uiState.collect {
+                    if (it.loadingCommunitiesUserIn == false) {
+                        val postId = intent.getStringExtra("postId")
+                        val communityId = intent.getStringExtra("communityId")
+
+                        if (postId != null && communityId != null) {
+                            navController.navigateToAddCommentOnPost(postId, communityId)
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            intent.removeExtra("postId")
+                            intent.removeExtra("communityId")
+                        }
+                    }
                 }
             }
 
@@ -143,6 +167,7 @@ class MainActivity : ComponentActivity() {
         appViewModel.books = emptyList()
     }
 
+
     private fun checkPermission() {
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
 
@@ -151,7 +176,8 @@ class MainActivity : ComponentActivity() {
                 this,
                 arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.POST_NOTIFICATIONS
                 ),
                 1001
             )

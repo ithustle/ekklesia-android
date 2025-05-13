@@ -50,6 +50,9 @@ sealed class Screen() {
     object CreateCommunity: Screen()
 
     @Serializable
+    object CommunityDetails: Screen()
+
+    @Serializable
     data class CreateWorship(
         val bookName: String?,
         val chapterNumber: String,

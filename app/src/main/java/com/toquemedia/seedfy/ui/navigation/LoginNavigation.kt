@@ -12,8 +12,8 @@ import com.toquemedia.seedfy.routes.navigateBetweenScreens
 import com.toquemedia.seedfy.routes.navigateToFirstScreen
 import com.toquemedia.seedfy.ui.screens.login.AuthViewModel
 import com.toquemedia.seedfy.ui.screens.login.LoginScreen
-import com.toquemedia.seedfy.ui.screens.profile.OnboardingPageContent
-import com.toquemedia.seedfy.ui.screens.profile.onboardingPages
+import com.toquemedia.seedfy.ui.screens.onBoarding.OnboardingPageContent
+import com.toquemedia.seedfy.ui.screens.onBoarding.onboardingPages
 
 fun NavGraphBuilder.loginNavigation(navController: NavController) {
     composable<Screen.Login> {

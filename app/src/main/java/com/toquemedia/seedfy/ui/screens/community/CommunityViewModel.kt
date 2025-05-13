@@ -85,7 +85,7 @@ class CommunityViewModel @Inject constructor(
                     e.printStackTrace()
                 }
             } else {
-                _uiState.update { it.copy(loadingCommunitiesUserIn = false ) }
+                _uiState.update { it.copy(loadingCommunitiesUserIn = false) }
             }
         }
     }
@@ -143,15 +143,17 @@ class CommunityViewModel @Inject constructor(
                 val member = CommunityMemberType(
                     id = user.id,
                     user = user,
-                    isAdmin = false
+                    admin = false
                 )
                 repository.addMember(
                     communityId = communityId,
                     member = member
                 )
 
-                val filteredCommunity = _uiState.value.communities.filter { it.community.id != communityId }
-                val communityAsMember = _uiState.value.communities.first { it.community.id == communityId }
+                val filteredCommunity =
+                    _uiState.value.communities.filter { it.community.id != communityId }
+                val communityAsMember =
+                    _uiState.value.communities.first { it.community.id == communityId }
 
                 _uiState.value = _uiState.value.copy(
                     joiningToCommunity = false,
@@ -175,6 +177,19 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
+    fun removeMember(communityId: String, memberId: String) {
+        viewModelScope.launch {
+            try {
+                _uiState.update { it.copy(loadingLeftCommunity = true) }
+                repository.removeMember(communityId, memberId)
+                _uiState.update { it.copy(loadingLeftCommunity = false) }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _uiState.update { it.copy(loadingLeftCommunity = false) }
+            }
+        }
+    }
+
     private suspend fun getAllCommunities() {
         try {
             val user = authRepository.getCurrentUser()
@@ -187,7 +202,8 @@ class CommunityViewModel @Inject constructor(
                                 val members = repository.getAllMembers(community.id)
 
                                 val finalMembers = if (members.isEmpty() &&
-                                    community.email == user?.email) {
+                                    community.email == user?.email
+                                ) {
                                     delay(500)
                                     val retryMembers = repository.getAllMembers(community.id)
                                     retryMembers

@@ -37,7 +37,7 @@ fun InviteButton(modifier: Modifier = Modifier) {
             modifier = modifier
                 .clip(CircleShape)
                 .background(color = PrincipalColor)
-                .padding(12.dp)
+                .padding(8.dp)
         ) {
             Icon(
                 imageVector = Icons.Rounded.Link,
@@ -46,17 +46,24 @@ fun InviteButton(modifier: Modifier = Modifier) {
             )
         }
 
-        Column {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(
                 text = stringResource(R.string.invite_link),
-                fontSize = 18.sp,
+                fontSize = 16.sp,
+                lineHeight = 11.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = PrincipalColor
+                color = PrincipalColor,
             )
             Text(
                 text = stringResource(R.string.invite_link_tip),
-                fontSize = 12.sp,
-                color = Color.Gray
+                fontSize = 11.sp,
+                lineHeight = 11.sp,
+                color = Color.Gray,
             )
         }
     }

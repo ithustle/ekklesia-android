@@ -28,11 +28,18 @@ import com.toquemedia.seedfy.services.UserService
 import com.toquemedia.seedfy.services.VerseOfDayService
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Named
 import retrofit2.Retrofit
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface UserServiceEntryPoint {
+    fun userService(): UserService
+}
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -55,9 +62,6 @@ class DatabaseModule {
     fun provideNotificationService(messaging: FirebaseMessaging): NotificationService = NotificationService(messaging)
     @Provides
     fun provideVerseOfDayService(firestore: FirebaseFirestore): VerseOfDayService = VerseOfDayService(firestore)
-
-    @Provides
-    fun provideMessagingService(auth: UserService): MessagingService = MessagingService(auth)
 
     @OptIn(UnstableApi::class)
     @Provides

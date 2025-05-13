@@ -1,4 +1,4 @@
-package com.toquemedia.seedfy.ui.screens.profile
+package com.toquemedia.seedfy.ui.screens.onBoarding
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,6 +18,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -70,7 +71,7 @@ fun OnboardingPageContent(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                brush = androidx.compose.ui.graphics.Brush.verticalGradient(
+                brush = Brush.verticalGradient(
                     colors = listOf(
                         Color(0xFFFFFFFF),
                         Color(0x4F9B3A6A),

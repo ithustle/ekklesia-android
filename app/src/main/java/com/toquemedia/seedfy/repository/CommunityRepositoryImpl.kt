@@ -18,55 +18,48 @@ import java.util.UUID
 import javax.inject.Inject
 
 class CommunityRepositoryImpl @Inject constructor(
-    private val service : CommunityService,
+    private val service: CommunityService,
     private val storage: StorageService,
     private val auth: UserService,
     private val notification: NotificationService
 ) : CommunityRepository {
 
-    override suspend fun createCommunity(name: String, description: String, image: Uri?, user: UserType?): CommunityWithMembers? {
+    override suspend fun createCommunity(
+        name: String,
+        description: String,
+        image: Uri?,
+        user: UserType?
+    ): CommunityWithMembers? {
         return withContext(Dispatchers.IO) {
-            user?.email?.let {
-                val communityId = UUID.randomUUID().toString()
-                val imageUrl = async {
-                    storage.uploadImage(communityId, image)
-                }.await()
+            val email = user?.email ?: return@withContext null
 
-                val community = CommunityType(
-                    id = communityId,
-                    communityName = name.trim(),
-                    communityDescription = description,
-                    communityImage = imageUrl.toString(),
-                    email = it
+            val communityId = UUID.randomUUID().toString()
+            val imageUrl = storage.uploadImage(communityId, image)
+
+            val community = CommunityType(
+                id = communityId,
+                communityName = name.trim(),
+                communityDescription = description,
+                communityImage = imageUrl.toString(),
+                email = email
+            )
+
+            val member = CommunityMemberType(
+                id = user.id,
+                user = user,
+                admin = true
+            )
+
+            try {
+                val communityWithMembers = CommunityWithMembers(
+                    community = community,
+                    allMembers = listOf(member)
                 )
 
-                val member = CommunityMemberType(
-                    id = user.id,
-                    user = user,
-                    isAdmin = true
-                )
-
-                try {
-                    val communityWithMembers = CommunityWithMembers(
-                        community = community,
-                        allMembers = listOf(member)
-                    )
-
-                    async {
-                        service.createCommunity(communityWithMembers)
-                    }.await()
-
-                    async {
-                        service.addMember(communityId = community.id, member = member)
-                    }.await()
-
-                    notification.subscribeToTopicForNotification(community.id)
-
-                    communityWithMembers
-                } catch (firestoreException: Exception) {
-                    throw firestoreException
-                    null
-                }
+                service.createCommunity(communityWithMembers)
+                communityWithMembers
+            } catch (firestoreException: Exception) {
+                throw firestoreException
             }
         }
     }
@@ -76,9 +69,13 @@ class CommunityRepositoryImpl @Inject constructor(
         member: CommunityMemberType
     ) {
         withContext(Dispatchers.IO) {
-            service.addMember(communityId, member)
-            auth.saveCommunityIn(communityId)
-            notification.subscribeToTopicForNotification(communityId)
+            val addMemberJob = async { service.addMember(communityId, member) }
+            val saveInCommunityJob = async { auth.saveCommunityIn(communityId) }
+            val notifyJob = async { notification.subscribeToTopicForNotification(communityId) }
+
+            addMemberJob.await()
+            saveInCommunityJob.await()
+            notifyJob.await()
         }
     }
 
@@ -91,7 +88,9 @@ class CommunityRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeMember(communityId: String, memberId: String) {
-        service.removeMember(communityId, memberId)
+        withContext(Dispatchers.IO) {
+            service.removeMember(communityId, memberId)
+        }
     }
 
     override suspend fun deleteCommunity(id: String) {

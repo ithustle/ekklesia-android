@@ -14,7 +14,8 @@
     <string name="salvar_as_draft">Salvar como rascunho</string>
     <string name="new_testament">Novo Testamento</string>
     <string name="old_testament">Antigo Testamento</string>
-    <string name="community">Comunidades</string>
+    <string name="communities">Comunidades</string>
+    <string name="community">Comunidade</string>
     <string name="my_community">Minhas Comunidades</string>
     <string name="newCommunity">Nova comunidade</string>
     <string name="save_community">Criar comunidade</string>
@@ -83,4 +84,7 @@
     <string name="duration">min</string>
     <string name="publish_story">Publicar</string>
     <string name="jump_onboarding">Pular</string>
+    <string name="sign_out_community">Deixar a comunidade</string>
+    <string name="community_detail_title">Detalhes da comunidade</string>
+    <string name="message_error_left_community">Erro ao sair da comunidade</string>
 </resources>

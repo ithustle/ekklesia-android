@@ -11,6 +11,7 @@ data class CommunityUiState(
     val communityDescription: String = "",
     val community: CommunityWithMembers? = null,
     val openDialog: Boolean = false,
+    val loadingLeftCommunity: Boolean = false,
     val members: List<CommunityMemberType> = emptyList(),
     val communities: List<CommunityWithMembers> = emptyList(),
     val myCommunities: List<CommunityWithMembers> = emptyList(),

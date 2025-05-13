@@ -120,7 +120,7 @@ fun FeedScreen(
                             liked = isLiked, //it.likes > 0,
                             post = post,
                             comments = post.comments,
-                            hasStory = stories.any { it.user?.email == user?.email },
+                            hasStory = stories.any { it.user?.email == post.user?.email },
                             onNavigateToComments = onNavigateToComments,
                             onLikePost = {
                                 onUserLikes(postId, 1)

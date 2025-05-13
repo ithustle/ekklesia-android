@@ -1,6 +1,7 @@
 package com.toquemedia.seedfy.services
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.toquemedia.seedfy.model.CommunityMemberType
 import com.toquemedia.seedfy.model.CommunityType
 import com.toquemedia.seedfy.model.CommunityWithMembers
@@ -25,7 +26,17 @@ class CommunityService @Inject constructor(
 
     suspend fun createCommunity(data: CommunityWithMembers) {
         val community = data.community
-        db.collection(collection).document(community.id).set(community).await()
+        val owner = data.allMembers.first()
+        val communityRef = db.collection(collection).document(community.id)
+
+        try {
+            communityRef.set(community).await()
+            communityRef.collection(subCollection).document(owner.id).set(owner).await()
+        } catch (e: Exception) {
+            throw e
+        } catch (e: FirebaseFirestoreException) {
+            throw e
+        }
     }
 
     suspend fun addMember(communityId: String, member: CommunityMemberType) {
@@ -75,12 +86,18 @@ class CommunityService @Inject constructor(
     }
 
     suspend fun removeMember(communityId: String, memberId: String) {
-        db.collection(collection)
-            .document(communityId)
-            .collection(subCollection)
-            .document(memberId)
-            .delete()
-            .await()
+        try {
+            db.collection(collection)
+                .document(communityId)
+                .collection(subCollection)
+                .document(memberId)
+                .delete()
+                .await()
+        } catch (e: Exception) {
+            throw e
+        } catch (e: FirebaseFirestoreException) {
+            throw e
+        }
     }
 
     suspend fun removeCommunity(id: String) {
