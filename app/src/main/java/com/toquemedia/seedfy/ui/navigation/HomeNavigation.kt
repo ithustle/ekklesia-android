@@ -4,7 +4,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
@@ -53,12 +52,19 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             )
         }
 
-        println("communityState.newCommunity: ${communityState.newCommunity}")
+        LaunchedEffect(Unit) {
+            if (communityState.loadingCommunitiesUserIn == false) {
+
+                if (communityState.communities.isEmpty()) {
+                    println("Carrega comunidades")
+                    communityViewModel.loadCommunities()
+                }
+            }
+        }
 
         produceState(false, communityState.newCommunity) {
             if (value) {
                 communityState.newCommunity?.let {
-                    //appViewModel.selectedCommunity = it
                     communityState.selectedCommunity = it
                     navController.navigateToCommunityFeed()
                 }
@@ -87,7 +93,6 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
                 likedVerseOfDay = state.likedVerseOfDay,
                 onJoinToCommunity = communityViewModel::joinToCommunity,
                 onNavigateToCommunity = {
-                    //appViewModel.selectedCommunity = it
                     communityState.selectedCommunity = it
                     navController.navigateToCommunityFeed()
                 },

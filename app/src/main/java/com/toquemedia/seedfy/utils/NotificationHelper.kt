@@ -27,10 +27,10 @@ object NotificationHelper {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Lembretes Diários",
+                "Versículos do dia",
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
-                description = "Canal para notificações diárias"
+                description = "O Seedfy irá notificar-te todos os dias as 07h57 sobre o versículo do dia"
             }
             val manager = context.getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)

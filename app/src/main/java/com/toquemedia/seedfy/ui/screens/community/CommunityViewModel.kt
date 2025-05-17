@@ -74,18 +74,23 @@ class CommunityViewModel @Inject constructor(
     fun loadCommunities() {
         viewModelScope.launch {
             if (context.isInternetAvailable()) {
-                try {
-                    coroutineScope {
-                        val communitiesDeferred = async { getAllCommunities() }
-                        val communitiesInDeferred = async { getAllCommunitiesUserIn() }
-                        communitiesInDeferred.await() to communitiesDeferred.await()
+                val user = authRepository.getCurrentUser()
+                if (user != null) {
+                    try {
+                        coroutineScope {
+                            val communitiesDeferred = async { getAllCommunities() }
+                            val communitiesInDeferred = async { getAllCommunitiesUserIn() }
+                            communitiesInDeferred.await() to communitiesDeferred.await()
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: HttpException) {
+                        e.printStackTrace()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e: HttpException) {
-                    e.printStackTrace()
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } else {
+                    _uiState.update { it.copy(loadingCommunitiesUserIn = false) }
                 }
             } else {
                 _uiState.update { it.copy(loadingCommunitiesUserIn = false) }
