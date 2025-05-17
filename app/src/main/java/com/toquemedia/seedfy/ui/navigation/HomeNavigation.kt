@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.platform.LocalContext
@@ -52,10 +53,13 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             )
         }
 
+        println("communityState.newCommunity: ${communityState.newCommunity}")
+
         produceState(false, communityState.newCommunity) {
             if (value) {
                 communityState.newCommunity?.let {
-                    appViewModel.selectedCommunity = it
+                    //appViewModel.selectedCommunity = it
+                    communityState.selectedCommunity = it
                     navController.navigateToCommunityFeed()
                 }
             }
@@ -63,7 +67,6 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
         }
 
         state.errorConnection?.let {
-            println("communityState.loadingCommunitiesUserIn: ${communityState.loadingCommunitiesUserIn}")
             EkklesiaNoInternet(
                 message = it,
                 loading = communityState.loadingCommunitiesUserIn,
@@ -82,10 +85,10 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
                 verseOfDay = state.verseOfDay,
                 verseOfDayStats = state.verseOfDayStats,
                 likedVerseOfDay = state.likedVerseOfDay,
-                context = context,
                 onJoinToCommunity = communityViewModel::joinToCommunity,
                 onNavigateToCommunity = {
-                    appViewModel.selectedCommunity = it
+                    //appViewModel.selectedCommunity = it
+                    communityState.selectedCommunity = it
                     navController.navigateToCommunityFeed()
                 },
                 onLikeVerseOfDay = viewModel::handleLikeVerseOfDay,

@@ -1,12 +1,17 @@
 package com.toquemedia.seedfy
 
+import com.toquemedia.seedfy.utils.AlarmScheduler
 import android.Manifest
+import android.app.AlarmManager
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +41,7 @@ import com.toquemedia.seedfy.ui.navigation.navigateToAddCommentOnPost
 import com.toquemedia.seedfy.ui.navigation.navigateToProfile
 import com.toquemedia.seedfy.ui.screens.community.CommunityViewModel
 import com.toquemedia.seedfy.ui.theme.EkklesiaTheme
+import com.toquemedia.seedfy.utils.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,6 +59,12 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         checkPermission()
+        requestNotificationPermissionIfNeeded()
+
+        NotificationHelper.createNotificationChannel(this)
+        checkExactAlarmPermission()
+
+        println("appViewModel.currentUser.value: ${appViewModel.currentUser.value}")
 
         lifecycleScope.launch {
             if (appViewModel.currentUser.value != null) {
@@ -60,7 +72,6 @@ class MainActivity : ComponentActivity() {
                     splashScreen.setKeepOnScreenCondition {
                         state.loadingCommunitiesUserIn
                     }
-                    println("state.loadingCommunitiesUserIn: ${state.loadingCommunitiesUserIn}")
                 }
             }
         }
@@ -116,7 +127,7 @@ class MainActivity : ComponentActivity() {
 
                         val currentRoute = currentDestination?.route
                         val selectedItem by remember(currentDestination) {
-                            val item = when(currentRoute) {
+                            val item = when (currentRoute) {
                                 Screen.Home::class.qualifiedName -> Screen.Home
                                 Screen.Bible::class.qualifiedName -> Screen.Bible
                                 Screen.Communities::class.qualifiedName -> Screen.Communities
@@ -130,7 +141,7 @@ class MainActivity : ComponentActivity() {
                         EkklesiaApp(
                             tabSelected = selectedItem,
                             onTabItemChange = {
-                                when(it) {
+                                when (it) {
                                     Screen.Home -> navController.navigateToHomeGraph()
                                     Screen.Bible -> navController.navigateToBibleGraph()
                                     else -> navController.navigateToCommunityGraph()
@@ -161,15 +172,66 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun checkExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).also {
+                    startActivity(it)
+                }
+            } else {
+                AlarmScheduler.scheduleDailyAlarm(this)
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         appViewModel.bible = emptyList()
         appViewModel.books = emptyList()
     }
 
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    Toast.makeText(
+                        this,
+                        "Precisamos da permissão para enviar notificações diárias do versículo do dia",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                else -> {
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Toast.makeText(this, "Notificações permitidas", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(
+                this,
+                "As notificações diárias não funcionarão sem permissão",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
     private fun checkPermission() {
-        val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val permissionCheck =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(
@@ -177,7 +239,6 @@ class MainActivity : ComponentActivity() {
                 arrayOf(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.POST_NOTIFICATIONS
                 ),
                 1001
             )

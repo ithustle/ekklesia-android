@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.PRIORITY_HIGH
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.toquemedia.seedfy.MainActivity
@@ -24,8 +25,7 @@ class MessagingService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
 
         val userService = EntryPointAccessors.fromApplication(
-            applicationContext,
-            UserServiceEntryPoint::class.java
+            applicationContext, UserServiceEntryPoint::class.java
         ).userService()
 
         val title = remoteMessage.notification?.title ?: "Nova notificação"
@@ -43,7 +43,9 @@ class MessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun showNotification(title: String, message: String, postId: String, communityId: String) {
+    private fun showNotification(
+        title: String, message: String, postId: String, communityId: String
+    ) {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val notificationId = Random.nextInt(3000)
 
@@ -53,19 +55,15 @@ class MessagingService : FirebaseMessagingService() {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
-            PendingIntent.FLAG_IMMUTABLE
+            this, 0, intent, PendingIntent.FLAG_IMMUTABLE
         )
 
         setupNotificationChannels(notificationManager)
 
-        val notification = NotificationCompat.Builder(this, "2310")
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(R.drawable.icone_seedfy)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .build()
+        val notification =
+            NotificationCompat.Builder(this, "2310").setContentTitle(title).setContentText(message)
+                .setSmallIcon(R.drawable.icone_seedfy).setAutoCancel(true)
+                .setContentIntent(pendingIntent).setPriority(PRIORITY_HIGH).build()
 
         notificationManager.notify(notificationId, notification)
     }
@@ -73,9 +71,7 @@ class MessagingService : FirebaseMessagingService() {
     private fun setupNotificationChannels(notificationManager: NotificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                "2310",
-                "Notificações do App",
-                NotificationManager.IMPORTANCE_DEFAULT
+                "2310", "Notificações do App", NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 description = "Canal para todas as notificações do aplicativo"
                 enableLights(true)

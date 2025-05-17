@@ -1,7 +1,7 @@
 package com.toquemedia.seedfy.model.interfaces
 
 import com.toquemedia.seedfy.model.StoryType
-import com.toquemedia.seedfy.repository.VerseResponse
+import com.toquemedia.seedfy.model.VerseResponse
 import com.toquemedia.seedfy.services.StatsVerseOfDay
 
 interface VerseRepository {

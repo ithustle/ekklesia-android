@@ -1,6 +1,5 @@
 package com.toquemedia.seedfy.ui.screens.home
 
-import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +29,6 @@ import com.toquemedia.seedfy.utils.mocks.CommunityMock
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    context: Context,
     verseOfDay: VerseType? = null,
     verseOfDayStats: StatsVerseOfDay = StatsVerseOfDay(),
     likedVerseOfDay: Boolean = false,
@@ -67,7 +64,6 @@ fun HomeScreen(
 
         item {
             MyCommunitiesSection(
-                context = context,
                 communitiesUserIn = communitiesUserIn,
                 loadingCommunitiesUserIn = loadingCommunitiesUserIn,
                 onNavigateToCommunity = onNavigateToCommunity
@@ -117,6 +113,5 @@ private fun HomePrev() {
             text = "Bem sei que tudo podes, e que nada te impede de ser feito."
         ),
         verseOfDayStats = StatsVerseOfDay(shares = 10, likes = 20),
-        context = LocalContext.current,
     )
 }

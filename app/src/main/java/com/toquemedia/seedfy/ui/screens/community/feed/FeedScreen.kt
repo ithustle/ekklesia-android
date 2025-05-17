@@ -1,5 +1,6 @@
 package com.toquemedia.seedfy.ui.screens.community.feed
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,8 +43,17 @@ fun FeedScreen(
     onNavigateToComments: (String) -> Unit = {},
     onLikePost: (PostType) -> Unit = {},
     onRemoveLikePost: (PostType) -> Unit = {},
-    onShowStory: (UserType) -> Unit = {}
+    onShowStory: (UserType) -> Unit = {},
+    onGoBack: (String?) -> Unit = {}
 ) {
+
+    BackHandler {
+        if (community.allMembers.none { it.id == user?.id }) {
+            onGoBack(community.community.id)
+        } else {
+            onGoBack(null)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -51,6 +61,17 @@ fun FeedScreen(
     ) {
 
         val loading = remember(loadingPosts) { loadingPosts }
+
+        if (community.allMembers.none { it.id == user?.id }) {
+            CommunityMemberLeftInformation(
+                modifier = Modifier
+                    .fillMaxSize(),
+                onGoBack = {
+                    onGoBack(community.community.id)
+                },
+            )
+            return
+        }
 
         if (loading) {
             ScreenAppLoading(
@@ -147,6 +168,10 @@ fun FeedScreen(
 private fun FeedScreenPrev() {
     FeedScreen(
         community = CommunityMock.getAllCommunityWithMembers().first(),
-        posts = PostsMock.getPosts()
+        posts = PostsMock.getPosts(),
+        user = UserType(
+            id = "90",
+            displayName = "Ck"
+        )
     )
 }

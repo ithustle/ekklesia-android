@@ -52,7 +52,7 @@ import com.toquemedia.seedfy.ui.theme.PrincipalColor
 @Composable
 fun ProfileScreen(
     user: UserType,
-    myNote: String = "",
+    myNote: String = "null",
     onChangeMyNote: (String) -> Unit = {},
     onNavigateToMyDevocional: () -> Unit = {},
     onSaveNote: (String) -> Unit = {},

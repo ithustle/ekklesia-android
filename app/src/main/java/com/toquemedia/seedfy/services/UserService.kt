@@ -46,6 +46,17 @@ class UserService @Inject constructor(
         }
     }
 
+    suspend fun removeCommunityIn(id: String) {
+        val user = this.getCurrentUser()
+
+        try {
+            db.collection(collection).document(user?.email.toString())
+                .update("communitiesIn", FieldValue.arrayRemove(id)).await()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     suspend fun saveLikes(id: String) {
         val user = this.getCurrentUser()
 

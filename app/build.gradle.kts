@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.retrofit.adapter)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.media3.ui.compose)
+    implementation(libs.androidx.work.runtime.ktx)
 
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.compiler)

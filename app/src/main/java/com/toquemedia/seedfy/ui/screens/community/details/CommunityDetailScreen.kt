@@ -26,6 +26,7 @@ import androidx.core.net.toUri
 import com.toquemedia.seedfy.R
 import com.toquemedia.seedfy.model.CommunityWithMembers
 import com.toquemedia.seedfy.model.UserType
+import com.toquemedia.seedfy.ui.composables.EkklesiaAlertDialog
 import com.toquemedia.seedfy.ui.composables.EkklesiaImage
 import com.toquemedia.seedfy.utils.mocks.CommunityMock
 
@@ -33,11 +34,28 @@ import com.toquemedia.seedfy.utils.mocks.CommunityMock
 fun CommunityDetailScreen(
     modifier: Modifier = Modifier,
     data: CommunityWithMembers,
-    currentUser: UserType? = null
+    currentUser: UserType? = null,
+    openDialog: Boolean = false,
+    onHandleDialog: (Boolean) -> Unit = {},
+    onLeftCommunity: () -> Unit = {},
 ) {
 
     val community = data.community
     val members = data.allMembers
+
+    if (openDialog) {
+        EkklesiaAlertDialog(
+            onDismissRequest = {
+                onHandleDialog(false)
+            },
+            onConfirmation = {
+                onHandleDialog(false)
+                onLeftCommunity()
+            },
+            dialogTitle = stringResource(R.string.dialog_community_title_left),
+            dialogText = stringResource(R.string.dialog_community_left_message)
+        )
+    }
 
     Column(
         modifier = modifier

@@ -8,10 +8,12 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.toquemedia.seedfy.broadcast.AlarmReceiver
 import com.toquemedia.seedfy.dao.AppCacheDao
 import com.toquemedia.seedfy.dao.AppDatabase
 import com.toquemedia.seedfy.dao.LikeDao
 import com.toquemedia.seedfy.dao.VerseDao
+import com.toquemedia.seedfy.repository.VerseRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

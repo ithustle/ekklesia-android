@@ -3,6 +3,7 @@ package com.toquemedia.seedfy.repository
 import com.toquemedia.seedfy.dao.VerseDao
 import com.toquemedia.seedfy.extension.toPortuguese
 import com.toquemedia.seedfy.model.StoryType
+import com.toquemedia.seedfy.model.VerseResponse
 import com.toquemedia.seedfy.model.interfaces.VerseRepository
 import com.toquemedia.seedfy.services.OurmannaService
 import com.toquemedia.seedfy.services.StatsVerseOfDay
@@ -13,11 +14,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import okio.IOException
 import retrofit2.HttpException
 import javax.inject.Inject
-
-data class VerseResponse(
-    val verseOfDay: Triple<String, Int, Int>,
-    val stats: StatsVerseOfDay
-)
 
 class VerseRepositoryImpl @Inject constructor(
     private val verse: VerseDao,

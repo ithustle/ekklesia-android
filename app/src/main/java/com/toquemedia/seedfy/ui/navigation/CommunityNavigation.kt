@@ -1,6 +1,5 @@
 package com.toquemedia.seedfy.ui.navigation
 
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -32,7 +31,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.toquemedia.seedfy.LocalAppViewModel
 import com.toquemedia.seedfy.R
-import com.toquemedia.seedfy.model.CommunityType
 import com.toquemedia.seedfy.model.TopBarState
 import com.toquemedia.seedfy.routes.Screen
 import com.toquemedia.seedfy.routes.navigateBetweenScreens
@@ -52,7 +50,6 @@ import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.VideoPlayerVi
 import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.WorshipPostScreen
 import com.toquemedia.seedfy.ui.screens.community.list.CommunityListScreen
 import com.toquemedia.seedfy.ui.theme.PrincipalColor
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @OptIn(UnstableApi::class)
@@ -78,7 +75,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         CommunityListScreen(
             onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
             onNavigateToCommunity = {
-                appViewModel.selectedCommunity = it
+                //appViewModel.selectedCommunity = it
+                uiState.selectedCommunity = it
                 navController.navigateToCommunityFeed()
             },
             onDismissDialog = { appViewModel.showBackgroundOverlay = false },
@@ -137,14 +135,19 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
     composable<Screen.CommunityFeed> { stackEntry ->
 
+        val appViewModel = LocalAppViewModel.current
+        val activity = appViewModel.activityContext as ComponentActivity
+
+        val communityViewModel = hiltViewModel<CommunityViewModel>(activity)
+        val communityState by communityViewModel.uiState.collectAsStateWithLifecycle()
+
         val viewModel = hiltViewModel<FeedCommunityViewModel>(stackEntry)
         val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-        val appViewModel = LocalAppViewModel.current
         val user = appViewModel.currentUser.value
 
-        val selectedCommunity =
-            remember(appViewModel.selectedCommunity) { appViewModel.selectedCommunity }
+        //val selectedCommunity = remember(appViewModel.selectedCommunity) { appViewModel.selectedCommunity }
+        val selectedCommunity = remember(communityState.selectedCommunity) { communityState.selectedCommunity }
 
         LaunchedEffect(state.posts) {
             if (selectedCommunity != null && state.posts.isEmpty()) {
@@ -174,9 +177,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                                 }
                         )
                     },
-                    onBackNavigation = {
-                        navController.popBackStack()
-                    }
+                    onBackNavigation = navController::popBackStack
                 )
             )
         }
@@ -208,6 +209,13 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                 },
                 onShowStory = {
                     navController.navigateToStories(email = it.email.toString())
+                },
+                onGoBack = {
+                    it?.let {
+                        println("ID: $it")
+                        communityViewModel.removeCommunityFromList(it, user?.email.toString())
+                    }
+                    navController.popBackStack()
                 }
             )
         }
@@ -221,37 +229,10 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val state by viewModel.uiState.collectAsStateWithLifecycle()
 
         val context = LocalContext.current
-        val communityId = appViewModel.selectedCommunity?.community?.id
+        //val communityId = appViewModel.selectedCommunity?.community?.id
+        val communityId = state.selectedCommunity?.community?.id
         val user = appViewModel.currentUser.value
         val scope = rememberCoroutineScope()
-
-        fun leftCommunity() {
-            scope.launch {
-                try {
-                    async {
-                        viewModel.removeMember(
-                            communityId.toString(),
-                            user?.id.toString()
-                        )
-                    }.await()
-                    val updatedMembers =
-                        appViewModel.selectedCommunity?.allMembers?.filter { it.id != user?.id }
-                    updatedMembers?.let {
-                        appViewModel.selectedCommunity?.copy(
-                            allMembers = it
-                        )
-                    }
-                    navController.popBackStack()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.message_error_left_community),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
 
         LaunchedEffect(Unit) {
             appViewModel.updateTopBarState(
@@ -264,6 +245,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                             EkklesiaProgress(
                                 color = PrincipalColor,
                                 size = 20.dp,
+                                modifier = Modifier
+                                    .padding(all = 16.dp)
                             )
                         } else {
                             Icon(
@@ -274,7 +257,8 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
                                     .padding(horizontal = 12.dp)
                                     .size(20.dp)
                                     .clickable {
-                                        leftCommunity()
+                                        appViewModel.showBackgroundOverlay = true
+                                        state.onOpenDialogChange(true)
                                     }
                             )
                         }
@@ -283,10 +267,32 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
             )
         }
 
-        appViewModel.selectedCommunity?.let {
+        //appViewModel.selectedCommunity?.let {
+        state.selectedCommunity?.let {
             CommunityDetailScreen(
                 data = it,
-                currentUser = user
+                currentUser = user,
+                openDialog = state.openDialog,
+                onHandleDialog = {
+                    appViewModel.showBackgroundOverlay = it
+                    state.onOpenDialogChange(it)
+                },
+                onLeftCommunity = {
+                    scope.launch {
+                        viewModel.leftCommunity(communityId.toString())
+                        val updatedMembers =
+                            //appViewModel.selectedCommunity?.allMembers?.filter { it.id != user?.id }
+                            state.selectedCommunity?.allMembers?.filter { it.id != user?.id }
+                        updatedMembers?.let {
+                            //appViewModel.selectedCommunity = appViewModel.selectedCommunity?.copy(
+                            state.selectedCommunity = state.selectedCommunity?.copy(
+                                allMembers = it
+                            )
+                        }
+                        appViewModel.showBackgroundOverlay = false
+                        navController.popBackStack()
+                    }
+                },
             )
         }
     }
@@ -442,8 +448,7 @@ fun NavController.navigateToPlayer(videoUrl: String) =
 fun NavController.navigateToStories(email: String) =
     this.navigateBetweenScreens(Screen.StoriesNavigation(email))
 
-fun NavController.navigateToChatScreen(community: CommunityType) =
-    this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
+//fun NavController.navigateToChatScreen(community: CommunityType) = this.navigateBetweenScreens(Screen.Chat(communityId = community.id))
 
 fun NavController.navigateToCommunityDetails() =
     this.navigateBetweenScreens(Screen.CommunityDetails)

@@ -42,7 +42,7 @@ class AppViewModel @Inject constructor(
     var books by mutableStateOf<List<BookType>>(bibleRepository.getBooks())
         internal set
 
-    var selectedCommunity by mutableStateOf<CommunityWithMembers?>(null)
+    //var selectedCommunity by mutableStateOf<CommunityWithMembers?>(null)
 
     var videoPlayerVisible by mutableStateOf<Boolean>(false)
 

@@ -1,10 +1,13 @@
 package com.toquemedia.seedfy.ui.screens.community
 
 import android.content.Context
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil3.network.HttpException
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.toquemedia.seedfy.R
 import com.toquemedia.seedfy.extension.communitiesToJoin
 import com.toquemedia.seedfy.extension.isInternetAvailable
 import com.toquemedia.seedfy.model.CommunityMemberType
@@ -12,7 +15,6 @@ import com.toquemedia.seedfy.model.CommunityWithMembers
 import com.toquemedia.seedfy.model.ValidationResult
 import com.toquemedia.seedfy.repository.AuthRepositoryImpl
 import com.toquemedia.seedfy.repository.CommunityRepositoryImpl
-import com.toquemedia.seedfy.services.NotificationService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -151,17 +153,30 @@ class CommunityViewModel @Inject constructor(
                     member = member
                 )
 
-                val filteredCommunity =
-                    _uiState.value.communities.filter { it.community.id != communityId }
-                val communityAsMember =
-                    _uiState.value.communities.first { it.community.id == communityId }
+                val communities = _uiState.value.communities.toMutableList()
+                val communityIndex = communities.indexOfFirst { it.community.id == communityId }
 
-                _uiState.value = _uiState.value.copy(
-                    joiningToCommunity = false,
-                    communities = filteredCommunity,
-                    newCommunity = communityAsMember,
-                    communitiesUserIn = _uiState.value.communitiesUserIn + communityAsMember
-                )
+                if (communityIndex != -1) {
+                    val updatedCommunity = communities[communityIndex].copy(
+                        allMembers = communities[communityIndex].allMembers + member
+                    )
+
+                    communities[communityIndex] = updatedCommunity
+
+                    val filteredCommunity =
+                        communities.filter { it.community.id != communityId }
+                    val communityAsMember = updatedCommunity
+
+                    _uiState.value = _uiState.value.copy(
+                        joiningToCommunity = false,
+                        communities = filteredCommunity,
+                        newCommunity = communityAsMember,
+                        selectedCommunity = updatedCommunity,
+                        communitiesUserIn = _uiState.value.communitiesUserIn + communityAsMember
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(joiningToCommunity = false)
+                }
             }
         }
     }
@@ -178,16 +193,61 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    fun removeMember(communityId: String, memberId: String) {
-        viewModelScope.launch {
-            try {
-                _uiState.update { it.copy(loadingLeftCommunity = true) }
-                repository.removeMember(communityId, memberId)
-                _uiState.update { it.copy(loadingLeftCommunity = false) }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _uiState.update { it.copy(loadingLeftCommunity = false) }
+    fun removeCommunityFromList(communityId: String, memberId: String) {
+        val updatedCommunity = _uiState.value.communitiesUserIn.filter { it.community.id != communityId }
+        val communityToRemoveMember = _uiState.value.communitiesUserIn.first { it.community.id == communityId }
+        val communityWithoutMember =
+            communityToRemoveMember.copy(allMembers = communityToRemoveMember.allMembers.filter { it.user.email != memberId })
+
+        _uiState.update {
+            it.copy(
+                communitiesUserIn = updatedCommunity,
+                communities = _uiState.value.communities + communityWithoutMember,
+                loadingLeftCommunity = false
+            )
+        }
+    }
+
+    suspend fun removeMember(communityId: String, memberId: String) {
+        try {
+            _uiState.update { it.copy(loadingLeftCommunity = true) }
+            repository.removeMember(communityId, memberId)
+
+            val communityLeft = _uiState.value.communities.firstOrNull { it.community.id == communityId }
+                ?: return
+
+            val communityWithoutMemberLeft =
+                communityLeft.copy(allMembers = communityLeft.allMembers.filter { it.id != memberId })
+
+            val updatedCommunitiesList = _uiState.value.communities.map { community ->
+                if (community.community.id == communityId) communityWithoutMemberLeft else community
             }
+
+            val updatedCommunity = _uiState.value.communitiesUserIn.filter { it.community.id != communityId }
+
+            _uiState.update {
+                it.copy(
+                    loadingLeftCommunity = false,
+                    communities = updatedCommunitiesList,
+                    communitiesUserIn = updatedCommunity
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _uiState.update { it.copy(loadingLeftCommunity = false) }
+        }
+    }
+
+    suspend fun leftCommunity(communityId: String) {
+        try {
+            this.removeMember(communityId.toString(), user?.id.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(
+                context,
+                context.getString(R.string.message_error_left_community),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -224,17 +284,22 @@ class CommunityViewModel @Inject constructor(
                 }
         } catch (e: Exception) {
             e.printStackTrace()
-            throw e
+        } catch (e: FirebaseFirestoreException) {
+            e.printStackTrace()
         }
     }
 
     private fun getAllCommunitiesUserIn() {
-        viewModelScope.launch {
-            val communities = repository.getCommunitiesUserIn()
-            _uiState.value = _uiState.value.copy(
-                communitiesUserIn = communities,
-                loadingCommunitiesUserIn = false,
-            )
+        try {
+            viewModelScope.launch {
+                val communities = repository.getCommunitiesUserIn()
+                _uiState.value = _uiState.value.copy(
+                    communitiesUserIn = communities,
+                    loadingCommunitiesUserIn = false,
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

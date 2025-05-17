@@ -95,9 +95,11 @@ class CommunityRepositoryImpl @Inject constructor(
     override suspend fun removeMember(communityId: String, memberId: String) {
         withContext(Dispatchers.IO) {
             val removedJob = async { service.removeMember(communityId, memberId) }
+            val userJob = async { auth.removeCommunityIn(communityId) }
             val notificationJob = async { notification.unsubscribeToTopicForNotification(communityId) }
 
             removedJob.await()
+            userJob.await()
             notificationJob.await()
         }
     }
