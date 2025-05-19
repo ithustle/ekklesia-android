@@ -102,21 +102,18 @@ fun NavGraphBuilder.verseNavigation(
                 onFavoriteVerse = {
                     shareCommunity = ShareCommunity.FAVORITE
                     versesStates.apply {
-                        onOpenDialogToShareToCommunity(true)
+                        onOpenDialogToShareToCommunity(true, ShareCommunity.FAVORITE)
                         onShowVerseAction(false)
                     }
                     appViewModel.showBackgroundOverlay = true
                 },
                 onAddNoteToVerse = {
-                    navController.navigateToNoteVerse(
-                        bookName,
-                        versesStates.chapter.toString(),
-                        versesStates.selectedVerse,
-                        versesStates.versicle
-                    )
+                    shareCommunity = ShareCommunity.NOTE
                     versesStates.apply {
+                        onOpenDialogToShareToCommunity(true, ShareCommunity.NOTE)
                         onShowVerseAction(false)
                     }
+                    appViewModel.showBackgroundOverlay = true
                 },
                 onSelectVerseForDevocional = {
                     navController.navigateToCreateWorship(
@@ -182,8 +179,18 @@ fun NavGraphBuilder.verseNavigation(
             onShareToCommunity = { community, share ->
                 when (share) {
                     ShareCommunity.NOTE -> {
-
+                        navController.navigateToNoteVerse(
+                            bookName,
+                            versesStates.chapter.toString(),
+                            versesStates.selectedVerse,
+                            versesStates.versicle,
+                            community.community.id
+                        )
+                        versesStates.apply {
+                            onShowVerseAction(false)
+                        }
                     }
+
                     ShareCommunity.FAVORITE -> {
                         vmVerses.markVerse(
                             bookName,
@@ -193,17 +200,19 @@ fun NavGraphBuilder.verseNavigation(
                             community.community.id
                         )
                     }
+
+                    else -> ShareCommunity.NONE
                 }
             },
             onShowVerseAction = versesStates.onShowVerseAction,
             openDialogToShareToCommunity = versesStates.openDialogToShareToCommunity,
-            onOpenDialogToShareToCommunity = {
+            onOpenDialogToShareToCommunity = { it, share ->
                 versesStates.apply {
-                    onOpenDialogToShareToCommunity(it)
+                    onOpenDialogToShareToCommunity(it, share)
                     onShowVerseAction(false)
                     onSelectVerse("", -1)
                 }
-                versesStates.onOpenDialogToShareToCommunity(it)
+                versesStates.onOpenDialogToShareToCommunity(it, share)
                 appViewModel.showBackgroundOverlay = false
             },
         )
@@ -258,6 +267,7 @@ fun NavGraphBuilder.verseNavigation(
         val bookName = args.bookName
         val versicle = args.versicle
         val selectedVerse = args.verse
+        val communityId = args.communityId
 
         val context = LocalContext.current
 
@@ -282,13 +292,15 @@ fun NavGraphBuilder.verseNavigation(
             onEntryNoteChange = versesStates.onEntryNoteChange,
             savingNote = versesStates.savingNote,
             onSaveAndShareNote = {
-                /*vmVerses.addNoteToVerse(
+                vmVerses.addNoteToVerse(
                     bookName = bookName.toString(),
                     chapter = chapterNumber.toInt(),
                     versicle = versesStates.versicle,
-                    verse = versesStates.selectedVerse
-                )*/
-                Toast.makeText(context, "Nota salva e partilhada com sucesso", Toast.LENGTH_SHORT).show()
+                    verse = versesStates.selectedVerse,
+                    communityId = communityId
+                )
+                Toast.makeText(context, "Nota salva e partilhada com sucesso", Toast.LENGTH_SHORT)
+                    .show()
                 navController.popBackStack()
             }
         )
@@ -401,8 +413,46 @@ fun NavGraphBuilder.verseNavigation(
     }
 }
 
-fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: Int) = this.navigateBetweenScreens(Screen.Verses(bookName = bookName, chapterNumber = chapterNumber) )
-fun NavController.navigateToNoteVerse(bookName: String?, chapterNumber: String, verse: String, versicle: Int) = this.navigateBetweenScreens(Screen.NoteVerse(bookName = bookName, chapterNumber = chapterNumber, verse = verse, versicle = versicle))
-fun NavController.navigateToCreateWorship(bookName: String?, chapterNumber: String, versicle: Int, verse: String) = this.navigateBetweenScreens(Screen.CreateWorship(bookName = bookName, chapterNumber = chapterNumber, versicle = versicle, verse = verse))
-fun NavController.navigateToCreateVideoForWorship() = this.navigateBetweenScreens(Screen.CreateVideo)
-fun NavController.navigateToStoryCreator(verse: String, bookWithVersicle: String) = this.navigateBetweenScreens(Screen.StoryCreator(verse = verse, bookWithVersicle = bookWithVersicle))
+fun NavController.navigateToChapterVerse(bookName: String?, chapterNumber: Int) =
+    this.navigateBetweenScreens(Screen.Verses(bookName = bookName, chapterNumber = chapterNumber))
+
+fun NavController.navigateToNoteVerse(
+    bookName: String?,
+    chapterNumber: String,
+    verse: String,
+    versicle: Int,
+    communityId: String
+) = this.navigateBetweenScreens(
+    Screen.NoteVerse(
+        bookName = bookName,
+        chapterNumber = chapterNumber,
+        verse = verse,
+        versicle = versicle,
+        communityId = communityId
+    )
+)
+
+fun NavController.navigateToCreateWorship(
+    bookName: String?,
+    chapterNumber: String,
+    versicle: Int,
+    verse: String
+) = this.navigateBetweenScreens(
+    Screen.CreateWorship(
+        bookName = bookName,
+        chapterNumber = chapterNumber,
+        versicle = versicle,
+        verse = verse
+    )
+)
+
+fun NavController.navigateToCreateVideoForWorship() =
+    this.navigateBetweenScreens(Screen.CreateVideo)
+
+fun NavController.navigateToStoryCreator(verse: String, bookWithVersicle: String) =
+    this.navigateBetweenScreens(
+        Screen.StoryCreator(
+            verse = verse,
+            bookWithVersicle = bookWithVersicle
+        )
+    )

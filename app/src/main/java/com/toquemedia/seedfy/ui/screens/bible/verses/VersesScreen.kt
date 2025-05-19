@@ -46,23 +46,15 @@ fun VersesScreen(
     onNextVerse: (Int) -> Unit = {},
     onPreviousVerse: (Int) -> Unit = {},
     onUnMarkVerse: (String, Int) -> Unit = { _, _ -> },
-    onShareToCommunity: (CommunityWithMembers, ShareCommunity) -> Unit = { _, _ ->},
+    onShareToCommunity: (CommunityWithMembers, ShareCommunity) -> Unit = { _, _ -> },
     onShowVerseAction: (Boolean) -> Unit = {},
-    openDialogToShareToCommunity: Boolean = false,
-    onOpenDialogToShareToCommunity: (Boolean) -> Unit = {},
+    openDialogToShareToCommunity: Pair<Boolean, ShareCommunity> = Pair(false, ShareCommunity.NONE),
+    onOpenDialogToShareToCommunity: (Boolean, ShareCommunity) -> Unit = { _, _ -> }
 ) {
-
-    /*LaunchedEffect(sharingWorship) {
-        if (sharingWorship == false) {
-            openDialog = false
-
-        }
-    }*/
-
-    if (openDialogToShareToCommunity) {
+    if (openDialogToShareToCommunity.first) {
         EkklesiaDialog(
             onDismissRequest = {
-                onOpenDialogToShareToCommunity(it)
+                onOpenDialogToShareToCommunity(it, openDialogToShareToCommunity.second)
             }
         ) {
             MyCommunities(
@@ -70,8 +62,8 @@ fun VersesScreen(
                 sharing = false,
                 communities = communities,
                 onShareToCommunity = {
-                    onShareToCommunity(it, ShareCommunity.FAVORITE)
-                    onOpenDialogToShareToCommunity(false)
+                    onShareToCommunity(it, openDialogToShareToCommunity.second)
+                    onOpenDialogToShareToCommunity(false, openDialogToShareToCommunity.second)
                 }
             )
         }

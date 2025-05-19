@@ -38,8 +38,8 @@ class VerseViewModel @Inject constructor(
                         versicle = versicle
                     )
                 },
-                onOpenDialogToShareToCommunity = {
-                    _uiState.value = _uiState.value.copy(openDialogToShareToCommunity = it)
+                onOpenDialogToShareToCommunity = { it, share ->
+                    _uiState.value = _uiState.value.copy(openDialogToShareToCommunity = Pair(it, share))
                 },
                 onMarkVerse = {
                     _uiState.value = _uiState.value.copy(

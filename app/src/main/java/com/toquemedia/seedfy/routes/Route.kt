@@ -106,5 +106,6 @@ sealed class Screen() {
         val chapterNumber: String,
         val verse: String,
         val versicle: Int,
+        val communityId: String
     ): Screen()
 }

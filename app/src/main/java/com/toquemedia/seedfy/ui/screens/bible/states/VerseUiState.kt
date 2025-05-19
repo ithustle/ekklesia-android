@@ -1,6 +1,7 @@
 package com.toquemedia.seedfy.ui.screens.bible.states
 
 import com.toquemedia.seedfy.model.NoteEntity
+import com.toquemedia.seedfy.model.ShareCommunity
 import kotlinx.coroutines.flow.MutableStateFlow
 
 data class VerseUiState(
@@ -15,11 +16,14 @@ data class VerseUiState(
     var onUnMarkVerse: (String) -> Unit = {},
     var onChangeChapter: (Int) -> Unit = {},
     var onShowVerseAction: (Boolean) -> Unit = {},
-    var onOpenDialogToShareToCommunity: (Boolean) -> Unit = {},
+    var onOpenDialogToShareToCommunity: (Boolean, ShareCommunity) -> Unit = { _, _ -> },
     var onShowAddNote: (Boolean) -> Unit = {},
     val showVerseActionOption: Boolean = false,
     val showAddNote: Boolean = false,
-    val openDialogToShareToCommunity: Boolean = false,
+    val openDialogToShareToCommunity: Pair<Boolean, ShareCommunity> = Pair(
+        false,
+        ShareCommunity.NONE
+    ),
     val entryNote: String = "",
     val onEntryNoteChange: (String) -> Unit = {},
     val savingNote: Boolean = false,

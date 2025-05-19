@@ -134,6 +134,7 @@ class MainActivity : ComponentActivity() {
                             withContext(Dispatchers.Main) {
                                 intent.removeExtra("postId")
                                 intent.removeExtra("communityId")
+                                intent.removeExtra("post")
                             }
                         }
                     }
