@@ -18,5 +18,5 @@ data class PostType(
     val comments: List<CommentType> = emptyList(),
     val likes: Long = 0,
     val firstUsersLiked: List<UserType> = emptyList(),
-    val communityId: List<String> = emptyList()
+    val communityId: String = ""
 )

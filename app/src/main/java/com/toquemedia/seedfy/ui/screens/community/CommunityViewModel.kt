@@ -129,7 +129,9 @@ class CommunityViewModel @Inject constructor(
 
                             newCommunity?.let {
                                 _uiState.value =
-                                    _uiState.value.copy(myCommunities = _uiState.value.myCommunities + newCommunity)
+                                    _uiState.value.copy(
+                                        myCommunities = _uiState.value.myCommunities + newCommunity,
+                                    )
                             }
                             _validationEvent.emit(ValidationResult.Success)
                         } catch (e: Exception) {
@@ -139,6 +141,10 @@ class CommunityViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun selectCommunity(community: CommunityWithMembers) {
+        _uiState.value = _uiState.value.copy(selectedCommunity = community)
     }
 
     fun joinToCommunity(communityId: String) {

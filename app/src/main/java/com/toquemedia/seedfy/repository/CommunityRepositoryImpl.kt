@@ -57,10 +57,12 @@ class CommunityRepositoryImpl @Inject constructor(
                 )
 
                 val createCommunityJob =  async { service.createCommunity(communityWithMembers) }
+                val saveInCommunityJob = async { auth.saveCommunityIn(communityId) }
                 val notifyJob = async { notification.subscribeToTopicForNotification(communityId) }
 
                 createCommunityJob.await()
                 notifyJob.await()
+                saveInCommunityJob.await()
 
                 communityWithMembers
             } catch (firestoreException: Exception) {

@@ -38,15 +38,18 @@ class VerseViewModel @Inject constructor(
                         versicle = versicle
                     )
                 },
+                onOpenDialogToShareToCommunity = {
+                    _uiState.value = _uiState.value.copy(openDialogToShareToCommunity = it)
+                },
                 onMarkVerse = {
                     _uiState.value = _uiState.value.copy(
                         markedVerse = it,
                     )
                 },
                 onUnMarkVerse = { verse ->
-                    val updatedVerses = _uiState.value.markedVerses.value.filter { it != verse }
+                    val updatedVerses = _uiState.value.markedVerses.filter { it != verse }
                     _uiState.value = _uiState.value.copy(
-                        markedVerses = MutableStateFlow(updatedVerses)
+                        markedVerses = updatedVerses
                     )
                 },
                 onShowAddNote = {
@@ -61,7 +64,7 @@ class VerseViewModel @Inject constructor(
                 onChangeChapter = {
                     _uiState.value = _uiState.value.copy(chapter = it)
                 },
-                markedVerses = verseRepository.markedVerses
+                markedVerses = verseRepository.markedVerses.value
             )
         }
 
@@ -83,7 +86,7 @@ class VerseViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(chapter = chapter)
     }
 
-    fun markVerse(bookName: String?, chapter: String?, versicle: String, verse: String) {
+    fun markVerse(bookName: String?, chapter: String?, versicle: String, verse: String, communityId: String) {
         viewModelScope.launch {
             if (bookName == null || chapter == null) return@launch
             verseRepository.markVerse(bookName, chapter.toInt(), versicle.toInt(), verse)
@@ -93,14 +96,13 @@ class VerseViewModel @Inject constructor(
 
             launch {
                 val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
-                val communityId = userRepository.getCommunitiesId()
                 val post = PostType(
                     verse = verse,
                     user = userRepository.getCurrentUser(),
                     verseId = verseId,
                     communityId = communityId
                 )
-                postRepository.addPost(post)
+                postRepository.addPost(post, communityId)
             }
         }
     }
@@ -123,6 +125,7 @@ class VerseViewModel @Inject constructor(
         chapter: Int,
         versicle: Int,
         verse: String,
+        communityId: String
     ) {
         _uiState.value.onSavingNote(true)
         viewModelScope.launch {
@@ -132,12 +135,11 @@ class VerseViewModel @Inject constructor(
                 versicle = versicle,
                 verse = verse,
                 note = _uiState.value.entryNote,
-                id = "${bookName}_${chapter}_$versicle"
+                id = "${bookName}_${chapter}_$versicle",
             )
             noteRepository.addNoteToVerse(note)
             launch {
                 val verseId = verseRepository.getId(bookName, chapter.toInt(), versicle.toInt())
-                val communityId = userRepository.getCommunitiesId()
                 val post = PostType(
                     note = note,
                     verse = verse,
@@ -145,7 +147,7 @@ class VerseViewModel @Inject constructor(
                     verseId = "${verseId}_note",
                     communityId = communityId
                 )
-                postRepository.addPost(post)
+                postRepository.addPost(post, communityId)
             }
             _uiState.value.onShowAddNote(false)
             _uiState.value.onSelectVerse("", -1)

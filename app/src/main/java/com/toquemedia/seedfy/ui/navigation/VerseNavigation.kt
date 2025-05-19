@@ -1,13 +1,16 @@
 package com.toquemedia.seedfy.ui.navigation
 
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,6 +21,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.toquemedia.seedfy.LocalAppViewModel
+import com.toquemedia.seedfy.model.ShareCommunity
 import com.toquemedia.seedfy.model.TopBarState
 import com.toquemedia.seedfy.routes.Screen
 import com.toquemedia.seedfy.routes.navigateBetweenScreens
@@ -28,6 +32,7 @@ import com.toquemedia.seedfy.ui.screens.bible.verses.VersesScreen
 import com.toquemedia.seedfy.ui.screens.bible.worship.CreateWorshipScreen
 import com.toquemedia.seedfy.ui.screens.bible.worship.VideoCreator
 import com.toquemedia.seedfy.ui.screens.bible.worship.WorshipViewModel
+import com.toquemedia.seedfy.ui.screens.community.CommunityViewModel
 import com.toquemedia.seedfy.ui.screens.community.feed.story.CreateStoryScreen
 import com.toquemedia.seedfy.ui.screens.community.feed.worshipPost.VideoPlayerViewModel
 import kotlinx.coroutines.launch
@@ -55,8 +60,13 @@ fun NavGraphBuilder.verseNavigation(
 
         val scope = rememberCoroutineScope()
         val scrollState = rememberScrollState()
+        var shareCommunity by remember { mutableStateOf<ShareCommunity?>(null) }
 
         val appViewModel = LocalAppViewModel.current
+        val activity = appViewModel.activityContext as ComponentActivity
+
+        val communityViewModel = hiltViewModel<CommunityViewModel>(activity)
+        val communityState by communityViewModel.uiState.collectAsStateWithLifecycle()
 
         val book = appViewModel.books.find { it.bookName == bookName }
 
@@ -90,12 +100,12 @@ fun NavGraphBuilder.verseNavigation(
                     }
                 },
                 onFavoriteVerse = {
-                    vmVerses.markVerse(
-                        bookName,
-                        versesStates.chapter.toString(),
-                        versesStates.versicle.toString(),
-                        versesStates.selectedVerse
-                    )
+                    shareCommunity = ShareCommunity.FAVORITE
+                    versesStates.apply {
+                        onOpenDialogToShareToCommunity(true)
+                        onShowVerseAction(false)
+                    }
+                    appViewModel.showBackgroundOverlay = true
                 },
                 onAddNoteToVerse = {
                     navController.navigateToNoteVerse(
@@ -135,20 +145,15 @@ fun NavGraphBuilder.verseNavigation(
 
         VersesScreen(
             book = book,
-            chapterNumber = versesStates.chapter,
-            scrollState = scrollState,
-            versesStates = versesStates,
+            markedVerses = versesStates.markedVerses,
             worshipState = worshipStates,
+            scrollState = scrollState,
+            chapterNumber = versesStates.chapter,
+            communities = communityState.communitiesUserIn,
+            selectedVerse = versesStates.selectedVerse,
+            notes = versesStates.notes,
             onSelectedVerse = { verse, versicle ->
                 versesStates.onSelectVerse(verse, versicle)
-            },
-            onUnMarkVerse = { verse, versicle ->
-                vmVerses.unMarkVerse(
-                    bookName = bookName,
-                    chapter = versesStates.chapter.toString(),
-                    versicle = versicle.toString(),
-                    verse = verse
-                )
             },
             onNextVerse = { versicle ->
                 if (versicle <= versesStates.chapter) {
@@ -165,6 +170,41 @@ fun NavGraphBuilder.verseNavigation(
                         scrollState.scrollTo(0)
                     }
                 }
+            },
+            onUnMarkVerse = { verse, versicle ->
+                vmVerses.unMarkVerse(
+                    bookName = bookName,
+                    chapter = versesStates.chapter.toString(),
+                    versicle = versicle.toString(),
+                    verse = verse
+                )
+            },
+            onShareToCommunity = { community, share ->
+                when (share) {
+                    ShareCommunity.NOTE -> {
+
+                    }
+                    ShareCommunity.FAVORITE -> {
+                        vmVerses.markVerse(
+                            bookName,
+                            versesStates.chapter.toString(),
+                            versesStates.versicle.toString(),
+                            versesStates.selectedVerse,
+                            community.community.id
+                        )
+                    }
+                }
+            },
+            onShowVerseAction = versesStates.onShowVerseAction,
+            openDialogToShareToCommunity = versesStates.openDialogToShareToCommunity,
+            onOpenDialogToShareToCommunity = {
+                versesStates.apply {
+                    onOpenDialogToShareToCommunity(it)
+                    onShowVerseAction(false)
+                    onSelectVerse("", -1)
+                }
+                versesStates.onOpenDialogToShareToCommunity(it)
+                appViewModel.showBackgroundOverlay = false
             },
         )
     }
@@ -242,12 +282,12 @@ fun NavGraphBuilder.verseNavigation(
             onEntryNoteChange = versesStates.onEntryNoteChange,
             savingNote = versesStates.savingNote,
             onSaveAndShareNote = {
-                vmVerses.addNoteToVerse(
+                /*vmVerses.addNoteToVerse(
                     bookName = bookName.toString(),
                     chapter = chapterNumber.toInt(),
                     versicle = versesStates.versicle,
                     verse = versesStates.selectedVerse
-                )
+                )*/
                 Toast.makeText(context, "Nota salva e partilhada com sucesso", Toast.LENGTH_SHORT).show()
                 navController.popBackStack()
             }

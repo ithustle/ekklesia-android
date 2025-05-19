@@ -33,7 +33,7 @@ class WorshipRepositoryImpl @Inject constructor(
         if (worship.postId != null && worship.communityId != null) {
             val post = PostType(
                 worship = worship,
-                communityId = listOf(worship.communityId!!),
+                communityId = worship.communityId ?: "",
                 user = user.getCurrentUser(),
                 verseId = worship.postId!!
             )
@@ -56,7 +56,7 @@ class WorshipRepositoryImpl @Inject constructor(
 
                 val post = PostType(
                     worship = worship,
-                    communityId = listOf(communityId),
+                    communityId = communityId,
                     user = currentUser,
                     verseId = postId
                 )

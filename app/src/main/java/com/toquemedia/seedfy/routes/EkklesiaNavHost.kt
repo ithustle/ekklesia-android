@@ -13,9 +13,12 @@ fun EkklesiaNavHost(
     isLoginActive: Boolean,
     navController: NavHostController,
 ) {
+
+    val startDestination = if (isLoginActive) Screen.HomeScreenGraph else Screen.AuthScreenGraph
+
     NavHost(
         navController,
-        startDestination = if (isLoginActive) Screen.HomeScreenGraph else Screen.AuthScreenGraph,
+        startDestination = startDestination,
         modifier = modifier
     ) {
         authGraph(navController = navController)
@@ -39,7 +42,6 @@ fun NavController.navigateToFirstScreen(route: Screen = Screen.AuthScreenGraph) 
         launchSingleTop = true
     }
 }
-
 
 fun NavController.navigateBetweenScreens(route: Screen) =
     this.navigate(route) {

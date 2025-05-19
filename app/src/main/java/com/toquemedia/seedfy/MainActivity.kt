@@ -1,6 +1,5 @@
 package com.toquemedia.seedfy
 
-import com.toquemedia.seedfy.utils.AlarmScheduler
 import android.Manifest
 import android.app.AlarmManager
 import android.content.Intent
@@ -21,16 +20,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.toquemedia.seedfy.model.FcmManager
+import com.toquemedia.seedfy.model.PostType
 import com.toquemedia.seedfy.routes.EkklesiaNavHost
 import com.toquemedia.seedfy.routes.Screen
 import com.toquemedia.seedfy.routes.navigateToBibleGraph
@@ -38,18 +41,26 @@ import com.toquemedia.seedfy.routes.navigateToCommunityGraph
 import com.toquemedia.seedfy.routes.navigateToFirstScreen
 import com.toquemedia.seedfy.routes.navigateToHomeGraph
 import com.toquemedia.seedfy.ui.navigation.navigateToAddCommentOnPost
+import com.toquemedia.seedfy.ui.navigation.navigateToCommunityFeed
 import com.toquemedia.seedfy.ui.navigation.navigateToProfile
 import com.toquemedia.seedfy.ui.screens.community.CommunityViewModel
+import com.toquemedia.seedfy.ui.screens.community.feed.FeedCommunityViewModel
 import com.toquemedia.seedfy.ui.theme.EkklesiaTheme
+import com.toquemedia.seedfy.utils.AlarmScheduler
 import com.toquemedia.seedfy.utils.NotificationHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val communityViewModel: CommunityViewModel by viewModels()
+    private val communityFeedViewModel: FeedCommunityViewModel by viewModels()
     private val appViewModel: AppViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -63,8 +74,6 @@ class MainActivity : ComponentActivity() {
 
         NotificationHelper.createNotificationChannel(this)
         checkExactAlarmPermission()
-
-        println("appViewModel.currentUser.value: ${appViewModel.currentUser.value}")
 
         lifecycleScope.launch {
             if (appViewModel.currentUser.value != null) {
@@ -96,24 +105,40 @@ class MainActivity : ComponentActivity() {
             }
 
             LaunchedEffect(Unit) {
-                println("jáaaaa???")
-
-                communityViewModel.uiState.collect {
-                    if (it.loadingCommunitiesUserIn == false) {
+                communityViewModel.uiState
+                    .filter { it.loadingCommunitiesUserIn == false }
+                    .collectLatest { state ->
                         val postId = intent.getStringExtra("postId")
                         val communityId = intent.getStringExtra("communityId")
+                        val postString = intent.getStringExtra("post")
 
                         if (postId != null && communityId != null) {
-                            navController.navigateToAddCommentOnPost(postId, communityId)
-                        }
+                            val selected = state.communitiesUserIn.firstOrNull { it.community.id == communityId }
 
-                        withContext(Dispatchers.Main) {
-                            intent.removeExtra("postId")
-                            intent.removeExtra("communityId")
+                            if (selected != null) {
+                                val post = Gson().fromJson(postString, PostType::class.java)
+                                communityFeedViewModel.getAllPosts(communityId)
+                                communityFeedViewModel.selectPost(post)
+                                communityViewModel.selectCommunity(selected)
+
+                                navController.navigateToCommunityFeed()
+
+                                val lifecycle = navController.getBackStackEntry(Screen.CommunityFeed).lifecycle
+                                snapshotFlow { lifecycle.currentState }
+                                    .filter { it == Lifecycle.State.RESUMED }
+                                    .first()
+
+                                navController.navigateToAddCommentOnPost(postId, communityId)
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                intent.removeExtra("postId")
+                                intent.removeExtra("communityId")
+                            }
                         }
                     }
-                }
             }
+
 
             CompositionLocalProvider(LocalAppViewModel provides appViewModel) {
                 EkklesiaTheme {
@@ -162,7 +187,7 @@ class MainActivity : ComponentActivity() {
                             content = {
                                 EkklesiaNavHost(
                                     navController = navController,
-                                    isLoginActive = isLoginActive,
+                                    isLoginActive = isLoginActive
                                 )
                             }
                         )

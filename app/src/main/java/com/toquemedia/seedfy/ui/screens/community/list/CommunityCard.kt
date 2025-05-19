@@ -66,20 +66,20 @@ fun CommunityCard(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .padding(end = 12.dp)
-                .size(54.dp)
+                .size(48.dp)
                 .clip(shape = RoundedCornerShape(4.dp)),
         )
 
         Column {
             Text(
                 text = community.community.communityName,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 color = PrincipalColor,
                 fontWeight = FontWeight.SemiBold
             )
             Text(
                 text = "${stringResource(R.string.members)}: ${community.allMembers.size}",
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 color = Color.DarkGray,
             )
         }

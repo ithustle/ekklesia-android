@@ -141,7 +141,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val communityViewModel = hiltViewModel<CommunityViewModel>(activity)
         val communityState by communityViewModel.uiState.collectAsStateWithLifecycle()
 
-        val viewModel = hiltViewModel<FeedCommunityViewModel>(stackEntry)
+        val viewModel = hiltViewModel<FeedCommunityViewModel>(activity)
         val state by viewModel.uiState.collectAsStateWithLifecycle()
 
         val user = appViewModel.currentUser.value
@@ -300,11 +300,12 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.StoriesNavigation> {
 
         val appViewModel = LocalAppViewModel.current
-        val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
+        //val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
+        val activity = appViewModel.activityContext as ComponentActivity
 
         val arg = it.toRoute<Screen.StoriesNavigation>()
 
-        val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(parentEntry)
+        val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(activity)
         val state by sharedViewModel.uiState.collectAsStateWithLifecycle()
 
         LaunchedEffect(Unit) {
@@ -323,10 +324,11 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
     composable<Screen.CommentPost> { stackEntry ->
 
         val arg = stackEntry.toRoute<Screen.CommentPost>()
-        val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
+        //val parentEntry = navController.getBackStackEntry(Screen.CommunityFeed)
         val appViewModel = LocalAppViewModel.current
+        val activity = appViewModel.activityContext as ComponentActivity
 
-        val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(parentEntry)
+        val sharedViewModel = hiltViewModel<FeedCommunityViewModel>(activity)
         val state by sharedViewModel.uiState.collectAsStateWithLifecycle()
 
         LaunchedEffect(key1 = arg.postId, key2 = state.posts) {

@@ -15,12 +15,10 @@ class PostRepositoryImpl @Inject constructor(
     private val postService: PostService,
     private val auth: UserService,
     private val dao: LikeDao,
-    private val communityService: CommunityService
 ) : PostRepository {
 
-    override suspend fun addPost(post: PostType) {
-        val communitiesActiveIds = communityService.getCommunitiesActiveIds(post.communityId)
-        post.copy(communityId = communitiesActiveIds)
+    override suspend fun addPost(post: PostType, communityId: String) {
+        post.copy(communityId = communityId)
         postService.addPost(post)
     }
     override suspend fun removePost(postId: String) = postService.removePost(postId)
