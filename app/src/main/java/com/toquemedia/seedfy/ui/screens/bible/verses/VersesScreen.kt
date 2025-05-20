@@ -1,8 +1,8 @@
 package com.toquemedia.seedfy.ui.screens.bible.verses
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -109,24 +108,29 @@ fun VersesScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = modifier.padding(horizontal = 4.dp))
-                    VerseText(
-                        verse = verse,
-                        selectedVerse = selectedVerse ?: "",
-                        markedVerse = markedVerses,
-                        hasNote = notes.find { it.verse == verse } != null,
-                        hasWorship = worshipState.worships.find { it.verse == verse } != null,
+                    Box(
                         modifier = Modifier
-                            .padding(bottom = 6.dp)
-                            .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
-                            .clickable {
-                                if (markedVerses.contains(verse)) {
-                                    onUnMarkVerse(verse, versicle + 1)
-                                } else {
-                                    onShowVerseAction(true)
-                                    onSelectedVerse(verse, versicle + 1)
+                            .weight(1f)
+                    ) {
+                        VerseText(
+                            verse = verse,
+                            selectedVerse = selectedVerse ?: "",
+                            markedVerse = markedVerses,
+                            hasNote = notes.find { it.verse == verse } != null,
+                            hasWorship = worshipState.worships.find { it.verse == verse } != null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 6.dp)
+                                .clickable {
+                                    if (markedVerses.contains(verse)) {
+                                        onUnMarkVerse(verse, versicle + 1)
+                                    } else {
+                                        onShowVerseAction(true)
+                                        onSelectedVerse(verse, versicle + 1)
+                                    }
                                 }
-                            }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -154,5 +158,8 @@ private fun VersesScreenPrev() {
         worshipState = WorshipUiState(),
         scrollState = rememberScrollState(),
         chapterNumber = 1,
+        markedVerses = listOf(
+            "Misericórdia, paz e amor lhes sejam multiplicados."
+        ),
     )
 }

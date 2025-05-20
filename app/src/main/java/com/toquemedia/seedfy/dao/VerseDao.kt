@@ -30,6 +30,7 @@ class VerseDao(context: Context) : EkklesiaDataStore(context, "ekklesia_verses")
                 val value = preference[key].toString()
                 verses.add(value)
             }
+            println("verses: $verses")
             _versesFlow.value = verses
         }
     }

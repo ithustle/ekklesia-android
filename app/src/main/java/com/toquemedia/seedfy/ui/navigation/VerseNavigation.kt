@@ -210,7 +210,6 @@ fun NavGraphBuilder.verseNavigation(
                 versesStates.apply {
                     onOpenDialogToShareToCommunity(it, share)
                     onShowVerseAction(false)
-                    onSelectVerse("", -1)
                 }
                 versesStates.onOpenDialogToShareToCommunity(it, share)
                 appViewModel.showBackgroundOverlay = false
