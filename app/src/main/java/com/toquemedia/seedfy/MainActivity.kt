@@ -112,6 +112,8 @@ class MainActivity : ComponentActivity() {
                         val communityId = intent.getStringExtra("communityId")
                         val postString = intent.getStringExtra("post")
 
+                        println("$postId, $communityId")
+
                         if (postId != null && communityId != null) {
                             val selected = state.communitiesUserIn.firstOrNull { it.community.id == communityId }
 

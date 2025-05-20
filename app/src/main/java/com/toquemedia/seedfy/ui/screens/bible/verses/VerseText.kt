@@ -1,7 +1,6 @@
 package com.toquemedia.seedfy.ui.screens.bible.verses
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,7 +39,7 @@ fun VerseText(
     modifier: Modifier = Modifier,
     verse: String,
     selectedVerse: String,
-    markedVerse: List<String>,
+    isMarked: Boolean = false,
     hasNote: Boolean,
     hasWorship: Boolean
 ) {
@@ -49,13 +48,12 @@ fun VerseText(
     val screenWidthPx = with(density) { configuration.screenWidthDp.dp.toPx() }
     val wrapWidthDp   = (screenWidthPx * 0.75f).dp
     val textMeasureWidthDp = wrapWidthDp - (8.dp * 2)
-    val isMarked = markedVerse.contains(verse)
 
     var layoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
 
     Text(
         text = verse,
-        fontSize = 16.sp,
+        fontSize = 17.sp,
         modifier = modifier
             .alpha(0f)
             .width(textMeasureWidthDp),
@@ -66,8 +64,15 @@ fun VerseText(
     )
 
     layoutResult?.let { result ->
+        val fullText = result.layoutInput.text.toString()
+
         val lines = (0 until result.lineCount).map { i ->
-            verse.substring(result.getLineStart(i), result.getLineEnd(i))
+            val start = result.getLineStart(i)
+
+            val rawEnd = result.getLineEnd(i)
+            val end = rawEnd.coerceAtMost(fullText.length)
+
+            fullText.substring(start, end).trimEnd()
         }
 
         Column(modifier = modifier) {
@@ -80,7 +85,7 @@ fun VerseText(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = lineText,
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             color = if (isMarked) Color.White else PrincipalColor,
                             textDecoration = if (selectedVerse == verse) TextDecoration.Underline else null,
                             fontWeight = if (selectedVerse == verse) FontWeight.SemiBold else FontWeight.Normal,
@@ -119,13 +124,10 @@ private fun VerseTextPrev() {
     Column {
         Row {
             Text("1")
-            Box(
-                modifier = Modifier.border(width = 1.dp, color = Color.Black)
-            ) {
+            Box {
                 VerseText(
-                    verse = "Observem o mês de abibe e celebrem a Páscoa do Senhor, do seu Deus, pois no mês de abibe, de noite, ele os tirou do Egito.",
+                    verse = "No sétimo dia Deus já havia concluido a obra que realizara, e ness dia descansou.",
                     selectedVerse = "",
-                    markedVerse = listOf("Observem o mês de abibe e celebrem a Páscoa do Senhor, do seu Deus, pois no mês de abibe, de noite, ele os tirou do Egito."),
                     hasNote = true,
                     hasWorship = true,
                 )

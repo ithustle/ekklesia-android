@@ -1,7 +1,9 @@
 package com.toquemedia.seedfy.dao
 
 import android.content.Context
+import androidx.datastore.preferences.core.Preferences
 import com.toquemedia.seedfy.model.interfaces.EkklesiaDataStore
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
@@ -22,16 +24,8 @@ class VerseDao(context: Context) : EkklesiaDataStore(context, "ekklesia_verses")
         return super.getPreference(bookAndCap)
     }
 
-    suspend fun getVerseMarked() {
+    fun getVerseMarked(): Flow<Preferences> {
         val preferences = super.getPreferences()
-        val verses = mutableListOf<String>()
-        preferences.collect { preference ->
-            for (key in preference.asMap().keys) {
-                val value = preference[key].toString()
-                verses.add(value)
-            }
-            println("verses: $verses")
-            _versesFlow.value = verses
-        }
+        return preferences
     }
 }

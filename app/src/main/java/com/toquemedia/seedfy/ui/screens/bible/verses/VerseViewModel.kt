@@ -1,5 +1,7 @@
 package com.toquemedia.seedfy.ui.screens.bible.verses
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.toquemedia.seedfy.model.NoteEntity
@@ -14,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -63,18 +66,24 @@ class VerseViewModel @Inject constructor(
                 },
                 onChangeChapter = {
                     _uiState.value = _uiState.value.copy(chapter = it)
-                },
-                markedVerses = verseRepository.markedVerses.value
+                }
             )
         }
 
         viewModelScope.launch {
-            verseRepository.getMarkedVerse()
+            verseRepository.getMarkedVerse().collect { preference ->
+                val verses = mutableListOf<String>()
+                for (key in preference.asMap().keys) {
+                    val value = preference[key].toString()
+                    verses.add(value)
+                }
+                _uiState.update { it.copy(markedVerses = verses) }
+            }
         }
         viewModelScope.launch {
             try {
-                noteRepository.getAllNotes().collect {
-                    _uiState.value = _uiState.value.copy(notes = it)
+                noteRepository.getAllNotes().collect { notes ->
+                    _uiState.update { it.copy(notes = notes) }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -115,7 +115,7 @@ fun VersesScreen(
                         VerseText(
                             verse = verse,
                             selectedVerse = selectedVerse ?: "",
-                            markedVerse = markedVerses,
+                            isMarked = markedVerses.contains(verse),
                             hasNote = notes.find { it.verse == verse } != null,
                             hasWorship = worshipState.worships.find { it.verse == verse } != null,
                             modifier = Modifier
