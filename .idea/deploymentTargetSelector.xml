@@ -16,9 +16,6 @@
       <SelectionState runConfigName="HomePrev">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="EkklesiaAppPrev">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="ShareableVerseOfDayPrev">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -38,6 +35,9 @@
           </Target>
         </DropdownSelection>
         <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="SearchAIScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>

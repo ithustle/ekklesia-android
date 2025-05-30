@@ -139,7 +139,7 @@ fun NavGraphBuilder.verseNavigation(
                 }
             )
         }
-        
+
         VersesScreen(
             book = book,
             markedVerses = versesStates.markedVerses,
