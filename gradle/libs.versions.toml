@@ -71,6 +71,7 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging-ktx"}
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
+firebase-app-check = { group = "com.google.firebase", name = "firebase-appcheck-playintegrity" }
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServices" }
 credentials-play-service-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentialPlayServices" }
 credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentialPlayServices" }

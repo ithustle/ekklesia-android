@@ -17,8 +17,8 @@ android {
         applicationId = "com.toquemedia.ekklesia"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10
-        versionName = "0.1.0"
+        versionCode = 11
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.ai)
+    implementation(libs.firebase.app.check)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.analytics)
     implementation(libs.credentials.play.service.auth)
