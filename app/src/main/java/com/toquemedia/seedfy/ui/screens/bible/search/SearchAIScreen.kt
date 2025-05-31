@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,7 +45,7 @@ import com.toquemedia.seedfy.utils.mocks.AiResponseMock
 fun SearchAIScreen(
     response: BiblicalResponse,
     onVerseClick: (VerseType) -> Unit,
-    onSaveStudyPlan: (StudyPlan) -> Unit
+    onSaveStudyPlan: (StudyPlan) -> Unit,
 ) {
 
     var isStudyPlanSaved by remember { mutableStateOf(false) }
@@ -132,7 +133,8 @@ fun SearchAIScreen(
                     Text(
                         text = response.studyPlan.title,
                         fontSize = 17.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.DarkGray
                     )
                     Text(
                         text = "Duração: ${response.studyPlan.durationDays} dias",
@@ -167,7 +169,7 @@ fun SearchAIScreen(
                         text = "Dia ${dailyReading.day}: ${dailyReading.theme}",
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = PrincipalColor
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     dailyReading.verses.forEach { verse ->
@@ -201,7 +203,7 @@ fun SearchAIScreen(
                     text = "Para Meditação:",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = PrincipalColor
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(

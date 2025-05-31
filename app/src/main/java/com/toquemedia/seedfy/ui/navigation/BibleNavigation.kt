@@ -1,6 +1,5 @@
 package com.toquemedia.seedfy.ui.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -13,18 +12,19 @@ import com.toquemedia.seedfy.LocalAppViewModel
 import com.toquemedia.seedfy.model.TopBarState
 import com.toquemedia.seedfy.routes.Screen
 import com.toquemedia.seedfy.routes.navigateBetweenScreens
+import com.toquemedia.seedfy.ui.composables.EkklesiaGenerating
 import com.toquemedia.seedfy.ui.screens.bible.ProposalTestamentScreen
 import com.toquemedia.seedfy.ui.screens.bible.TestamentViewModel
 import com.toquemedia.seedfy.ui.screens.bible.search.SearchAIScreen
+import com.toquemedia.seedfy.ui.screens.biblePlan.BiblePlanViewModel
 
 fun NavGraphBuilder.bibleNavigation(navController: NavController) {
     composable<Screen.Bible> {
-        val viewModel = hiltViewModel<TestamentViewModel>(it)
-
         val appViewModel = LocalAppViewModel.current
         val currentUser = appViewModel.currentUser.value
 
         LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = "Testamentos",
@@ -50,6 +50,8 @@ fun NavGraphBuilder.bibleNavigation(navController: NavController) {
             val viewModel = hiltViewModel<TestamentViewModel>(navEntry)
             val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+            val vmBiblePlan = hiltViewModel<BiblePlanViewModel>()
+
             val args = it.toRoute<Screen.SearchAi>()
             val appViewModel = LocalAppViewModel.current
             val currentUser = appViewModel.currentUser.value
@@ -59,9 +61,10 @@ fun NavGraphBuilder.bibleNavigation(navController: NavController) {
             }
 
             LaunchedEffect(Unit) {
+                appViewModel.showTopBar = true
                 appViewModel.updateTopBarState(
                     newState = TopBarState(
-                        title = "Pesquisa",
+                        title = "Explorar a Bíblia",
                         useAvatar = currentUser?.photo,
                         showBackButton = true,
                         onBackNavigation = { navController.popBackStack() }
@@ -73,12 +76,10 @@ fun NavGraphBuilder.bibleNavigation(navController: NavController) {
                 SearchAIScreen(
                     response = it,
                     onVerseClick = {},
-                    onSaveStudyPlan = {
-
-                    }
+                    onSaveStudyPlan = { vmBiblePlan.saveBiblePlan(it) },
                 )
             } ?: run {
-                Text("A gerar ... ")
+                EkklesiaGenerating(label = "A analisar uma explicação...")
             }
         }
     }

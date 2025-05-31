@@ -15,6 +15,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.toquemedia.seedfy.dao.AppCacheDao
 import com.toquemedia.seedfy.dao.AppDatabase
 import com.toquemedia.seedfy.dao.LikeDao
+import com.toquemedia.seedfy.dao.StudyPlanDao
 import com.toquemedia.seedfy.dao.VerseDao
 import dagger.Module
 import dagger.Provides
@@ -54,6 +55,10 @@ object AppModules {
     @Singleton
     @Provides
     fun provideAppCacheDao(@ApplicationContext context: Context): AppCacheDao = AppCacheDao(context)
+
+    @Singleton
+    @Provides
+    fun provideStudyPlanDao(@ApplicationContext context: Context): StudyPlanDao = StudyPlanDao(context)
 
     @Provides
     @Singleton

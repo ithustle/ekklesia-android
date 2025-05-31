@@ -1,4 +1,4 @@
-package com.toquemedia.seedfy.ui.screens.profile
+package com.toquemedia.seedfy.ui.screens.biblePlan
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +28,7 @@ fun VerseCard(verse: VerseType) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, PrincipalColor.copy(alpha = 0.1f))
     ) {

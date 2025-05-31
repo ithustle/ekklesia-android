@@ -17,8 +17,12 @@ import com.toquemedia.seedfy.LocalAppViewModel
 import com.toquemedia.seedfy.model.TopBarState
 import com.toquemedia.seedfy.routes.Screen
 import com.toquemedia.seedfy.routes.navigateBetweenScreens
+import com.toquemedia.seedfy.ui.composables.EkklesiaGenerating
 import com.toquemedia.seedfy.ui.screens.bible.worship.CreateWorshipScreen
 import com.toquemedia.seedfy.ui.screens.bible.worship.WorshipViewModel
+import com.toquemedia.seedfy.ui.screens.biblePlan.BiblePlanListScreen
+import com.toquemedia.seedfy.ui.screens.biblePlan.BiblePlanScreen
+import com.toquemedia.seedfy.ui.screens.biblePlan.BiblePlanViewModel
 import com.toquemedia.seedfy.ui.screens.community.CommunityViewModel
 import com.toquemedia.seedfy.ui.screens.login.AuthViewModel
 import com.toquemedia.seedfy.ui.screens.profile.MyWorshipScreen
@@ -34,16 +38,7 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
         val appViewModel = LocalAppViewModel.current
 
         LaunchedEffect(Unit) {
-            appViewModel.updateTopBarState(
-                newState = TopBarState(
-                    title = "Perfil",
-                    showBackButton = true,
-                    isBackgroundTransparent = true,
-                    onBackNavigation = {
-                        navController.popBackStack()
-                    }
-                )
-            )
+            appViewModel.showTopBar = false
         }
 
         uiState.user?.let {
@@ -59,6 +54,12 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
                 },
                 onNavigateToMyDevocional = {
                     navController.navigateToMyWorships()
+                },
+                onNavigateToMyBiblePlans = {
+                    navController.navigateToBiblePlansList()
+                },
+                onNavigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
@@ -91,6 +92,7 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
         val scope = rememberCoroutineScope()
 
         LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = "Meus devocionais",
@@ -163,8 +165,70 @@ fun NavGraphBuilder.profileNavigation(navController: NavController) {
             }
         )
     }
+
+    composable<Screen.BiblePlan> {
+
+        navController.previousBackStackEntry?.let { navEntry ->
+            val viewModel = hiltViewModel<BiblePlanViewModel>(navEntry)
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+            val appViewModel = LocalAppViewModel.current
+
+            LaunchedEffect(Unit) {
+                appViewModel.showTopBar = false
+            }
+
+            state.biblePlan?.let {
+                BiblePlanScreen(
+                    biblePlan = it,
+                    onCheckAsRead = { checked, day ->
+                        viewModel.updateBiblePlan(it, checked, day)
+                    },
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
+            } ?: run {
+                EkklesiaGenerating(label = "A carregar o plano...")
+            }
+        }
+    }
+
+    composable<Screen.BiblePlansList> {
+        val viewModel = hiltViewModel<BiblePlanViewModel>(it)
+        val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+        val appViewModel = LocalAppViewModel.current
+
+        LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
+            appViewModel.updateTopBarState(
+                newState = TopBarState(
+                    title = "Planos de leitura",
+                    useAvatar = null,
+                    showTitleAvatar = false,
+                    showBackButton = true,
+                    onBackNavigation = { navController.popBackStack() }
+                )
+            )
+        }
+
+        if (state.loadingPlans) {
+            EkklesiaGenerating(label = "A carregar o plano...")
+        } else {
+            BiblePlanListScreen(
+                plans = state.biblePlans,
+                onNavigateToBiblePlan = {
+                    viewModel.getBiblePlan(it.title)
+                    navController.navigateToBiblePlan()
+                }
+            )
+        }
+    }
 }
 
 fun NavController.navigateToProfile() = this.navigateBetweenScreens(Screen.Profile)
 fun NavController.navigateToMyWorships() = this.navigateBetweenScreens(Screen.MyWorships)
 fun NavController.navigateToEditWorship() = this.navigateBetweenScreens(Screen.EditWorship)
+fun NavController.navigateToBiblePlansList() = this.navigateBetweenScreens(Screen.BiblePlansList)
+fun NavController.navigateToBiblePlan() = this.navigateBetweenScreens(Screen.BiblePlan)

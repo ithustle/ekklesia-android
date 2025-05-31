@@ -2,6 +2,8 @@ package com.toquemedia.seedfy.dao
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.toquemedia.seedfy.model.MessageEntity
 import com.toquemedia.seedfy.model.NoteEntity
 import com.toquemedia.seedfy.model.WorshipEntity

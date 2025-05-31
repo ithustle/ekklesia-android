@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.AutoStories
@@ -65,6 +66,8 @@ fun ProfileScreen(
     myNote: String = "null",
     onChangeMyNote: (String) -> Unit = {},
     onNavigateToMyDevocional: () -> Unit = {},
+    onNavigateToMyBiblePlans: () -> Unit = {},
+    onNavigateBack: () -> Unit = {},
     onSaveNote: (String) -> Unit = {},
     onSignOut: () -> Unit = {},
 ) {
@@ -82,10 +85,10 @@ fun ProfileScreen(
             icon = Icons.Rounded.AutoStories,
             onAction = onNavigateToMyDevocional
         ),
-        ProfileList.Devocional(
+        ProfileList.BiblePlan(
             title = stringResource(R.string.menu_bible_study),
             icon = Icons.Rounded.Book,
-            onAction = onNavigateToMyDevocional
+            onAction = onNavigateToMyBiblePlans
         ),
         ProfileList.Logout(
             title = stringResource(R.string.menu_logout),
@@ -111,6 +114,19 @@ fun ProfileScreen(
                     )
                 )
         ) {
+
+            IconButton(
+                modifier = Modifier
+                    .align(Alignment.TopStart),
+                onClick = onNavigateBack
+            ) {
+                Icon(
+                    Icons.AutoMirrored.Rounded.ArrowBack,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+
             PersonalInfo(
                 user = user,
                 modifier = Modifier
@@ -120,7 +136,6 @@ fun ProfileScreen(
             )
         }
 
-        // Lista de opções com cards
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -286,7 +301,7 @@ fun ProfileScreen(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 private fun ProfileScreenPrev() {
     ProfileScreen(

@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class StudyPlan(
     val title: String,
     val durationDays: Int,
-    val dailyReadings: List<DailyReading>
+    val dailyReadings: List<DailyReading>,
+    val progress: Int = 0
 )

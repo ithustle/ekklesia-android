@@ -44,6 +44,7 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             }
 
         LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = "${Date().getGreeting()}, ${currentUser?.displayName}",

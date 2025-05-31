@@ -13,6 +13,7 @@ import com.toquemedia.seedfy.dao.BibleDao
 import com.toquemedia.seedfy.dao.LikeDao
 import com.toquemedia.seedfy.dao.MessageDao
 import com.toquemedia.seedfy.dao.NoteDao
+import com.toquemedia.seedfy.dao.StudyPlanDao
 import com.toquemedia.seedfy.dao.WorshipDao
 import com.toquemedia.seedfy.model.EkklesiaPlayer
 import com.toquemedia.seedfy.model.interfaces.AuthRepository
@@ -35,6 +36,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Named
+import jakarta.inject.Singleton
 import retrofit2.Retrofit
 
 @EntryPoint
@@ -69,7 +71,6 @@ class DatabaseModule {
     @OptIn(UnstableApi::class)
     @Provides
     fun provideEkklesiaPlayer(@ApplicationContext context: Context): EkklesiaPlayer = EkklesiaPlayer(context)
-
     @Provides
     fun provideOurmannaService(@Named("ourmannaService") retrofit: Retrofit) : OurmannaService = retrofit.create(OurmannaService::class.java)
 

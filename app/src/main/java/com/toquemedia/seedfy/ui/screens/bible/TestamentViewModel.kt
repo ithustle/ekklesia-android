@@ -26,6 +26,7 @@ class TestamentViewModel @Inject constructor(
 
     fun generateResponse(userPrompt: String) {
         viewModelScope.launch {
+            _uiState.update { it.copy(searchResponse = null) }
             val response = bibleRepository.talkToSeedfyBible(userPrompt)
             _uiState.update { it.copy(searchResponse = response) }
         }

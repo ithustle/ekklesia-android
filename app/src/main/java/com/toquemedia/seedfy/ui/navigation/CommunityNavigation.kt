@@ -64,6 +64,7 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         val currentUser = appViewModel.currentUser.value
 
         LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = "Minhas comunidades",
@@ -75,7 +76,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
         CommunityListScreen(
             onOpenToCreateCommunity = { navController.navigateToCreateCommunity() },
             onNavigateToCommunity = {
-                //appViewModel.selectedCommunity = it
                 uiState.selectedCommunity = it
                 navController.navigateToCommunityFeed()
             },
@@ -146,7 +146,6 @@ fun NavGraphBuilder.communityNavigation(navController: NavController) {
 
         val user = appViewModel.currentUser.value
 
-        //val selectedCommunity = remember(appViewModel.selectedCommunity) { appViewModel.selectedCommunity }
         val selectedCommunity = remember(communityState.selectedCommunity) { communityState.selectedCommunity }
 
         LaunchedEffect(state.posts) {

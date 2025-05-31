@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class DailyReading(
     val day: Int,
     val theme: String,
-    val verses: List<VerseType>
+    val verses: List<VerseType>,
+    val isCompleted: Boolean = false
 )

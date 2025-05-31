@@ -1,6 +1,7 @@
-package com.toquemedia.seedfy.ui.screens.profile
+package com.toquemedia.seedfy.ui.screens.biblePlan
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,13 +14,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.CheckCircleOutline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,15 +37,27 @@ import com.toquemedia.seedfy.ui.theme.PrincipalColor
 import com.toquemedia.seedfy.utils.mocks.AiResponseMock
 
 @Composable
-fun DaySection(dailyVerse: DailyReading) {
+fun DaySection(
+    dailyVerse: DailyReading,
+    wasRead: Boolean = false,
+    onCheckAsRead: (Boolean, Int) -> Unit = { _, _ ->}
+) {
+
+    var wasRead by remember { mutableStateOf(wasRead) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(vertical = 8.dp)
     ) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    wasRead = !wasRead
+                    onCheckAsRead(wasRead, dailyVerse.day)
+                },
+            shape = RoundedCornerShape(1.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
             Row(
@@ -85,17 +102,19 @@ fun DaySection(dailyVerse: DailyReading) {
                 }
 
                 Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                    imageVector = if (wasRead) Icons.Rounded.CheckCircle else Icons.Rounded.CheckCircleOutline,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = if (wasRead) PrincipalColor else Color.Gray
                 )
             }
         }
         
         Spacer(modifier = Modifier.height(12.dp))
 
-        dailyVerse.verses.forEach { verse ->
-            VerseCard(verse)
+        if (!wasRead) {
+            dailyVerse.verses.forEach { verse ->
+                VerseCard(verse)
+            }
         }
     }
 }
