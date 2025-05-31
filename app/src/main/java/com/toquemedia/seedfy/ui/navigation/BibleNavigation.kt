@@ -54,7 +54,6 @@ fun NavGraphBuilder.bibleNavigation(navController: NavController) {
 
             val args = it.toRoute<Screen.SearchAi>()
             val appViewModel = LocalAppViewModel.current
-            val currentUser = appViewModel.currentUser.value
 
             LaunchedEffect(args.userPrompt) {
                 viewModel.generateResponse(args.userPrompt)
@@ -65,7 +64,8 @@ fun NavGraphBuilder.bibleNavigation(navController: NavController) {
                 appViewModel.updateTopBarState(
                     newState = TopBarState(
                         title = "Explorar a Bíblia",
-                        useAvatar = currentUser?.photo,
+                        useAvatar = null,
+                        showTitleAvatar = false,
                         showBackButton = true,
                         onBackNavigation = { navController.popBackStack() }
                     )
