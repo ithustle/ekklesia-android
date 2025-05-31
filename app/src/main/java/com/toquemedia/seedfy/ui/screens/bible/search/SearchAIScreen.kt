@@ -18,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,9 +34,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.seedfy.model.BiblicalResponse
-import com.toquemedia.seedfy.model.DailyReading
 import com.toquemedia.seedfy.model.StudyPlan
 import com.toquemedia.seedfy.model.VerseType
+import com.toquemedia.seedfy.ui.theme.PrincipalColor
+import com.toquemedia.seedfy.utils.mocks.AiResponseMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +53,7 @@ fun SearchAIScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp) // Aumenta o espaçamento geral
+        verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         item {
             Column {
@@ -59,9 +61,10 @@ fun SearchAIScreen(
                     text = "Sua Busca:",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = PrincipalColor
                 )
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = response.query,
                     fontSize = 16.sp,
@@ -79,7 +82,7 @@ fun SearchAIScreen(
                 text = "Versículos Relevantes:",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = PrincipalColor
             )
             Spacer(modifier = Modifier.height(8.dp))
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -98,7 +101,7 @@ fun SearchAIScreen(
                 text = "Ensino Bíblico:",
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = PrincipalColor
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -124,13 +127,12 @@ fun SearchAIScreen(
                         text = "Plano de Estudo:",
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = PrincipalColor
                     )
                     Text(
                         text = response.studyPlan.title,
                         fontSize = 17.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.primary
+                        fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = "Duração: ${response.studyPlan.durationDays} dias",
@@ -144,7 +146,7 @@ fun SearchAIScreen(
                         onSaveStudyPlan(response.studyPlan)
                     }
                 ) {
-                    androidx.compose.material3.Icon(
+                    Icon(
                         imageVector = if (isStudyPlanSaved) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
                         contentDescription = if (isStudyPlanSaved) "Plano Salvo" else "Salvar Plano",
                         tint = if (isStudyPlanSaved) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
@@ -216,42 +218,8 @@ fun SearchAIScreen(
 @Preview(showBackground = true)
 @Composable
 fun SearchAIScreenPreview() {
-    val sampleResponse = BiblicalResponse(
-        query = "Qual o significado da Páscoa?",
-        verses = listOf(
-            VerseType("Êxodo", 12, 1, "Disse o Senhor a Moisés e a Arão na terra do Egito..."),
-            VerseType("Êxodo", 12, 14, "E este dia vos será por memorial, e celebrá-lo-eis como festa ao Senhor..."),
-            VerseType("1 Coríntios", 5, 7, "Alimpai-vos, pois, do fermento velho, para que sejais uma nova massa, assim como estais sem fermento. Porque Cristo, nossa Páscoa, foi sacrificado por nós.")
-        ),
-        biblicalTeaching = "A Páscoa é uma festa judaica que comemora a libertação dos israelitas da escravidão no Egito. No Novo Testamento, Jesus Cristo é identificado como o Cordeiro Pascal, cujo sacrifício nos liberta do pecado. A Páscoa aponta para a redenção e a nova vida em Cristo, sendo um memorial da graça de Deus.",
-        studyPlan = StudyPlan(
-            title = "Estudo sobre a Páscoa",
-            durationDays = 3,
-            dailyReadings = listOf(
-                DailyReading(
-                    1, "A Páscoa no Antigo Testamento", listOf(
-                        VerseType("Êxodo", 12, 1, "Disse o Senhor a Moisés e a Arão na terra do Egito..."),
-                        VerseType("Êxodo", 12, 20, "Nenhuma coisa levedada comereis; em todas as vossas habitações comereis pães ázimos.")
-                    )
-                ),
-                DailyReading(
-                    2, "Jesus como Cordeiro Pascal", listOf(
-                        VerseType("João", 1, 29, "No dia seguinte, João viu a Jesus, que vinha para ele, e disse: Eis o Cordeiro de Deus, que tira o pecado do mundo!"),
-                        VerseType("1 Coríntios", 5, 7, "Alimpai-vos, pois, do fermento velho, para que sejais uma nova massa, assim como estais sem fermento. Porque Cristo, nossa Páscoa, foi sacrificado por nós.")
-                    )
-                ),
-                DailyReading(
-                    3, "O Significado da Páscoa para Nós Hoje", listOf(
-                        VerseType("Gálatas", 3, 13, "Cristo nos resgatou da maldição da lei, fazendo-se maldição por nós; porque está escrito: Maldito todo aquele que for pendurado no madeiro;"),
-                        VerseType("Romanos", 6, 4, "De sorte que fomos sepultados com ele pelo batismo na morte; para que, como Cristo foi ressuscitado dentre os mortos pela glória do Pai, assim andemos nós também em novidade de vida.")
-                    )
-                )
-            )
-        ),
-        meditationQuestion = "Como a celebração da Páscoa e o sacrifício de Jesus me inspiram a viver uma vida de gratidão e liberdade em Cristo?"
-    )
     SearchAIScreen(
-        response = sampleResponse,
+        response = AiResponseMock.get(),
         onVerseClick = { verse -> println("Versículo clicado: ${verse.bookName} ${verse.chapter}:${verse.versicle}") },
         onSaveStudyPlan = { plan -> println("Plano de estudo salvo: ${plan.title}") }
     )

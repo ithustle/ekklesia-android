@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.messaging)
+    implementation(libs.firebase.ai)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.analytics)
     implementation(libs.credentials.play.service.auth)

@@ -35,6 +35,9 @@ sealed class Screen() {
     object Bible: Screen()
 
     @Serializable
+    data class SearchAi(val userPrompt: String) : Screen()
+
+    @Serializable
     object Communities: Screen()
 
     @Serializable

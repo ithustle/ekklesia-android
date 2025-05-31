@@ -20,7 +20,7 @@ import com.toquemedia.seedfy.ui.composables.EkklesiaNoInternet
 import com.toquemedia.seedfy.ui.screens.community.CommunityViewModel
 import com.toquemedia.seedfy.ui.screens.home.HomeScreen
 import com.toquemedia.seedfy.ui.screens.home.HomeViewModel
-import com.toquemedia.seedfy.utils.mocks.BitmapUtil
+import com.toquemedia.seedfy.utils.BitmapUtil
 import java.util.Date
 
 fun NavGraphBuilder.homeNavigation(navController: NavController) {

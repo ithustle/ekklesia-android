@@ -90,4 +90,6 @@
     <string name="community_detail_title">Detalhes da comunidade</string>
     <string name="message_error_left_community">Erro ao sair da comunidade</string>
     <string name="my_notes">Minhas notas</string>
+    <string name="placeholder_search">Procure passagens ou tire uma dúvida</string>
+    <string name="menu_bible_study">Meus estudos bíblicos</string>
 </resources>

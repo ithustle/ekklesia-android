@@ -1,13 +1,16 @@
-package com.toquemedia.seedfy.utils.mocks
+package com.toquemedia.seedfy.utils
 
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
@@ -37,11 +40,11 @@ object BitmapUtil {
         logoDrawableId: Int = R.drawable.seedfy_white
     ): Bitmap {
         val bitmap = createBitmap(widthPx, heightPx)
-        val canvas = android.graphics.Canvas(bitmap)
+        val canvas = Canvas(bitmap)
 
         val gradientPaint = Paint()
 
-        val gradient = android.graphics.LinearGradient(
+        val gradient = LinearGradient(
             0f, 0f, widthPx.toFloat(), heightPx.toFloat(), // Diagonal
             intArrayOf(
                 "#633B48".toColorInt(),
@@ -50,7 +53,7 @@ object BitmapUtil {
                 "#FFA3C4".toColorInt()
             ),
             null,
-            android.graphics.Shader.TileMode.CLAMP
+            Shader.TileMode.CLAMP
         )
         gradientPaint.shader = gradient
 

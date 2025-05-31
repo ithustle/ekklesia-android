@@ -3,6 +3,7 @@ package com.toquemedia.seedfy.di.modules
 import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
+import com.google.firebase.ai.GenerativeModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
@@ -17,6 +18,7 @@ import com.toquemedia.seedfy.model.EkklesiaPlayer
 import com.toquemedia.seedfy.model.interfaces.AuthRepository
 import com.toquemedia.seedfy.services.BunnyService
 import com.toquemedia.seedfy.services.CommunityService
+import com.toquemedia.seedfy.services.FirebaseAiService
 import com.toquemedia.seedfy.services.MessagingService
 import com.toquemedia.seedfy.services.NoteService
 import com.toquemedia.seedfy.services.NotificationService
@@ -62,7 +64,8 @@ class DatabaseModule {
     fun provideNotificationService(messaging: FirebaseMessaging): NotificationService = NotificationService(messaging)
     @Provides
     fun provideVerseOfDayService(firestore: FirebaseFirestore): VerseOfDayService = VerseOfDayService(firestore)
-
+    @Provides
+    fun provideFirebaseAiService(model: GenerativeModel): FirebaseAiService = FirebaseAiService(model)
     @OptIn(UnstableApi::class)
     @Provides
     fun provideEkklesiaPlayer(@ApplicationContext context: Context): EkklesiaPlayer = EkklesiaPlayer(context)

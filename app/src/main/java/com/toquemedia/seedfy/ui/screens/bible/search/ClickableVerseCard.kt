@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.seedfy.model.VerseType
+import com.toquemedia.seedfy.ui.theme.PrincipalColor
 
 @Composable
 fun ClickableVerseCard(
@@ -35,7 +36,7 @@ fun ClickableVerseCard(
                 text = "${verse.bookName} ${verse.chapter}:${verse.versicle}",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 17.sp,
-                color = MaterialTheme.colorScheme.primary
+                color = PrincipalColor
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
