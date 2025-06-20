@@ -29,7 +29,7 @@ fun FeedStory(
         horizontalArrangement = Arrangement.Center,
         modifier = modifier
             .size(68.dp)
-            .border(width = 3.dp, color = PrincipalColor, shape = CircleShape)
+            .border(width = 4.dp, color = PrincipalColor, shape = CircleShape)
             .clickable {
                 onClickToShowStory()
             },
@@ -38,7 +38,7 @@ fun FeedStory(
             model = userPhoto.toUri(),
             contentDescription = stringResource(R.string.profileTitleScreen),
             modifier = Modifier
-                .size(64.dp)
+                .size(56.dp)
                 .clip(CircleShape)
         )
     }

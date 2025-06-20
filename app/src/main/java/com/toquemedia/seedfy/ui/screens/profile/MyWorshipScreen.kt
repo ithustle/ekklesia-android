@@ -67,7 +67,7 @@ fun MyWorshipScreen(
         ) {
             MyCommunities(
                 modifier = Modifier.fillMaxWidth(),
-                sharingWorship = sharingWorship,
+                sharing = sharingWorship,
                 communities = communities,
                 onShareToCommunity = {
                     selectedWorship?.let { worship ->

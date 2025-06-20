@@ -20,7 +20,7 @@ import com.toquemedia.seedfy.ui.composables.EkklesiaNoInternet
 import com.toquemedia.seedfy.ui.screens.community.CommunityViewModel
 import com.toquemedia.seedfy.ui.screens.home.HomeScreen
 import com.toquemedia.seedfy.ui.screens.home.HomeViewModel
-import com.toquemedia.seedfy.utils.mocks.BitmapUtil
+import com.toquemedia.seedfy.utils.BitmapUtil
 import java.util.Date
 
 fun NavGraphBuilder.homeNavigation(navController: NavController) {
@@ -44,6 +44,7 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             }
 
         LaunchedEffect(Unit) {
+            appViewModel.showTopBar = true
             appViewModel.updateTopBarState(
                 newState = TopBarState(
                     title = "${Date().getGreeting()}, ${currentUser?.displayName}",
@@ -52,10 +53,20 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
             )
         }
 
+        LaunchedEffect(Unit) {
+            if (communityState.loadingCommunitiesUserIn == false) {
+
+                if (communityState.communities.isEmpty()) {
+                    println("Carrega comunidades")
+                    communityViewModel.loadCommunities()
+                }
+            }
+        }
+
         produceState(false, communityState.newCommunity) {
             if (value) {
                 communityState.newCommunity?.let {
-                    appViewModel.selectedCommunity = it
+                    communityState.selectedCommunity = it
                     navController.navigateToCommunityFeed()
                 }
             }
@@ -63,7 +74,6 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
         }
 
         state.errorConnection?.let {
-            println("communityState.loadingCommunitiesUserIn: ${communityState.loadingCommunitiesUserIn}")
             EkklesiaNoInternet(
                 message = it,
                 loading = communityState.loadingCommunitiesUserIn,
@@ -82,10 +92,9 @@ fun NavGraphBuilder.homeNavigation(navController: NavController) {
                 verseOfDay = state.verseOfDay,
                 verseOfDayStats = state.verseOfDayStats,
                 likedVerseOfDay = state.likedVerseOfDay,
-                context = context,
                 onJoinToCommunity = communityViewModel::joinToCommunity,
                 onNavigateToCommunity = {
-                    appViewModel.selectedCommunity = it
+                    communityState.selectedCommunity = it
                     navController.navigateToCommunityFeed()
                 },
                 onLikeVerseOfDay = viewModel::handleLikeVerseOfDay,

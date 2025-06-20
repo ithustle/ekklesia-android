@@ -14,7 +14,8 @@
     <string name="salvar_as_draft">Salvar como rascunho</string>
     <string name="new_testament">Novo Testamento</string>
     <string name="old_testament">Antigo Testamento</string>
-    <string name="community">Comunidades</string>
+    <string name="communities">Comunidades</string>
+    <string name="community">Comunidade</string>
     <string name="my_community">Minhas Comunidades</string>
     <string name="newCommunity">Nova comunidade</string>
     <string name="save_community">Criar comunidade</string>
@@ -49,7 +50,9 @@
     <string name="cancelar">Cancelar</string>
     <string name="yes_confirmation">Continuar</string>
     <string name="dialog_community_title">Eliminar comunidade</string>
+    <string name="dialog_community_title_left">Abandonar a comunidade</string>
     <string name="dialog_community_text">Deseja realmente eliminar a comunidade?</string>
+    <string name="dialog_community_left_message">Você realmente abandonar a comunidade?</string>
     <string name="loading_screen">A carregar...</string>
     <string name="loading_community">A carregar a comunidade...</string>
     <string name="loading_community_messages">A carregar as mensagens...</string>
@@ -82,4 +85,11 @@
     <string name="play_description_icon">Botão de play</string>
     <string name="duration">min</string>
     <string name="publish_story">Publicar</string>
+    <string name="jump_onboarding">Pular</string>
+    <string name="sign_out_community">Deixar a comunidade</string>
+    <string name="community_detail_title">Detalhes da comunidade</string>
+    <string name="message_error_left_community">Erro ao sair da comunidade</string>
+    <string name="my_notes">Minha nota</string>
+    <string name="placeholder_search">Procure passagens ou tire uma dúvida</string>
+    <string name="menu_bible_study">Planos bíblicos</string>
 </resources>

@@ -87,7 +87,7 @@ fun HomeCommunity(
                 Spacer(Modifier.height(4.dp))
 
                 Text(
-                    text = "${members.size} membros",
+                    text = "${members.size} ${if (members.size > 1) "membros" else "membro"}",
                     fontSize = 12.sp,
                     color = Color.Gray,
                     maxLines = 1,

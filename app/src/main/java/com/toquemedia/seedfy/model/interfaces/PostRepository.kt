@@ -6,7 +6,7 @@ import com.toquemedia.seedfy.model.UserType
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
-    suspend fun addPost(post: PostType)
+    suspend fun addPost(post: PostType, communityId: String)
     suspend fun removePost(postId: String)
     suspend fun getPosts(communityId: String): List<PostType>
     suspend fun addComment(postId: String, comment: CommentType, communityId: String)

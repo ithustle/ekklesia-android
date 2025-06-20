@@ -85,8 +85,6 @@ fun VideoPlayer(
         }
     }
 
-    println("VideoPlayer")
-
     Box(
         modifier = Modifier
             .fillMaxSize()

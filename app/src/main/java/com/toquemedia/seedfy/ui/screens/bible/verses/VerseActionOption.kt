@@ -143,18 +143,6 @@ fun ActionOptions(
     }
 }
 
-@Preview
-@Composable
-private fun XXX() {
-    ActionOption(
-        modifier = Modifier,
-        actionOptionPainterIcon = painterResource(R.drawable.story),
-        onActionOptionClick = {
-
-        }
-    )
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable

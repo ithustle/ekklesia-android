@@ -17,6 +17,15 @@ sealed class Screen() {
     object CommunityScreenGraph: Screen()
 
     @Serializable
+    object FirstPageOnboarding: Screen()
+
+    @Serializable
+    object SecondPageOnboarding: Screen()
+
+    @Serializable
+    object ThirdPageOnboarding: Screen()
+
+    @Serializable
     object Login: Screen()
 
     @Serializable
@@ -24,6 +33,15 @@ sealed class Screen() {
 
     @Serializable
     object Bible: Screen()
+
+    @Serializable
+    data class SearchAi(val userPrompt: String) : Screen()
+
+    @Serializable
+    object BiblePlan: Screen()
+
+    @Serializable
+    object BiblePlansList: Screen()
 
     @Serializable
     object Communities: Screen()
@@ -39,6 +57,9 @@ sealed class Screen() {
 
     @Serializable
     object CreateCommunity: Screen()
+
+    @Serializable
+    object CommunityDetails: Screen()
 
     @Serializable
     data class CreateWorship(
@@ -94,5 +115,6 @@ sealed class Screen() {
         val chapterNumber: String,
         val verse: String,
         val versicle: Int,
+        val communityId: String
     ): Screen()
 }

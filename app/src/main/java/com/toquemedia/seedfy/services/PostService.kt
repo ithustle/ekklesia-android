@@ -32,7 +32,7 @@ class PostService @Inject constructor(
     suspend fun getAllPosts(communityId: String): List<PostType> {
         val snapshot = db.collection(collection)
             .orderBy("createdAt", Query.Direction.DESCENDING)
-            .whereArrayContains("communityId", communityId)
+            .whereEqualTo("communityId", communityId)
             .get()
             .await()
 

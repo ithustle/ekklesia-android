@@ -39,7 +39,6 @@ fun NoteScreen(
     versicle: Int,
     verse: String,
     onEntryNoteChange: (String) -> Unit = { },
-    onSaveNote: () -> Unit = {},
     onSaveAndShareNote: () -> Unit = {},
     savingNote: Boolean
 ) {
@@ -108,19 +107,11 @@ fun NoteScreen(
             ) {
                 EkklesiaButton(
                     label = "Salvar e Partilhar",
-                    filled = false,
+                    filled = true,
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 8.dp),
                     onClick = onSaveAndShareNote,
-                )
-                EkklesiaButton(
-                    label = "Salvar",
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 8.dp),
-                    onClick = onSaveNote
-
                 )
             }
         }

@@ -30,7 +30,6 @@ class FeedCommunityViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        println("INIT: ${_uiState.value.userLikes.toMutableMap()}")
         _uiState.update { currentState ->
             currentState.copy(
                 onChangeTextComment = {
@@ -48,7 +47,7 @@ class FeedCommunityViewModel @Inject constructor(
                 }
             )
         }
-        println("VIEW MODEL")
+        println("VIEW MODEL FeedCommunityViewModel")
         getUserLiked()
     }
 
@@ -102,6 +101,12 @@ class FeedCommunityViewModel @Inject constructor(
 
     fun selectPost(postId: String) {
         val post = _uiState.value.posts.firstOrNull { it.verseId == postId }
+        _uiState.update {
+            it.copy(selectedPost = post)
+        }
+    }
+
+    fun selectPost(post: PostType) {
         _uiState.update {
             it.copy(selectedPost = post)
         }

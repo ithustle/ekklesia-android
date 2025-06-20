@@ -1,7 +1,14 @@
 package com.toquemedia.seedfy.ui.screens.bible
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -11,8 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +42,39 @@ fun TestamentScreen(
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
     val tabTitles = listOf(stringResource(R.string.old_testament), stringResource(R.string.new_testament))
 
-    Column {
+    Column(
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background)
+    ) {
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 12.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(size = 4.dp))
+                .border(width = 1.dp, color = PrincipalColor.copy(alpha = 0.3f), shape = RoundedCornerShape(size = 4.dp))
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = stringResource(R.string.placeholder_search),
+                color = Color.Gray,
+                fontSize = 15.sp,
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterStart)
+            )
+
+            Icon(
+                painter = painterResource(R.drawable.search_ai),
+                contentDescription = null,
+                tint = PrincipalColor,
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterEnd)
+                    .size(32.dp)
+            )
+        }
+
         TabRow(
             selectedTabIndex = selectedTabIndex,
             containerColor = MaterialTheme.colorScheme.background,

@@ -37,7 +37,7 @@ import com.toquemedia.seedfy.utils.mocks.CommunityMock
 @Composable
 fun MyCommunities(
     modifier: Modifier = Modifier,
-    sharingWorship: Boolean = false,
+    sharing: Boolean = false,
     communities: List<CommunityWithMembers>,
     onShareToCommunity: (CommunityWithMembers) -> Unit = {}
 ) {
@@ -51,7 +51,7 @@ fun MyCommunities(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(R.string.my_community),
+                text = stringResource(R.string.communities),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = PrincipalColor,
@@ -60,7 +60,7 @@ fun MyCommunities(
 
             selectedCommunity?.let {
 
-                if (sharingWorship) {
+                if (sharing) {
                     IconButton(onClick = {}) {
                         EkklesiaProgress(
                             modifier = Modifier.padding(top = 4.dp),

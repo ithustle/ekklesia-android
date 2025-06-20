@@ -18,12 +18,12 @@ data class CommunityType(
 data class CommunityMemberType(
     val id: String = "",
     val user: UserType = UserType(id = ""),
-    val isAdmin: Boolean = false
+    val admin: Boolean = false
 )
 
 
 @Immutable
 data class CommunityWithMembers(
     val community: CommunityType,
-    val allMembers: List<CommunityMemberType>
+    var allMembers: List<CommunityMemberType>
 )

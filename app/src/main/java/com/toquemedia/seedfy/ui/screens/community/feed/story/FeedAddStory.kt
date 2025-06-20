@@ -29,7 +29,7 @@ fun FeedAddStory(
     val modifierStory = if (hasStory) Modifier
         .size(64.dp)
         .clip(CircleShape)
-        .border(width = 3.dp, color = PrincipalColor, shape = CircleShape) else
+        .border(width = 4.dp, color = PrincipalColor, shape = CircleShape) else
         Modifier
             .size(64.dp)
             .clip(CircleShape)

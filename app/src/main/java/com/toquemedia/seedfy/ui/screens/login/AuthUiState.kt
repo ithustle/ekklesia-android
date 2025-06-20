@@ -4,5 +4,7 @@ import com.toquemedia.seedfy.model.UserType
 
 data class AuthUiState(
     val user: UserType? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val myNote: String = "",
+    val onMyNote: (String) -> Unit = {}
 )

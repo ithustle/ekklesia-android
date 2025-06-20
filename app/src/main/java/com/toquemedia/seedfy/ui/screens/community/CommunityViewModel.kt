@@ -1,10 +1,13 @@
 package com.toquemedia.seedfy.ui.screens.community
 
 import android.content.Context
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil3.network.HttpException
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.toquemedia.seedfy.R
 import com.toquemedia.seedfy.extension.communitiesToJoin
 import com.toquemedia.seedfy.extension.isInternetAvailable
 import com.toquemedia.seedfy.model.CommunityMemberType
@@ -71,21 +74,26 @@ class CommunityViewModel @Inject constructor(
     fun loadCommunities() {
         viewModelScope.launch {
             if (context.isInternetAvailable()) {
-                try {
-                    coroutineScope {
-                        val communitiesDeferred = async { getAllCommunities() }
-                        val communitiesInDeferred = async { getAllCommunitiesUserIn() }
-                        communitiesInDeferred.await() to communitiesDeferred.await()
+                val user = authRepository.getCurrentUser()
+                if (user != null) {
+                    try {
+                        coroutineScope {
+                            val communitiesDeferred = async { getAllCommunities() }
+                            val communitiesInDeferred = async { getAllCommunitiesUserIn() }
+                            communitiesInDeferred.await() to communitiesDeferred.await()
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    } catch (e: HttpException) {
+                        e.printStackTrace()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e: HttpException) {
-                    e.printStackTrace()
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } else {
+                    _uiState.update { it.copy(loadingCommunitiesUserIn = false) }
                 }
             } else {
-                _uiState.update { it.copy(loadingCommunitiesUserIn = false ) }
+                _uiState.update { it.copy(loadingCommunitiesUserIn = false) }
             }
         }
     }
@@ -121,7 +129,9 @@ class CommunityViewModel @Inject constructor(
 
                             newCommunity?.let {
                                 _uiState.value =
-                                    _uiState.value.copy(myCommunities = _uiState.value.myCommunities + newCommunity)
+                                    _uiState.value.copy(
+                                        myCommunities = _uiState.value.myCommunities + newCommunity,
+                                    )
                             }
                             _validationEvent.emit(ValidationResult.Success)
                         } catch (e: Exception) {
@@ -131,6 +141,10 @@ class CommunityViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun selectCommunity(community: CommunityWithMembers) {
+        _uiState.value = _uiState.value.copy(selectedCommunity = community)
     }
 
     fun joinToCommunity(communityId: String) {
@@ -143,22 +157,37 @@ class CommunityViewModel @Inject constructor(
                 val member = CommunityMemberType(
                     id = user.id,
                     user = user,
-                    isAdmin = false
+                    admin = false
                 )
                 repository.addMember(
                     communityId = communityId,
                     member = member
                 )
 
-                val filteredCommunity = _uiState.value.communities.filter { it.community.id != communityId }
-                val communityAsMember = _uiState.value.communities.first { it.community.id == communityId }
+                val communities = _uiState.value.communities.toMutableList()
+                val communityIndex = communities.indexOfFirst { it.community.id == communityId }
 
-                _uiState.value = _uiState.value.copy(
-                    joiningToCommunity = false,
-                    communities = filteredCommunity,
-                    newCommunity = communityAsMember,
-                    communitiesUserIn = _uiState.value.communitiesUserIn + communityAsMember
-                )
+                if (communityIndex != -1) {
+                    val updatedCommunity = communities[communityIndex].copy(
+                        allMembers = communities[communityIndex].allMembers + member
+                    )
+
+                    communities[communityIndex] = updatedCommunity
+
+                    val filteredCommunity =
+                        communities.filter { it.community.id != communityId }
+                    val communityAsMember = updatedCommunity
+
+                    _uiState.value = _uiState.value.copy(
+                        joiningToCommunity = false,
+                        communities = filteredCommunity,
+                        newCommunity = communityAsMember,
+                        selectedCommunity = updatedCommunity,
+                        communitiesUserIn = _uiState.value.communitiesUserIn + communityAsMember
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(joiningToCommunity = false)
+                }
             }
         }
     }
@@ -175,6 +204,64 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
+    fun removeCommunityFromList(communityId: String, memberId: String) {
+        val updatedCommunity = _uiState.value.communitiesUserIn.filter { it.community.id != communityId }
+        val communityToRemoveMember = _uiState.value.communitiesUserIn.first { it.community.id == communityId }
+        val communityWithoutMember =
+            communityToRemoveMember.copy(allMembers = communityToRemoveMember.allMembers.filter { it.user.email != memberId })
+
+        _uiState.update {
+            it.copy(
+                communitiesUserIn = updatedCommunity,
+                communities = _uiState.value.communities + communityWithoutMember,
+                loadingLeftCommunity = false
+            )
+        }
+    }
+
+    suspend fun removeMember(communityId: String, memberId: String) {
+        try {
+            _uiState.update { it.copy(loadingLeftCommunity = true) }
+            repository.removeMember(communityId, memberId)
+
+            val communityLeft = _uiState.value.communities.firstOrNull { it.community.id == communityId }
+                ?: return
+
+            val communityWithoutMemberLeft =
+                communityLeft.copy(allMembers = communityLeft.allMembers.filter { it.id != memberId })
+
+            val updatedCommunitiesList = _uiState.value.communities.map { community ->
+                if (community.community.id == communityId) communityWithoutMemberLeft else community
+            }
+
+            val updatedCommunity = _uiState.value.communitiesUserIn.filter { it.community.id != communityId }
+
+            _uiState.update {
+                it.copy(
+                    loadingLeftCommunity = false,
+                    communities = updatedCommunitiesList,
+                    communitiesUserIn = updatedCommunity
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _uiState.update { it.copy(loadingLeftCommunity = false) }
+        }
+    }
+
+    suspend fun leftCommunity(communityId: String) {
+        try {
+            this.removeMember(communityId.toString(), user?.id.toString())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(
+                context,
+                context.getString(R.string.message_error_left_community),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     private suspend fun getAllCommunities() {
         try {
             val user = authRepository.getCurrentUser()
@@ -187,7 +274,8 @@ class CommunityViewModel @Inject constructor(
                                 val members = repository.getAllMembers(community.id)
 
                                 val finalMembers = if (members.isEmpty() &&
-                                    community.email == user?.email) {
+                                    community.email == user?.email
+                                ) {
                                     delay(500)
                                     val retryMembers = repository.getAllMembers(community.id)
                                     retryMembers
@@ -207,17 +295,22 @@ class CommunityViewModel @Inject constructor(
                 }
         } catch (e: Exception) {
             e.printStackTrace()
-            throw e
+        } catch (e: FirebaseFirestoreException) {
+            e.printStackTrace()
         }
     }
 
     private fun getAllCommunitiesUserIn() {
-        viewModelScope.launch {
-            val communities = repository.getCommunitiesUserIn()
-            _uiState.value = _uiState.value.copy(
-                communitiesUserIn = communities,
-                loadingCommunitiesUserIn = false,
-            )
+        try {
+            viewModelScope.launch {
+                val communities = repository.getCommunitiesUserIn()
+                _uiState.value = _uiState.value.copy(
+                    communitiesUserIn = communities,
+                    loadingCommunitiesUserIn = false,
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }

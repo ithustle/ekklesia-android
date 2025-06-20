@@ -1,5 +1,9 @@
 package com.toquemedia.seedfy
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -10,16 +14,24 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.zIndex
 import com.toquemedia.seedfy.model.EkklesiaBottomNavigation
+import com.toquemedia.seedfy.model.FcmManager
 import com.toquemedia.seedfy.model.TopBarState
 import com.toquemedia.seedfy.model.UserType
 import com.toquemedia.seedfy.routes.Screen
 import com.toquemedia.seedfy.ui.composables.EkklesiaTopBar
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,12 +42,43 @@ fun EkklesiaApp(
     onTabItemChange: (Screen) -> Unit = {},
     onNavigateToProfile: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
+    fcmManager: FcmManager? = null,
     currentUser: UserType?,
     topBarState: TopBarState,
     showTopBar: Boolean = true,
     videoPlayerVisible: Boolean = false,
     content: @Composable () -> Unit = {}
 ) {
+    val scope = rememberCoroutineScope()
+
+    var permissionGranted by remember { mutableStateOf(fcmManager?.areNotificationsEnabled()) }
+    var fcmToken by remember { mutableStateOf<String?>(null) }
+
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        permissionGranted = isGranted
+        if (isGranted) {
+            scope.launch {
+                fcmToken = fcmManager?.getFCMToken()
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        permissionGranted?.let {
+            if (!it && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    LaunchedEffect(permissionGranted) {
+        if (permissionGranted == true) {
+            fcmToken = fcmManager?.getFCMToken()
+        }
+    }
+
     if (showOverlay) {
         Box(
             modifier = modifier

@@ -2,14 +2,20 @@ package com.toquemedia.seedfy.di.modules
 
 import android.content.Context
 import androidx.room.Room
+import com.google.firebase.Firebase
+import com.google.firebase.ai.GenerativeModel
+import com.google.firebase.ai.ai
+import com.google.firebase.ai.type.GenerativeBackend
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.toquemedia.seedfy.dao.AppCacheDao
 import com.toquemedia.seedfy.dao.AppDatabase
 import com.toquemedia.seedfy.dao.LikeDao
+import com.toquemedia.seedfy.dao.StudyPlanDao
 import com.toquemedia.seedfy.dao.VerseDao
 import dagger.Module
 import dagger.Provides
@@ -44,7 +50,15 @@ object AppModules {
 
     @Singleton
     @Provides
+    fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
+
+    @Singleton
+    @Provides
     fun provideAppCacheDao(@ApplicationContext context: Context): AppCacheDao = AppCacheDao(context)
+
+    @Singleton
+    @Provides
+    fun provideStudyPlanDao(@ApplicationContext context: Context): StudyPlanDao = StudyPlanDao(context)
 
     @Provides
     @Singleton
@@ -60,6 +74,11 @@ object AppModules {
     @Singleton
     @Provides
     fun provideAuthEmulator(): FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Singleton
+    @Provides
+    fun provideFirebaseAi(): GenerativeModel = Firebase.ai(backend = GenerativeBackend.googleAI())
+        .generativeModel(modelName = "gemini-2.0-flash-001")
 
     @Singleton
     @Provides

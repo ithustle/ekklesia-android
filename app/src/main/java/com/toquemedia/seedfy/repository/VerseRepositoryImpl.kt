@@ -1,23 +1,21 @@
 package com.toquemedia.seedfy.repository
 
+import androidx.datastore.preferences.core.Preferences
 import com.toquemedia.seedfy.dao.VerseDao
 import com.toquemedia.seedfy.extension.toPortuguese
 import com.toquemedia.seedfy.model.StoryType
+import com.toquemedia.seedfy.model.VerseResponse
 import com.toquemedia.seedfy.model.interfaces.VerseRepository
 import com.toquemedia.seedfy.services.OurmannaService
 import com.toquemedia.seedfy.services.StatsVerseOfDay
 import com.toquemedia.seedfy.services.StoryService
 import com.toquemedia.seedfy.services.UserService
 import com.toquemedia.seedfy.services.VerseOfDayService
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import okio.IOException
 import retrofit2.HttpException
 import javax.inject.Inject
-
-data class VerseResponse(
-    val verseOfDay: Triple<String, Int, Int>,
-    val stats: StatsVerseOfDay
-)
 
 class VerseRepositoryImpl @Inject constructor(
     private val verse: VerseDao,
@@ -44,7 +42,7 @@ class VerseRepositoryImpl @Inject constructor(
         return this.verse.getVerseMarked(verseId)
     }
 
-    override suspend fun getMarkedVerse() {
+    override suspend fun getMarkedVerse(): Flow<Preferences> {
         return this.verse.getVerseMarked()
     }
 

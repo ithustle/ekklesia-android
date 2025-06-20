@@ -1,8 +1,8 @@
 package com.toquemedia.seedfy.ui.screens.bible.verses
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,19 +13,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.toquemedia.seedfy.model.BookType
+import com.toquemedia.seedfy.model.CommunityWithMembers
+import com.toquemedia.seedfy.model.NoteEntity
+import com.toquemedia.seedfy.model.ShareCommunity
+import com.toquemedia.seedfy.ui.composables.EkklesiaDialog
 import com.toquemedia.seedfy.ui.screens.bible.states.WorshipUiState
-import com.toquemedia.seedfy.ui.screens.bible.states.VerseUiState
+import com.toquemedia.seedfy.ui.screens.profile.MyCommunities
 import com.toquemedia.seedfy.ui.theme.PrincipalColor
 import com.toquemedia.seedfy.utils.mocks.BookMock
 
@@ -33,17 +34,39 @@ import com.toquemedia.seedfy.utils.mocks.BookMock
 fun VersesScreen(
     modifier: Modifier = Modifier,
     book: BookType?,
-    versesStates: VerseUiState,
+    markedVerses: List<String> = emptyList(),
     worshipState: WorshipUiState,
     scrollState: ScrollState,
     chapterNumber: Int?,
+    communities: List<CommunityWithMembers> = emptyList(),
+    selectedVerse: String? = null,
+    notes: List<NoteEntity> = emptyList(),
     onSelectedVerse: (verse: String, versicle: Int) -> Unit = { _, _ -> },
     onNextVerse: (Int) -> Unit = {},
     onPreviousVerse: (Int) -> Unit = {},
     onUnMarkVerse: (String, Int) -> Unit = { _, _ -> },
+    onShareToCommunity: (CommunityWithMembers, ShareCommunity) -> Unit = { _, _ -> },
+    onShowVerseAction: (Boolean) -> Unit = {},
+    openDialogToShareToCommunity: Pair<Boolean, ShareCommunity> = Pair(false, ShareCommunity.NONE),
+    onOpenDialogToShareToCommunity: (Boolean, ShareCommunity) -> Unit = { _, _ -> }
 ) {
-
-    val markedVerses by versesStates.markedVerses.collectAsState()
+    if (openDialogToShareToCommunity.first) {
+        EkklesiaDialog(
+            onDismissRequest = {
+                onOpenDialogToShareToCommunity(it, openDialogToShareToCommunity.second)
+            }
+        ) {
+            MyCommunities(
+                modifier = Modifier.fillMaxWidth(),
+                sharing = false,
+                communities = communities,
+                onShareToCommunity = {
+                    onShareToCommunity(it, openDialogToShareToCommunity.second)
+                    onOpenDialogToShareToCommunity(false, openDialogToShareToCommunity.second)
+                }
+            )
+        }
+    }
 
     Column(
         modifier = modifier
@@ -85,24 +108,29 @@ fun VersesScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = modifier.padding(horizontal = 4.dp))
-                    VerseText(
-                        verse = verse,
-                        selectedVerse = versesStates.selectedVerse,
-                        markedVerse = markedVerses,
-                        hasNote = versesStates.notes.find { it.verse == verse } != null,
-                        hasWorship = worshipState.worships.find { it.verse == verse } != null,
+                    Box(
                         modifier = Modifier
-                            .padding(bottom = 6.dp)
-                            .background(color = if (markedVerses.contains(verse)) PrincipalColor else Color.Transparent)
-                            .clickable {
-                                if (markedVerses.contains(verse)) {
-                                    onUnMarkVerse(verse, versicle + 1)
-                                } else {
-                                    versesStates.onShowVerseAction(true)
-                                    onSelectedVerse(verse, versicle + 1)
+                            .weight(1f)
+                    ) {
+                        VerseText(
+                            verse = verse,
+                            selectedVerse = selectedVerse ?: "",
+                            isMarked = markedVerses.contains(verse),
+                            hasNote = notes.find { it.verse == verse } != null,
+                            hasWorship = worshipState.worships.find { it.verse == verse } != null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 6.dp)
+                                .clickable {
+                                    if (markedVerses.contains(verse)) {
+                                        onUnMarkVerse(verse, versicle + 1)
+                                    } else {
+                                        onShowVerseAction(true)
+                                        onSelectedVerse(verse, versicle + 1)
+                                    }
                                 }
-                            }
-                    )
+                        )
+                    }
                 }
             }
         }
@@ -127,9 +155,11 @@ fun VersesScreen(
 private fun VersesScreenPrev() {
     VersesScreen(
         book = BookMock.get(),
-        chapterNumber = 1,
-        versesStates = VerseUiState(),
+        worshipState = WorshipUiState(),
         scrollState = rememberScrollState(),
-        worshipState = WorshipUiState()
+        chapterNumber = 1,
+        markedVerses = listOf(
+            "Misericórdia, paz e amor lhes sejam multiplicados."
+        ),
     )
 }

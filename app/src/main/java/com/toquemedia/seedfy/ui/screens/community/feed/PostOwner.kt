@@ -2,6 +2,7 @@ package com.toquemedia.seedfy.ui.screens.community.feed
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,10 +40,10 @@ fun PostOwner(
     onNavigateToStory: (UserType) -> Unit = {}
 ) {
 
-    val modifierStory = if (hasStory) Modifier
+    val modifierStory = if (!hasStory) Modifier
         .size(42.dp)
         .clip(CircleShape)
-        .border(width = 3.dp, color = PrincipalColor, shape = CircleShape) else
+        .border(width = 4.dp, color = PrincipalColor, shape = CircleShape) else
         Modifier
             .size(42.dp)
             .clip(CircleShape)
@@ -54,14 +55,17 @@ fun PostOwner(
                 if (hasStory) { onNavigateToStory(user) }
             }
     ) {
-        EkklesiaImage(
-            model = user.photo?.toUri(),
-            contentDescription = stringResource(R.string.profileTitleScreen),
-            modifier = modifierStory /*Modifier
+        Box() {
+            EkklesiaImage(
+                model = user.photo?.toUri(),
+                contentDescription = stringResource(R.string.profileTitleScreen),
+                modifier = modifierStory
+                    /*Modifier
                     .padding(end = 12.dp)
                     .size(42.dp)
                     .clip(CircleShape) */
-        )
+            )
+        }
 
         Spacer(Modifier.width(8.dp))
 
