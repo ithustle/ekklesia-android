@@ -7,6 +7,11 @@
   [![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.android.com)
   [![Kotlin](https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white)](https://kotlinlang.org)
   [![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)](https://firebase.google.com)
+  
+  <br/>
+  
+  **📖 Language / Idioma:**
+  [🇺🇸 English](./README_EN.md) | [🇵🇹 Português](./README.md)
 </div>
 
 ## 📖 Sobre a Aplicação
