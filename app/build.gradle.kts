@@ -17,7 +17,7 @@ android {
         applicationId = "com.toquemedia.ekklesia"
         minSdk = 24
         targetSdk = 34
-        versionCode = 11
+        versionCode = 12
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -76,6 +76,8 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.ai)
     implementation(libs.firebase.app.check)
+    implementation(libs.firebase.app.check.debug)
+    implementation(libs.play.integrity)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.analytics)
     implementation(libs.credentials.play.service.auth)

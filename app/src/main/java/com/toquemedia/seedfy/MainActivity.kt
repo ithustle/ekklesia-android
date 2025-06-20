@@ -31,8 +31,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.gson.Gson
 import com.toquemedia.seedfy.model.FcmManager
 import com.toquemedia.seedfy.model.PostType
@@ -57,7 +55,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.jvm.java
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -73,21 +70,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         checkPermission()
         requestNotificationPermissionIfNeeded()
-
-        val firebaseAppCheck = FirebaseAppCheck.getInstance()
-
-        firebaseAppCheck.getAppCheckToken(false)
-            .addOnSuccessListener { appCheckToken ->
-                val token = appCheckToken.token
-                println(token)
-            }
-            .addOnFailureListener {
-                println(it.message)
-            }
-
-        firebaseAppCheck.installAppCheckProviderFactory(
-            PlayIntegrityAppCheckProviderFactory.getInstance()
-        )
 
         NotificationHelper.createNotificationChannel(this)
         checkExactAlarmPermission()
