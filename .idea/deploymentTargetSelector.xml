@@ -21,7 +21,7 @@
       </SelectionState>
       <SelectionState runConfigName="Seedfy.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-06-02T08:53:57.854590Z">
+        <DropdownSelection timestamp="2025-06-20T12:56:42.679720Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=05157df578538018" />

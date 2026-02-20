@@ -10,15 +10,15 @@ plugins {
 }
 
 android {
-    namespace = "com.toquemedia.seedfy"
+    namespace = "com.toquemedia.ekklesia"
     compileSdk = 35
 
     defaultConfig {
         applicationId = "com.toquemedia.ekklesia"
         minSdk = 24
         targetSdk = 34
-        versionCode = 12
-        versionName = "1.0.0"
+        versionCode = 13
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -79,6 +79,7 @@ dependencies {
     implementation(libs.firebase.app.check.debug)
     implementation(libs.play.integrity)
     implementation(libs.play.services.auth)
+    implementation(libs.play.services.safetynet)
     implementation(libs.firebase.analytics)
     implementation(libs.credentials.play.service.auth)
     implementation(libs.credentials)

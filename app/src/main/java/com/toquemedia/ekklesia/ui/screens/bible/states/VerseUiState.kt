@@ -1,0 +1,31 @@
+package com.toquemedia.ekklesia.ui.screens.bible.states
+
+import com.toquemedia.ekklesia.model.NoteEntity
+import com.toquemedia.ekklesia.model.ShareCommunity
+
+data class VerseUiState(
+    val markedVerse: String = "",
+    val selectedVerse: String = "",
+    val notes: List<NoteEntity> = emptyList(),
+    val versicle: Int = -1,
+    val chapter: Int = 1,
+    val markedVerses: List<String> = emptyList(),
+    var onSelectVerse: (String, Int) -> Unit = { _, _ -> },
+    var onMarkVerse: (String) -> Unit = {},
+    var onUnMarkVerse: (String) -> Unit = {},
+    var onChangeChapter: (Int) -> Unit = {},
+    var onShowVerseAction: (Boolean) -> Unit = {},
+    var onOpenDialogToShareToCommunity: (Boolean, ShareCommunity) -> Unit = { _, _ -> },
+    var onShowAddNote: (Boolean) -> Unit = {},
+    val showVerseActionOption: Boolean = false,
+    val showAddNote: Boolean = false,
+    val openDialogToShareToCommunity: Pair<Boolean, ShareCommunity> = Pair(
+        false,
+        ShareCommunity.NONE
+    ),
+    val entryNote: String = "",
+    val onEntryNoteChange: (String) -> Unit = {},
+    val savingNote: Boolean = false,
+    val addingStory: Boolean = false,
+    val onSavingNote: (Boolean) -> Unit = {}
+)
